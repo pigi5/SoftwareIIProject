@@ -1,6 +1,3 @@
-image: node:8.5.0
-image: gradle:4.1
-
 stages:
   - init
   - build
@@ -8,11 +5,13 @@ stages:
   - deploy
 
 init:
+  image: node:8.5.0
   stage: init
   script:
     - npm install
 
 gradleBuild:
+  image: gradle:4.1
   stage: build
   script:
     - chmod +x gradlew
