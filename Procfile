@@ -1,1 +1,1 @@
-web: java -jar build/server/webapp-runner-8.5.11.3.jar --port %PORT% build/libs/petfinder-site-1.0-SNAPSHOT.war
+web: java -jar build/server/webapp-runner-*.jar --port $PORT build/libs/*.war
