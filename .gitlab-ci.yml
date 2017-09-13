@@ -1,4 +1,3 @@
-
 stages:
   - init
   - build
