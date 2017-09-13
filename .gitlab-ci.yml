@@ -14,8 +14,7 @@ gradleBuild:
   image: gradle:4.1
   stage: build
   script:
-    - chmod +x gradlew
-    - ./gradlew build
+    - gradle build
     
 herokuDeploy:
   stage: deploy
