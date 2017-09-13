@@ -1,15 +1,24 @@
 stages:
+  - init
   - build
   - test
   - deploy
+
+init:
+  stage: init
+  script:
+    - npm install
 
 gradleBuild:
   stage: build
   script:
     - ./gradlew build
-
     
 herokuDeploy:
   stage: deploy
   script:
+    - git remote add heroku https://git.heroku.com/afternoon-thicket-12402.git
     - git push heroku master
+    - echo "Deployed to heroku server"
+  only:
+    - master
