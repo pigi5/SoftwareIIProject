@@ -1,0 +1,15 @@
+stages:
+  - build
+  - test
+  - deploy
+
+gradleBuild:
+  stage: build
+  script:
+    - ./gradlew build
+
+    
+herokuDeploy:
+  stage: deploy
+  script:
+    - git push heroku master
