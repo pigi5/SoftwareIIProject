@@ -1,4 +1,5 @@
 image: node:8.5.0
+image: gradle:4.1
 
 stages:
   - init
