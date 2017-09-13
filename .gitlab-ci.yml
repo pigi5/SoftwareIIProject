@@ -1,3 +1,5 @@
+image: node:8.5.0
+
 stages:
   - init
   - build
