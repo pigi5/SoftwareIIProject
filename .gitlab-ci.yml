@@ -14,6 +14,7 @@ init:
 gradleBuild:
   stage: build
   script:
+    - chmod +x gradlew
     - ./gradlew build
     
 herokuDeploy:
