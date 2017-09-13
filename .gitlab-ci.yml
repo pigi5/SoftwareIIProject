@@ -20,7 +20,7 @@ gradleBuild:
 herokuDeploy:
   stage: deploy
   script:
-    - git remote add heroku https://heroku:$e09a579b-06b9-4a1f-b199-8466320ca939@git.heroku.com/afternoon-thicket-12402.git
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/afternoon-thicket-12402.git
     - git push heroku master
     - echo "Deployed to heroku server"
   only:
