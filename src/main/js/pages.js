@@ -5,12 +5,12 @@ export class Home extends React.Component {
 	render() {
 		return (
 			<div className="container padded">
-				This is the home page.
+				Tempteturs HOME PAGE.
 
 				<ul>
-					<li><Link to="/page-1">Page 1</Link></li>
-					<li><Link to="/page-2">Page 2</Link></li>
-					<li><Link to="/page-3">Page 3</Link></li>
+					<li><Link to="/sitters">Sitters Page</Link></li>
+					<li><Link to="/owners">Owners Page</Link></li>
+					<li><Link to="/help">Help!</Link></li>
 				</ul>
 			</div>
 		);
@@ -21,7 +21,7 @@ export class Page1 extends React.Component {
 	render() {
 		return (
 			<div className="container padded">
-				This is page 1.
+				This is the sitters page.
 			</div>
 		);
 	}
@@ -31,7 +31,7 @@ export class Page2 extends React.Component {
 	render() {
 		return (
 			<div className="container padded">
-				This is page 2.
+				This is the owners page.
 			</div>
 		);
 	}
@@ -41,7 +41,7 @@ export class Page3 extends React.Component {
 	render() {
 		return (
 			<div className="container padded">
-				This is page 3.
+				This is the help page.
 			</div>
 		);
 	}
