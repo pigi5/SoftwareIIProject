@@ -9,9 +9,9 @@ export default class Index extends React.Component {
 			<HashRouter>
 				<div>
 					<Route exact path="/" component={Home} />
-					<Route exact path="/page-1" component={Page1} />
-					<Route exact path="/page-2" component={Page2} />
-					<Route exact path="/page-3" component={Page3} />
+					<Route exact path="/sitters" component={Page1} />
+					<Route exact path="/owners" component={Page2} />
+					<Route exact path="/help" component={Page3} />
 				</div>
 			</HashRouter>
 		);
