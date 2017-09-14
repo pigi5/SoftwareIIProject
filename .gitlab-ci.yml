@@ -1,7 +1,14 @@
 stages:
+  - init
   - build
   - test
   - deploy
+
+init:
+  image: node:8.5.0
+  stage: init
+  script:
+    - npm install
 
 gradleBuild:
   image: gradle:4.1
