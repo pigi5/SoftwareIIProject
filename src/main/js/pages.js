@@ -21,7 +21,7 @@ export class Page1 extends React.Component {
 	render() {
 		return (
 			<div className="container padded">
-				This is the sitters page.
+				This is the sitter's page.
 			</div>
 		);
 	}
