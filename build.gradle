@@ -13,6 +13,7 @@ buildscript {
 plugins {
 	id 'io.spring.dependency-management' version '1.0.0.RC2'
 	id 'com.moowork.node' version '1.1.1'
+	id 'org.springframework.boot' version '1.5.7.RELEASE'
 }
 
 group 'petfinder'
@@ -20,7 +21,6 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'war'
 apply plugin: 'com.moowork.node'
 
 sourceCompatibility = 1.8
@@ -43,7 +43,6 @@ dependencyManagement {
 }
 
 dependencies {
-    compile 'com.github.jsimone:webapp-runner:8.5.11.3'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
@@ -139,8 +138,8 @@ node {
 	if (isNpmInstalled()) {
 		download = false
 	} else {
-		version = '8.5.0'
-		npmVersion = '5.3.0'
+		version = '7.7.3'
+		npmVersion = '4.1.2'
 		download = true
 	}
 }
@@ -161,27 +160,18 @@ task testJs(type: NpmTask) {
 	args = ['test']
 }
 
-war {
-	from('build/statics') {
+processResources {
+	from ('build/statics') {
 		include '*.*'
 		exclude 'index.html'
-		into('WEB-INF/classes/public/statics')
+		into 'statics'
 	}
 }
 
-tasks.war.dependsOn webpack
-// tasks.test.dependsOn testJs
+tasks.processResources.dependsOn webpack
 
-task stage() {
-    dependsOn clean, war
-}
-war.mustRunAfter clean
-
-task copyToLib(type: Copy) {
-    into "$buildDir/server"
-    from(configurations.compile) {
-        include "webapp-runner*"
-    }
+task stage(){
+	dependsOn clean, build
 }
 
-stage.dependsOn(copyToLib)
+build.mustRunAfter clean

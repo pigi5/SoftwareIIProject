@@ -1,26 +1,12 @@
-stages:
-  - init
-  - build
-  - test
-  - deploy
+image: java:8
 
-init:
-  image: node:8.5.0
-  stage: init
-  script:
-    - npm install
-
-gradleBuild:
-  image: gradle:4.1
-  stage: build
-  script:
-    - gradle build
-    
-herokuDeploy:
-  stage: deploy
-  script:
-    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/afternoon-thicket-12402.git
-    - git push heroku master
-    - echo "Deployed to heroku server"
-  only:
-    - master
+deploy:
+stage: deploy
+image: ruby:2.3
+script:
+- apt-get update -qy
+- apt-get install -y ruby-dev
+- gem install dpl
+- dpl --provider=heroku --app=$APP_NAME --api-key=$API_KEY
+only:
+- master

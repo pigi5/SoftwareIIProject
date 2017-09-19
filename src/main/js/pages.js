@@ -9,6 +9,8 @@ export class Home extends React.Component {
 			<div className="container padded">
 				Tempteturs HOME PAGE.
 
+        		<input id="clickMe" type="button" value="clickme" />
+
 				<ul>
 					<li><Link to="/sitters">Sitters Page</Link></li>
 					<li><Link to="/owners">Owners Page</Link></li>
@@ -17,6 +19,7 @@ export class Home extends React.Component {
 			</div>
 		);
 	}
+
 }
 
 export class Page1 extends React.Component {
