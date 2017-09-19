@@ -63,7 +63,7 @@ export class Page2 extends React.Component {
 	        	this.textCallback(xmlHttp.responseText);
 	        }
 	    }.bind(this);
-	    xmlHttp.open('GET', 'http://localhost:8080/api/owner/' + r, true);
+	    xmlHttp.open('GET', '/api/owner/' + r, true);
 	    xmlHttp.send(null);
 	}
 	
