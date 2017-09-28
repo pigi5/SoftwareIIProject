@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Route } from 'react-router-dom';
 
-import { Home, Page1, Page2, Page3 } from 'js/pages';
+import { Home, SittersPage, OwnersPage, AboutPage, FAQPage } from 'js/pages';
 
 export default class Index extends React.Component {
 	render() {
@@ -9,9 +9,10 @@ export default class Index extends React.Component {
 			<HashRouter>
 				<div>
 					<Route exact path="/" component={Home} />
-					<Route exact path="/sitters" component={Page1} />
-					<Route exact path="/owners" component={Page2} />
-					<Route exact path="/help" component={Page3} />
+					<Route exact path="/sitters" component={SittersPage} />
+					<Route exact path="/owners" component={OwnersPage} />
+					<Route exact path="/about" component={AboutPage} />
+                    <Route exact path="/faq" component={FAQPage} />
 				</div>
 			</HashRouter>
 		);
