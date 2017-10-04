@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 export class GetterButton extends React.Component {
 	constructor() {
@@ -9,8 +10,7 @@ export class GetterButton extends React.Component {
 		};
 	}
 	
-	textCallback(text) {
-		var obj = JSON.parse(text);
+	textCallback(obj) {
 		this.setState({ul: (
 			<ul>
 				<li>{'Owner Info'}
@@ -27,14 +27,14 @@ export class GetterButton extends React.Component {
 	handleClick() {
 		var r = Math.floor(Math.random() * 5 + 1);
 		
-		var xmlHttp = new XMLHttpRequest();
-	    xmlHttp.onreadystatechange = function() { 
-	        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-	        	this.textCallback(xmlHttp.responseText);
-	        }
-	    }.bind(this);
-	    xmlHttp.open('GET', '/api/owner/' + r, true);
-	    xmlHttp.send(null);
+	    axios.get('/api/owner/' + r)
+	         .then((response) => {
+	             this.textCallback(response['data']);
+	         })
+	         .catch(function(error) {
+	             console.log(error);
+	         });
+	         
 	}
 	
     render() { 
