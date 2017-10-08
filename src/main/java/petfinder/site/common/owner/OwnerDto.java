@@ -10,8 +10,8 @@ import petfinder.site.common.user.UserDto;
  * Created by jlutteringer on 8/23/17.
  */
 public class OwnerDto {
-	private UserDto user;
-	private List<PetDto> pets;
+	public UserDto user;
+	public List<PetDto> pets;
 
 	public OwnerDto(){
 
