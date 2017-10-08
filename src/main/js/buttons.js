@@ -11,6 +11,7 @@ export class GetterButton extends React.Component {
 	}
 	
 	textCallback(obj) {
+
 		this.setState({ul: (
 			<ul>
 				<li>{'Owner Info'}
@@ -23,13 +24,18 @@ export class GetterButton extends React.Component {
 			</ul>
 		)});
 	}
+
+	addOwnerToDb(obj){
+        axios.put('/api/owners/add', obj);
+	}
 	
 	handleClick() {
 		var r = Math.floor(Math.random() * 5 + 1);
 		
-	    axios.get('/api/owner/' + r)
+	    axios.get('/api/owners/' + r)
 	         .then((response) => {
 	             this.textCallback(response['data']);
+	             this.addOwnerToDb(response['data']);
 	         })
 	         .catch(function(error) {
 	             console.log(error);

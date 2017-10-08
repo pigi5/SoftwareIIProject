@@ -10,6 +10,8 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Created by jlutteringer on 8/23/17.
  */
+//Queries
+
 @Repository
 public class UserDao {
 	private final Map<Long, UserDto> users =
