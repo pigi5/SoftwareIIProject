@@ -43,7 +43,7 @@ public class OwnerEndpoint {
 	//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
 	//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
 	final String ACCESS_KEY = "f1cjmlsx";
-	final String SECRET_KEY = "tp7vjypq3wdxiowv"";
+	final String SECRET_KEY = "tp7vjypq3wdxiowv";
 	final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
 
 	ObjectMapper mapper = new ObjectMapper();
