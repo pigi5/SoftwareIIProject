@@ -1,0 +1,63 @@
+#ifndef KNIFETAG_H
+#define KNIFETAG_H
+#include <string>
+
+using namespace std;
+
+/**
+ * Class to manage KnifeTag(TM) course.
+ * 
+ * Competitors will call compete, and Janitors will call clean.  Your
+ * solution should subclass this class and override one or more of the
+ * pre/post
+ * \version 1.0
+ */
+class KnifeTag
+{
+  public:
+    // Maximum number of simultaneous competitors
+    static const int MAXCOMPETITORS = 4;
+  
+    /**
+     * Executes cleaning of the KnifeTag course
+     * \param ms number of milliseconds cleaning takes
+     * \param name name of cleaner
+     */
+    void clean(int ms, string name);
+
+    /**
+     * Executes competitor in the KnifeTag course
+     * 
+     * \param ms number of milliseconds for competing
+     * \param name name of competitor
+     */
+    void compete(int ms, string name);
+
+  protected:
+    // Number of current competitors
+    int numCompetitors = 0;
+
+    void log(string line);
+
+    /**
+     * Execute before cleaning
+     */
+    virtual void preClean();
+
+    /**
+     * Execute after cleaning
+     */
+    virtual void postClean();
+  
+    /**
+     * Execute before competing
+     */
+    virtual void preCompete();
+
+    /**
+     * Execute after competing
+     */
+    virtual void postCompete();
+};
+
+#endif
