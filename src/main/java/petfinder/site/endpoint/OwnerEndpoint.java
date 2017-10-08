@@ -74,13 +74,14 @@ public class OwnerEndpoint {
 
 			HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
 
-			Response response;
+			Response response = null;
 			try{
 				response = restClient.performRequest("PUT",
 						"/owners/users/" + owner.getUser().getId().toString(),
 						Collections.<String, String>emptyMap(),
 						entity
 				);
+				System.out.println("\n\nreceived response: " + response);
 			}catch(Exception e){
 				System.out.println(e.toString());
 			}
@@ -104,12 +105,10 @@ public class OwnerEndpoint {
 
 			*/
 
-			System.out.println("\n\nreceived response: " + response);
-
 			//localRestClient.close();
 			restClient.close();
-
 			return response;
+
 		} catch (IOException e){
 			e.printStackTrace();
 			return null;
