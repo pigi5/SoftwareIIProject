@@ -24,8 +24,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.apache.http.HttpHost;
 
-import petfinder.site.common.owner.OwnerDto;
-import petfinder.site.common.owner.OwnerService;
+import petfinder.site.common.user.UserDto;
+import petfinder.site.common.user.UserService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,7 +41,8 @@ import java.net.InetAddress;
 @RequestMapping(value = "/api/users")
 public class OwnerEndpoint {
 	@Autowired
-	private OwnerService ownerService;
+	//private OwnerService ownerService;
+	private UserService userService;
 
 	//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
 	//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
@@ -52,15 +53,15 @@ public class OwnerEndpoint {
 	ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public OwnerDto findOwner(@PathVariable(name = "id") Long id) {
-		return ownerService.findOwner(id).get();
+	public UserDto findOwner(@PathVariable(name = "id") Long id) {
+		return userService.findUser(id).get();
 	}
 
 	@RequestMapping(path = "/add", method = RequestMethod.PUT)
-	public Response createOwner(@RequestBody OwnerDto owner) throws IOException {
+	public Response createOwner(@RequestBody UserDto user) throws IOException {
 		try {
 
-			System.out.println("\n\nowner recognized as: " + owner.toString());
+			System.out.println("\n\nowner recognized as: " + user.toString());
 
 			final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 			credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
@@ -74,14 +75,14 @@ public class OwnerEndpoint {
 					})
 					.build();
 
-			String json = mapper.writeValueAsString(owner);
+			String json = mapper.writeValueAsString(user);
 
 			HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
 
 			Response response = null;
 			try{
 				response = restClient.performRequest("PUT",
-						"/users/user" + owner.getUser().getId().toString(),
+						"/users/user" + user.getId().toString(),
 						Collections.<String, String>emptyMap(),
 						entity
 				);

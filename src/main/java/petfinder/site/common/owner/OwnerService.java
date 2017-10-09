@@ -1,5 +1,5 @@
-package petfinder.site.common.owner;
-
+//package petfinder.site.common.owner;
+/*
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,10 +14,12 @@ import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetService;
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserService;
+*/
 
 /**
  * Created by jlutteringer on 8/23/17.
  */
+/*
 @Service
 public class OwnerService {
 	@Autowired
@@ -49,3 +51,4 @@ public class OwnerService {
 		return Optional.of(new OwnerDto(user.get(), pets));
 	}
 }
+*/
