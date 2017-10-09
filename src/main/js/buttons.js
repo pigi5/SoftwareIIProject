@@ -26,7 +26,7 @@ export class GetterButton extends React.Component {
 	}
 
 	addOwnerToDb(obj){
-        axios.put('/api/add', obj)
+        axios.put('/api/users/add', obj)
 			.catch(function(error){
 			console.log(error);
 		});
