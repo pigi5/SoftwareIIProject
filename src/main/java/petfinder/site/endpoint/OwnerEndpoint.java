@@ -38,7 +38,7 @@ import java.net.InetAddress;
 //uses dao to pull data. called from frontend
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/users")
 public class OwnerEndpoint {
 	@Autowired
 	private OwnerService ownerService;
@@ -81,7 +81,7 @@ public class OwnerEndpoint {
 			Response response = null;
 			try{
 				response = restClient.performRequest("PUT",
-						"/users/user" + owner.getUser().getId().toString(),
+						"/user/" + owner.getUser().getId().toString(),
 						Collections.<String, String>emptyMap(),
 						entity
 				);
