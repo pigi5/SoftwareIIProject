@@ -9,7 +9,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.common.settings.Settings;
@@ -18,7 +20,8 @@ import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
-
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.apache.http.HttpHost;
 
 import petfinder.site.common.owner.OwnerDto;
@@ -56,6 +59,7 @@ public class OwnerEndpoint {
 	@RequestMapping(path = "/add", method = RequestMethod.PUT)
 	public Response createOwner(@RequestBody OwnerDto owner) throws IOException {
 		try {
+
 			System.out.println("\n\nowner recognized as: " + owner.toString());
 
 			final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -87,25 +91,25 @@ public class OwnerEndpoint {
 			}
 
 
+
 			/*
 			//THIS IS THE LOCAL CONNECTION PROTOCOL DO NOT DELETE
-			RestClient localRestClient = RestClient.builder(
+			RestClient restClient = RestClient.builder(
 					new HttpHost("localhost", 9200, "http")).build();
 
 			String json = mapper.writeValueAsString(owner);
 
 			HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
 
-			Response indexResponse = localRestClient.performRequest(
+			Response response = restClient.performRequest(
 					"PUT",
 					"/owners/users/" + owner.getUser().getId().toString(),
 					Collections.<String, String>emptyMap(),
 					entity
 			);
-
 			*/
 
-			//localRestClient.close();
+			
 			restClient.close();
 			return response;
 
