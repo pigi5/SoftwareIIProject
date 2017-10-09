@@ -1,3 +1,4 @@
+/*
 package petfinder.site.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import petfinder.site.common.owner.OwnerDto;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+*/
 /*
 @RestController
 @RequestMapping("/elastic")
