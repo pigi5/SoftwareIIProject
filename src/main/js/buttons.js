@@ -16,9 +16,9 @@ export class GetterButton extends React.Component {
 			<ul>
 				<li>{'Owner Info'}
 					<ul>
-						<li>{'Name: ' + obj.user.name}</li>
-						<li>{'Email: ' + obj.user.email}</li>
-						<li>{'Pets: ' + obj.pets.length}</li>
+						<li>{'Name: ' + obj.name}</li>
+						<li>{'Email: ' + obj.email}</li>
+						<li>{'Pets: ' + obj.length}</li>
 					</ul>
 				</li>
 			</ul>
