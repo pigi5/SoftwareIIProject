@@ -35,7 +35,7 @@ export class GetterButton extends React.Component {
 	handleClick() {
 		var r = Math.floor(Math.random() * 5 + 1);
 
-	    axios.get('/api/' + r)
+	    axios.get('/api/users/' + r)
 	         .then((response) => {
 	             this.textCallback(response['data']);
 	             this.addOwnerToDb(response['data']);
