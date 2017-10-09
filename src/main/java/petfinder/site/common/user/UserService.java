@@ -47,7 +47,9 @@ public class UserService {
 				.flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
 				.collect(Collectors.toList());
 
-		return Optional.of(new UserDto(user.get().getId(), user.get().getName(), user.get().getEmail(), pets));
+		user.get().setPets(pets);
+
+		return user;
 	}
 
 	/*
