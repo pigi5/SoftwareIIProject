@@ -8,6 +8,7 @@ public class PetDto {
 	private String name;
 	private String type;
 
+	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public PetDto() {
 	}
 

@@ -13,6 +13,8 @@ public class OwnerDto {
 	private UserDto user;
 	private List<PetDto> pets;
 
+
+	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public OwnerDto(){
 
 	}

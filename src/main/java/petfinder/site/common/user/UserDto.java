@@ -8,6 +8,7 @@ public class UserDto {
 	private String name;
 	private String email;
 
+	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
 
 	}
