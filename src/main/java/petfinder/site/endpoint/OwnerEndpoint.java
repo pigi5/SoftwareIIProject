@@ -1,5 +1,7 @@
 package petfinder.site.endpoint;
 
+
+import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
@@ -25,8 +27,10 @@ import org.elasticsearch.action.get.GetResponse;
 import org.apache.http.HttpHost;
 
 import petfinder.site.common.user.UserDto;
+import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.Collections;
 import java.net.InetAddress;
@@ -43,6 +47,7 @@ public class OwnerEndpoint {
 	@Autowired
 	//private OwnerService ownerService;
 	private UserService userService;
+	private UserDao userDao;
 
 	//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
 	//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
@@ -53,8 +58,12 @@ public class OwnerEndpoint {
 	ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public UserDto findOwner(@PathVariable(name = "id") Long id) {
-		return userService.getUser(id).get();
+	public Optional<UserDto> findOwner(@PathVariable(name = "id") Long id) {
+		Optional<UserDto> user = userDao.findUser(id);
+		if(!user.isPresent()){
+			return Optional.empty();
+		}
+		return user;
 	}
 
 	@RequestMapping(path = "/add", method = RequestMethod.PUT)
