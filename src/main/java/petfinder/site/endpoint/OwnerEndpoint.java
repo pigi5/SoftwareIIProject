@@ -54,7 +54,7 @@ public class OwnerEndpoint {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public UserDto findOwner(@PathVariable(name = "id") Long id) {
-		return userService.findUser(id).get();
+		return userService.getUser(id).get();
 	}
 
 	@RequestMapping(path = "/add", method = RequestMethod.PUT)
