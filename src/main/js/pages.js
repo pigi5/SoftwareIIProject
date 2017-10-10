@@ -10,22 +10,7 @@ export class Home extends React.Component {
         return (
             <div>
                 <Navbar pageName='Home' />
-                <div className="row top-buffer-sm">
-                    <div className="col-2">
-                        <div className="p-2 mb-2 bg-dark text-white text-center">
-                            Tempeturs
-                        </div>
-                    </div>
-                    <div className="col"></div>
-                    <div className="col-2">
-                        <LoginModal />
-                    </div>
-                    
-                    <div className="col-2">
-                        <RegisterModal />
-                    </div>
-                </div>
-                <div className="row top-buffer-sm">
+                <div className="container">
                     <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
                         <ol className="carousel-indicators">
                             <li data-target="#carouselExampleIndicators" data-slide-to="0" className="active"></li>
@@ -53,7 +38,7 @@ export class Home extends React.Component {
                         </a>
                     </div>
                 </div>
-                <div className="row top-buffer-sm">
+                <div className="container top-buffer-sm">
                     <GetterButton />
                 </div>
             </div>

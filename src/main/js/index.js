@@ -6,6 +6,7 @@ import { Home, SittersPage, OwnersPage, AboutPage, FAQPage } from 'js/pages';
 import {SearchResults} from 'js/searchresults';
 import {SitterPreferences} from 'js/sitterpreferences';
 import {StartAppointment} from 'js/startappointment';
+import {Profile} from 'js/profile';
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
     return (
@@ -21,6 +22,7 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
 
 export class Index extends React.Component {    
 	render() {
+        console.log('auth check: ' + JSON.stringify(this.props));
 		return (
 			<HashRouter>
 			    <div>
@@ -31,6 +33,8 @@ export class Index extends React.Component {
                     <Route exact path="/search" component={SearchResults} />
                     <Route exact path="/sitterprefs" component={SitterPreferences} />
                     <Route exact path="/startappt" component={StartAppointment} />
+                   
+                    <PrivateRoute exact path="/profile" authed={this.props.authed} component={Profile} />
                 </div>
     		</HashRouter>
 		);

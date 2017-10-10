@@ -3,37 +3,15 @@ import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
 import { AddPetModal } from 'js/addpetmodal.js';
 import { connect } from 'react-redux';
+import { Navbar } from 'js/navbar';
 
 export class StartAppointment extends React.Component {
     render() {
         return (
         	<div>
-	            <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
-	                <a className="navbar-brand" href="/#/">Tempeturs</a>
-	                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	                    <span className="navbar-toggler-icon"></span>
-	                </button>
-	        
-	                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-	                    <ul className="navbar-nav mr-auto">
-	                        <li className="nav-item active">
-	                            <a className="nav-link" href="/#/">Home</a>
-	                        </li>
-	                        <li className="nav-item">
-	                            <a className="nav-link" href="/#/about">About</a>
-	                        </li>
-	                        <li className="nav-item">
-	                            <a className="nav-link" href="/#/faq">FAQ</a>
-	                        </li>
-	                    </ul>
-	                    <form className="form-inline my-2 my-lg-0">
-	                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"/>
-	                        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-	                    </form>
-	                </div>
-	            </nav>
+        	    <Navbar pageName='Start Appointment' />
 	            
-	        	<div className="container top-buffer-lg left-align-300">
+	        	<div className="container left-align-300">
 	        		<h2>Search for a sitter</h2>
 	        		<form>
 			    		<div className="top-buffer-sm">

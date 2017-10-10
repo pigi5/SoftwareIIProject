@@ -2,6 +2,16 @@ import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 
+export class RegisterButton extends React.Component {
+    render() {
+        return (
+            <button type="button" className="btn btn-success btn-block" data-toggle="modal" data-target="#registerModal">
+                <span>Register</span>
+                <i className="fa fa-user-plus pull-left" aria-hidden="true"></i>
+            </button>
+        );
+    }
+}
 
 export class RegisterModal extends React.Component {
     constructor(props) {
@@ -35,22 +45,13 @@ export class RegisterModal extends React.Component {
     handleSubmit(event) {
         // register
 
-        // TODO: Austin - add the axios REST request to register a user
-        //       (pass in email, username, password, name, zip)
-        //       (receive user information if username is unique, else return http error code 401)
-        //       I will test for unique usernames myself, but it would still be a good idea to 
-        //       make sure you can't create a user with a duplicate username in the backend also
-        // EX:
-
-        axios.post('/api/users/add', {
-
-                'id' : '201',
+        axios.put('/api/users/add', {
+                'id': '200',
                 'email': this.state.email,
                 'username': this.state.username,
                 'password': this.state.password,
                 'name': this.state.name,
                 'zipCode': this.state.zip
-
             })
             .then((response) => {
                 //this.userRegistered(response['data']);
@@ -76,11 +77,6 @@ export class RegisterModal extends React.Component {
         
         return (
             <div>
-                <button type="button" className="btn btn-success btn-block" data-toggle="modal" data-target="#registerModal">
-                    <span>Register</span>
-                    <i className="fa fa-user-plus pull-left" aria-hidden="true"></i>
-                </button>
-                
                 <div className="modal fade" id="registerModal" tabIndex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">

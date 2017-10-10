@@ -2,6 +2,17 @@ import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 
+export class LoginButton extends React.Component {
+    render() {
+        return (
+            <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#loginModal">
+                <span>Login</span>
+                <i className="fa fa-sign-in fa-fw pull-left" aria-hidden="true"></i>
+            </button>
+        );
+    }
+}
+
 export class LoginModal extends React.Component {
     constructor(props) {
         super(props);
@@ -36,10 +47,8 @@ export class LoginModal extends React.Component {
         // EX:
         /*
         axios.get('/api/authuser', {
-                params: {
-                    username: this.state.username,
-                    password: this.state.password
-                }
+                'username': this.state.username,
+                'password': this.state.password
             })
             .then((response) => {
                 this.authorizeUser(response['data']);
@@ -55,12 +64,7 @@ export class LoginModal extends React.Component {
 
     render() {
         return (
-            <div>
-                <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#loginModal">
-                    <span>Login</span>
-                    <i className="fa fa-sign-in fa-fw pull-left" aria-hidden="true"></i>
-                </button>
-                
+            <div>                
                 <div className="modal fade" id="loginModal" tabIndex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">

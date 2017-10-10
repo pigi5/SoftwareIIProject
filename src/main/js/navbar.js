@@ -1,7 +1,10 @@
 import React from 'react';
+import { RegisterButton, RegisterModal } from 'js/registermodal';
+import { LoginButton, LoginModal } from 'js/loginmodal';
+import { connect } from 'react-redux';
 
 export class Navbar extends React.Component {
-    constructor(props) {
+    constructor() {
         super();
         this.state = {
             pages: [
@@ -38,9 +41,34 @@ export class Navbar extends React.Component {
             }
         }.bind(this);
         
+        var navButtons;
+        console.log('auth check: ' + JSON.stringify(this.props));
+        if (this.props.authed) {
+            console.log('authed');
+            navButtons = (
+                <ul className="nav navbar-nav navbar-right">
+                    <li>
+                        Logged In
+                    </li>
+                </ul>
+            );
+        } else {
+            console.log('not authed');
+            navButtons = (
+                <ul className="nav navbar-nav navbar-right">
+                    <li className="right-buffer-sm">
+                        <LoginButton />
+                    </li>
+                    <li>
+                        <RegisterButton />
+                    </li>
+                </ul>
+            );
+        }
+        
         return (
             <div>
-                <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+                <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
                     <a className="navbar-brand" href="/#/">Tempeturs</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
@@ -50,14 +78,21 @@ export class Navbar extends React.Component {
                         <ul className="navbar-nav mr-auto">
                             {this.state.pages.map(createNavLink)}
                         </ul>
-                        <form className="form-inline my-2 my-lg-0">
-                            <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"/>
-                            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                        </form>
+                        {navButtons}
                     </div>
                 </nav>
-                <div className="container top-buffer-lg" />
+                <div className="top-buffer-lg" />
+                <LoginModal />
+                <RegisterModal />
             </div>
         );
     }
 }
+
+const mapStateToProps = (store) => {
+    return {
+        authed: store.user.authed
+    };
+};
+
+export default connect(mapStateToProps)(Navbar);

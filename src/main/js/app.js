@@ -30,7 +30,7 @@ const reducers = {
 };
 
 const reducer = combineReducers(reducers);
-const store = createStore(reducer, {user: {authed: false}});
+const store = createStore(reducer, {user: {authed: true}});
 
 const mountNode = document.querySelector('#main');
 ReactDOM.render(<Provider store={store}><Index /></Provider>, mountNode);
