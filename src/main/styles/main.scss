@@ -25,3 +25,14 @@ $fa-font-path: "~font-awesome/fonts";
 	width: 200px;
 	maxlength: 10;
 }
+
+.horizontally-centered {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.left-align-300 {
+    position: absolute;
+    left: 300px;
+    padding: 10px;
+}
