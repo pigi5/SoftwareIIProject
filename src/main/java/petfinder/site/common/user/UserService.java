@@ -39,7 +39,7 @@ public class UserService {
 
 	public Optional<UserDto> getUser(Long id) {
 		Optional<UserDto> user = userDao.findUser(id);
-		if(user.isPresent()){
+		if(!user.isPresent()){
 			return Optional.empty();
 		}
 
