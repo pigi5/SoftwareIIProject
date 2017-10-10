@@ -13,7 +13,7 @@ export class StartAppointment extends React.Component {
 	            
 	        	<div className="container left-align-300">
 	        		<h2>Search for a sitter</h2>
-	        		<form>
+	        		<div>
 			    		<div className="top-buffer-sm">
 		                    <AddPetModal />
 		                </div>
@@ -22,11 +22,11 @@ export class StartAppointment extends React.Component {
 			  				<LocationRadios />
 			  			</div>
 		    			<div className="form-group">
-		  		    		<label for="inputStartDate">Start date</label>
+		  		    		<label htmlFor="inputStartDate">Start date</label>
 		  		    		<input type="date" className="form-control date-box-style" id="inputStartDate" placeholder="mm/dd/yyyy"/>
 		  		    	</div>
 		    			<div className="form-group">
-				    		<label for="inputEndDate">End date</label>
+				    		<label htmlFor="inputEndDate">End date</label>
 				    		<input type="date" className="form-control date-box-style" id="inputEndDate" placeholder="mm/dd/yyyy"/>
 				    	</div>
 						<div className="form-group row">
@@ -35,7 +35,7 @@ export class StartAppointment extends React.Component {
 					    	</div>
 					    </div>
 
-				    </form>
+				    </div>
 			    </div>
 		    </div>
         );
@@ -71,7 +71,7 @@ export class LocationRadios extends React.Component {
 				<legend className="col-form-legend col-sm-2">Location</legend>
 	  			<div className="form-check top-buffer-sm">
 					<label className="form-check-label">
-						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosMy" value="myHouse" checked/>
+						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosMy" value="myHouse" defaultChecked/>
 						My house
 					</label>
 				</div>

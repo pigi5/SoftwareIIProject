@@ -35,7 +35,7 @@ export class AddPetModal extends React.Component {
                 	<PetCheckList />
                 </div>
         
-				<div className="modal fade" id="addPetModal" tabindex="-1" role="dialog" aria-labelledby="addPetModalLabel" aria-hidden="true">
+				<div className="modal fade" id="addPetModal" tabIndex="-1" role="dialog" aria-labelledby="addPetModalLabel" aria-hidden="true">
 					<div className="modal-dialog" role="document">
 						<div className="modal-content">
 							<div className="modal-header">
@@ -47,11 +47,11 @@ export class AddPetModal extends React.Component {
 							<div className="modal-body">
 								<form>
 					    			<div className="form-group">
-					    		    	<label for="inputPetName">Pet name</label>
+					    		    	<label htmlFor="inputPetName">Pet name</label>
 					    		    	<input className="form-control" id="inputPetName" placeholder="Pet name"/>
 					    			</div>
 					    			<div className="form-group">
-					    		    	<label for="selectPetType">Pet type</label>
+					    		    	<label htmlFor="selectPetType">Pet type</label>
 					    		    	<select className="form-control" id="selectPetType">
 					    		    		<option>bird</option>
 					    		    		<option>cat</option>
