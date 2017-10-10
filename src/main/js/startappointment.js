@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
 import { AddPetModal } from 'js/addpetmodal.js';
+import { connect } from 'react-redux';
 
 export class StartAppointment extends React.Component {
     render() {
@@ -31,32 +32,24 @@ export class StartAppointment extends React.Component {
 	                    </form>
 	                </div>
 	            </nav>
-	        	<div className="container top-buffer-lg">
-		    		<form>
-			    		<div className="col-2">
+	            
+	        	<div className="container top-buffer-lg left-align-300">
+	        		<h2>Search for a sitter</h2>
+	        		<form>
+			    		<div className="top-buffer-sm">
 		                    <AddPetModal />
 		                </div>
-		                <p>List of pets will appear here</p>
 
-			  			<div className="form-check top-buffer-sm">
-			  				<label className="form-check-label">
-			  					<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosMy" value="my" checked/>
-			  					My house
-			  				</label>
-			  			</div>
-			  			<div className="form-check">
-			  				<label className="form-check-label">
-			  					<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosSitter" value="sitter"/>
-			  					Sitter&#39;s house
-			  				</label>
+			  			<div>
+			  				<LocationRadios />
 			  			</div>
 		    			<div className="form-group">
-		  		    		<label for="exampleFormControlInput2">Start date</label>
-		  		    		<input type="date" className="form-control date-box-style" id="exampleFormControlInput2" placeholder="mm/dd/yyyy"/>
+		  		    		<label for="inputStartDate">Start date</label>
+		  		    		<input type="date" className="form-control date-box-style" id="inputStartDate" placeholder="mm/dd/yyyy"/>
 		  		    	</div>
 		    			<div className="form-group">
-				    		<label for="exampleFormControlInput3">End date</label>
-				    		<input type="date" className="form-control date-box-style" id="exampleFormControlInput2" placeholder="mm/dd/yyyy"/>
+				    		<label for="inputEndDate">End date</label>
+				    		<input type="date" className="form-control date-box-style" id="inputEndDate" placeholder="mm/dd/yyyy"/>
 				    	</div>
 						<div className="form-group row">
 					    	<div className="col-sm-10">
@@ -71,3 +64,48 @@ export class StartAppointment extends React.Component {
     }
 }
 
+export class LocationRadios extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+                        // I think this is right
+        				myHouse: true,
+                        sitterHouse: false
+                     };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    
+    handleChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
+    handleSubmit(event) {
+    	// TODO: set location
+        
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+        	<form>
+				<legend className="col-form-legend col-sm-2">Location</legend>
+	  			<div className="form-check top-buffer-sm">
+					<label className="form-check-label">
+						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosMy" value="myHouse" checked/>
+						My house
+					</label>
+				</div>
+				<div className="form-check">
+					<label className="form-check-label">
+						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosSitter" value="sitterHouse"/>
+						Sitter&#39;s house
+					</label>
+				</div>
+        	</form>
+        );
+    }
+}
+
+export default connect()(LocationRadios);
