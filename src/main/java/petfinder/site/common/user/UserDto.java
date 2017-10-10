@@ -28,6 +28,13 @@ public class UserDto {
 		this.email = email;
 	}
 
+	public UserDto(UserDto thatUser, List<PetDto> pets){
+		this.id = thatUser.id;
+		this.name = thatUser.name;
+		this.email = thatUser.email;
+		this.pets = pets;
+	}
+
 	//Setters
 	public void setId(Long id) {
 		this.id = id;

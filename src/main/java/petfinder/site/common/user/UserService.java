@@ -47,10 +47,25 @@ public class UserService {
 				.flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
 				.collect(Collectors.toList());
 
+		return Optional.of(new UserDto(user.get(), pets));
+	}
+
+	/*
+	public Optional<UserDto> getUser(Long id) {
+		Optional<UserDto> user = userDao.findUser(id);
+		if(!user.isPresent()){
+			return Optional.empty();
+		}
+
+		List<PetDto> pets = userMapping.get(user.get().getId()).stream().map(petId -> petService.findPet(petId))
+				.flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
+				.collect(Collectors.toList());
+
 		user.get().setPets(pets);
 
 		return user;
 	}
+	*/
 
 	/*
 	public Optional<UserDto> getUser(Long id){
