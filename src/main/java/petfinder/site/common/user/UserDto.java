@@ -48,9 +48,10 @@ public class UserDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+	public void setName(String name) { this.name = name; }
+	public void setUsername(String username){this.username = username;}
+	public void setZipCode(Integer zipCode){this.zipCode = zipCode;}
+	public void setPassword(String password){this.password = password;}
 	public void setEmail(String email) {
 		this.email = email;
 	}

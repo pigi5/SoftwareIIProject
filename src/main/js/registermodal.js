@@ -49,11 +49,11 @@ export class RegisterModal extends React.Component {
                 'username': this.state.username,
                 'password': this.state.password,
                 'name': this.state.name,
-                'zip': this.state.zip
+                'zipCode': this.state.zip
 
             })
             .then((response) => {
-                this.userRegistered(response['data']);
+                //this.userRegistered(response['data']);
             })
             .catch(function(error) {
                 // TODO: Ford - Notify the user that registration failed
