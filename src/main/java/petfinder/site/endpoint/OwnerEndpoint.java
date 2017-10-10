@@ -58,11 +58,8 @@ public class OwnerEndpoint {
 	ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Optional<UserDto> findOwner(@PathVariable(name = "id") Long id) {
-		Optional<UserDto> user = userDao.findUser(id);
-		if(!user.isPresent()){
-			return Optional.empty();
-		}
+	public UserDto findOwner(@PathVariable(name = "id") Long id) {
+		UserDto user = userService.getUser(id).get();
 		return user;
 	}
 
