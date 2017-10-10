@@ -45,7 +45,7 @@ export class RegisterModal extends React.Component {
     handleSubmit(event) {
         // register
 
-        axios.put('/api/users/add', {
+        axios.post('/api/users/add', {
                 'id': '200',
                 'email': this.state.email,
                 'username': this.state.username,
