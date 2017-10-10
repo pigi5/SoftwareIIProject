@@ -114,12 +114,12 @@ public class UserEndpoint {
             return null;
         }
     }
-
+    /*
     @RequestMapping(path = "/register", method =RequestMethod.PUT)
-    public Response registerUser(@RequestParam(value = "email") String email, @RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "name") String name, @RequestParam(value = "zip") Integer zipCode){
+    public Response registerUser(@RequestBody UserDto user){
         try{
 
-            UserDto user = new UserDto(name, email, username, password, zipCode);
+            //UserDto user = new UserDto(name, email, username, password, zipCode);
 
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
@@ -158,6 +158,7 @@ public class UserEndpoint {
         }
 
     }
+    */
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public Response createOwner(@RequestBody UserDto user) throws IOException {
@@ -176,6 +177,8 @@ public class UserEndpoint {
                         }
                     })
                     .build();
+
+            user.generateID();
 
             String json = mapper.writeValueAsString(user);
 
