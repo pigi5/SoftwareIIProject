@@ -2,16 +2,15 @@ import React from 'react';
 import axios from 'axios';
 
 export class GetterButton extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			text: 'Nothing',
-			ul: <div>{'Nothing'}</div>
-		};
-	}
-	
-	textCallback(obj) {
-
+    constructor() {
+        super();
+        this.state = {
+            text: 'Nothing',
+            ul: <div>{'Nothing'}</div>
+        };
+    }
+    
+    textCallback(obj) {
 		this.setState({ul: (
 			<ul>
 				<li>{'Owner Info'}
@@ -25,40 +24,40 @@ export class GetterButton extends React.Component {
 		)});
 	}
 
-	addOwnerToDb(obj){
+    addOwnerToDb(obj){
         axios.put('/api/users/add', obj)
-			.catch(function(error){
-			console.log(error);
-		});
-	}
-	
-	handleClick() {
-		var r = Math.floor(Math.random() * 5 + 1);
+            .catch(function(error){
+            console.log(error);
+        });
+    }
+    
+    handleClick() {
+        var r = Math.floor(Math.random() * 5 + 1);
 
-	    axios.get('/api/users/' + r)
-	         .then((response) => {
-	             this.textCallback(response['data']);
-	             this.addOwnerToDb(response['data']);
-	         })
-	         .catch(function(error) {
-	             console.log(error);
-	         });
-	         
-	}
-	
+        axios.get('/api/users/' + r)
+             .then((response) => {
+                 this.textCallback(response['data']);
+                 this.addOwnerToDb(response['data']);
+             })
+             .catch(function(error) {
+                 console.log(error);
+             });
+             
+    }
+    
     render() { 
         return(
-        	<div>
-				<button className='button' onClick={() => this.handleClick()}>
-					{'Get a random Owner'}
-				</button>
-				<div>
-					{this.state.ul}
-				</div>
-	            <div>
-	            	{this.props.children}
-	            </div>
-        	</div>
+            <div>
+                <button className='button' onClick={() => this.handleClick()}>
+                    {'Get a random Owner'}
+                </button>
+                <div>
+                    {this.state.ul}
+                </div>
+                <div>
+                    {this.props.children}
+                </div>
+            </div>
         );
     }
 }

@@ -1,33 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GetterButton } from 'js/buttons.js';
+import { RegisterModal } from 'js/registermodal';
+import { LoginModal } from 'js/loginmodal';
+import { GetterButton } from 'js/buttons';
 
 export class Home extends React.Component {
     render() {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
-                    <a className="navbar-brand" href="#">Tempeturs</a>
+                    <a className="navbar-brand" href="/#/">Tempeturs</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-        
+            
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item active">
-                                <a className="nav-link" href="#">Home<span className="sr-only">(current)</span></a>
+                                <a className="nav-link" href="/#/">Home<span className="sr-only">(current)</span></a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#/owners">Owners</a>
+                                <a className="nav-link" href="/#/about">About</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#/sitters">Sitters</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#/about">About</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#/faq">FAQ</a>
+                                <a className="nav-link" href="/#/faq">FAQ</a>
                             </li>
                         </ul>
                         <form className="form-inline my-2 my-lg-0">
@@ -45,87 +41,11 @@ export class Home extends React.Component {
                         </div>
                         <div className="col"></div>
                         <div className="col-2">
-                            <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#loginModal">
-                                <span>Login</span>
-                                <i className="fa fa-sign-in fa-fw pull-left" aria-hidden="true"></i>
-                            </button>
-                            
-                            <div className="modal fade" id="loginModal" tabIndex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-                                <div className="modal-dialog" role="document">
-                                    <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title" id="loginModalLabel">Welcome Back!</h5>
-                                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div className="modal-body">
-                                            <div className="input-group">
-                                                <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
-                                                <input className="form-control" type="text" placeholder="Username" />
-                                            </div>
-                                            <div className="input-group top-buffer-sm">
-                                                <span className="input-group-addon"><i className="fa fa-key fa-fw"></i></span>
-                                                <input className="form-control" type="password" placeholder="Password" />
-                                            </div>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" className="btn btn-primary">Login</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <LoginModal />
                         </div>
                         
                         <div className="col-2">
-                            <button type="button" className="btn btn-success btn-block" data-toggle="modal" data-target="#registerModal">
-                                <span>Register</span>
-                                <i className="fa fa-user-plus pull-left" aria-hidden="true"></i>
-                            </button>
-                            
-                            <div className="modal fade" id="registerModal" tabIndex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
-                                <div className="modal-dialog" role="document">
-                                    <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title" id="registerModalLabel">First Time Registration</h5>
-                                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div className="modal-body">
-                                            <div className="input-group">
-                                                <span className="input-group-addon"><i className="fa fa-envelope fa-fw"></i></span>
-                                                <input className="form-control" type="email" placeholder="Email address" />
-                                            </div>
-                                            <div className="input-group top-buffer-sm">
-                                                <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
-                                                <input className="form-control" type="text" placeholder="Username" />
-                                            </div>
-                                            <div className="input-group top-buffer-sm">
-                                                <span className="input-group-addon"><i className="fa fa-key fa-fw"></i></span>
-                                                <input className="form-control" type="password" placeholder="Password" />
-                                            </div>
-                                            <div className="input-group top-buffer-sm">
-                                                <span className="input-group-addon"><i className="fa fa-repeat fa-fw"></i></span>
-                                                <input className="form-control" type="password" placeholder="Retype Password" />
-                                            </div>
-                                            <div className="input-group top-buffer-lg">
-                                                <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
-                                                <input className="form-control" type="text" placeholder="Street Address" />
-                                            </div>
-                                            <div className="input-group top-buffer-sm">
-                                                <span className="input-group-addon"><i className="fa fa-phone fa-fw"></i></span>
-                                                <input className="form-control" type="tel" placeholder="Phone Number" />
-                                            </div>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" className="btn btn-success">Register</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <RegisterModal />
                         </div>
                     </div>
                     <div className="row top-buffer-sm">
