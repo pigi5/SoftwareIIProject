@@ -61,6 +61,7 @@ dependencies {
 	compile group: 'com.google.guava', name: 'guava'
 
 	testCompile group: 'junit', name: 'junit'
+	testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
 
 configurations.all {
