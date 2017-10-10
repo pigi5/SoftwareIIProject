@@ -28,7 +28,7 @@ export class Index extends React.Component {
                     <Route exact path="/about" component={AboutPage} />
                     <Route exact path="/faq" component={FAQPage} />
         
-                    <PrivateRoute exact path="/search" authed={this.props.authed} component={SearchResults} />
+                    <Route exact path="/search" authed={this.props.authed} component={SearchResults} />
                     <Route exact path="/sitterprefs" component={SitterPreferences} />
                     <Route exact path="/startappt" component={StartAppointment} />
                 </div>
