@@ -43,7 +43,7 @@ export class RegisterModal extends React.Component {
         // EX:
 
 
-        axios.get('/api/users/register', {
+        axios.put('/api/users/register', {
 
                 'email': this.state.email,
                 'username': this.state.username,
