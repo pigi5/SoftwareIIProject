@@ -88,7 +88,7 @@ public class OwnerEndpoint {
 			Response response = null;
 			try{
 				response = restClient.performRequest("PUT",
-						"/users/user" + user.getId().toString(),
+						"/users/user/" + user.getId().toString(),
 						Collections.<String, String>emptyMap(),
 						entity
 				);
