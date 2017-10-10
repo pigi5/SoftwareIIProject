@@ -42,9 +42,9 @@ export class RegisterModal extends React.Component {
         //       make sure you can't create a user with a duplicate username in the backend also
         // EX:
 
-
         axios.put('/api/users/add', {
 
+                'id': '200'
                 'email': this.state.email,
                 'username': this.state.username,
                 'password': this.state.password,
