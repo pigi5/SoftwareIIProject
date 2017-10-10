@@ -1,3 +1,4 @@
+/*
 package petfinder.site.endpoint;
 
 
@@ -35,12 +36,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.net.InetAddress;
 
-
+*/
 /**
  * Created by jlutteringer on 8/23/17.
  */
 //uses dao to pull data. called from frontend
-
+/*
 @RestController
 @RequestMapping(value = "/api/users")
 public class OwnerEndpoint {
@@ -99,7 +100,7 @@ public class OwnerEndpoint {
 				System.out.println(e.toString());
 			}
 
-
+			*/
 
 			/*
 			//THIS IS THE LOCAL CONNECTION PROTOCOL DO NOT DELETE
@@ -118,7 +119,7 @@ public class OwnerEndpoint {
 			);
 			*/
 
-
+			/*
 			restClient.close();
 			return response;
 
@@ -128,3 +129,4 @@ public class OwnerEndpoint {
 		}
 	}
 }
+			*/
