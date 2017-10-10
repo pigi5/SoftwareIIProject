@@ -116,7 +116,7 @@ public class UserEndpoint {
     }
 
     @RequestMapping(path = "/register", method =RequestMethod.PUT)
-    public Response registerUser(@RequestParam(name = "email") String email, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, @RequestParam(name = "name") String name, @RequestParam(name = "zip") int zipCode){
+    public Response registerUser(@RequestParam(name = "email") String email, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, @RequestParam(name = "name") String name, @RequestParam(name = "zip") Long zipCode){
         try{
 
             UserDto user = new UserDto(name, email, username, password, zipCode);
