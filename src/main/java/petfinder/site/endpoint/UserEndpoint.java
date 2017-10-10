@@ -160,7 +160,7 @@ public class UserEndpoint {
     }
     */
 
-    @RequestMapping(path = "/add", method = RequestMethod.PUT)
+    @RequestMapping(path = "/add", method = RequestMethod.POST)
     public Response createOwner(@RequestBody UserDto user) throws IOException {
         try {
 
@@ -186,8 +186,8 @@ public class UserEndpoint {
 
             Response response = null;
             try{
-                response = restClient.performRequest("PUT",
-                        "/users/user/" + user.getId().toString(),
+                response = restClient.performRequest("POST",
+                        "/users/user",
                         Collections.<String, String>emptyMap(),
                         entity
                 );
