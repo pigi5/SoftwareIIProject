@@ -41,12 +41,13 @@ export class RegisterModal extends React.Component {
         //       I will test for unique usernames myself, but it would still be a good idea to 
         //       make sure you can't create a user with a duplicate username in the backend also
         // EX:
-        /*
-        axios.get('/api/registeruser', {
+
+
+        axios.get('/api/users/register', {
                 params: {
                     email: this.state.email,
-                    username: this.state.username
-                    password: this.state.password
+                    username: this.state.username,
+                    password: this.state.password,
                     name: this.state.name,
                     zip: this.state.zip
                 }
@@ -58,7 +59,7 @@ export class RegisterModal extends React.Component {
                 // TODO: Ford - Notify the user that registration failed
                 console.log(error);
             });
-        */
+
         
         event.preventDefault();
     }

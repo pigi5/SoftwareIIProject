@@ -1,5 +1,6 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
+import java.util.Random;
 import java.util.List;
 
 /**
@@ -9,25 +10,33 @@ public class UserDto {
 	private Long id;
 	private String name;
 	private String email;
+	private String username;
+	private String password;
+	private Integer zipCode;
 	private List<PetDto> pets;
 
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
-
 	}
 	public UserDto(Long id, String name, String email) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 	}
-
 	public UserDto(Long id, String name, String email, List<PetDto> pets){
 		this.id = id;
 		this.name = name;
 		this.email = email;
 	}
-
+	public UserDto(String name, String email, String username, String password, Integer zipCode){
+		this.name = name;
+		this.email = email;
+		this.username = username;
+		this.password = password;
+		this.zipCode = zipCode;
+		this.id = this.generateID();
+	}
 	public UserDto(UserDto thatUser, List<PetDto> pets){
 		this.id = thatUser.id;
 		this.name = thatUser.name;
@@ -59,6 +68,13 @@ public class UserDto {
 	}
 	public List<PetDto> getPets() {
 		return pets;
+	}
+
+	public Long generateID(){
+		Random rand = new Random();
+		//NEED BETTER WAY TO GENERATE ID SO NO REPEATS
+		Long id = rand.nextLong() % 1000;
+		return id;
 	}
 
 }

@@ -13,17 +13,22 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.index.query.QueryBuilders.*;
+import org.elasticsearch.search.builder.*;
 import org.apache.http.HttpHost;
 
 import petfinder.site.common.user.UserDto;
@@ -61,6 +66,97 @@ public class UserEndpoint {
     public UserDto findOwner(@PathVariable(name = "id") Long id) {
         UserDto user = userService.getUser(id).get();
         return user;
+    }
+
+    @RequestMapping(path = "/auth", method = RequestMethod.GET)
+    public Response authenticate(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+        try{
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
+
+            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
+                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                        @Override
+                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                        }
+                    })
+                    .build();
+
+            //QueryBuilder qb = QueryBuilders.matchQuery("name", "Steve");
+
+            //SearchRequest searchRequest = new SearchRequest("users");
+
+            //SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            //sourceBuilder.query(QueryBuilders.termQuery("name", "Steve"));
+
+            //searchRequest.source(sourceBuilder);
+
+            Response response = null;
+            try{
+                response = restClient.performRequest("GET",
+                        "users/user/_search?q=name:" + "Steve"
+                );
+                System.out.println("\n\nreceived response: " + response);
+
+            }catch(Exception e){
+                System.out.println(e.toString());
+                return null;
+            }
+
+            if(response == null){
+                return null;
+            }
+            return response;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @RequestMapping(path = "/register", method =RequestMethod.PUT)
+    public Response registerUser(@RequestParam(value = "email") String email, @RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "name") String name, @RequestParam(value = "zip") Integer zipCode){
+        try{
+
+            UserDto user = new UserDto(name, email, username, password, zipCode);
+
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
+
+            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
+                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                        @Override
+                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                        }
+                    })
+                    .build();
+
+            String json = mapper.writeValueAsString(user);
+
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+
+            Response response = null;
+            try {
+                response = restClient.performRequest("PUT",
+                        "/users/user/" + user.getId().toString(),
+                        Collections.<String, String>emptyMap(),
+                        entity
+                );
+                System.out.println("\n\nreceived response: " + response);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            restClient.close();
+            return response;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
