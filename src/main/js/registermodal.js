@@ -45,11 +45,11 @@ export class RegisterModal extends React.Component {
 
         axios.get('/api/users/register', {
 
-                "email": this.state.email,
-                "username": this.state.username,
-                "password": this.state.password,
-                "name": this.state.name,
-                "zip": this.state.zip
+                'email': this.state.email,
+                'username': this.state.username,
+                'password': this.state.password,
+                'name': this.state.name,
+                'zip': this.state.zip
 
             })
             .then((response) => {
