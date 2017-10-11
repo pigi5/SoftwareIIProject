@@ -1,9 +1,9 @@
 import React from 'react';
-import { RegisterButton, RegisterModal } from 'js/registermodal';
-import { LoginButton, LoginModal } from 'js/loginmodal';
+import RegisterModal, { RegisterButton } from 'js/registermodal';
+import LoginModal, { LoginButton } from 'js/loginmodal';
 import { connect } from 'react-redux';
 
-export class Navbar extends React.Component {
+class Navbar extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -19,42 +19,51 @@ export class Navbar extends React.Component {
                 {
                     name: 'FAQ',
                     link: '/#/faq'
-                },
-                {
-                    name: 'Start Appointment',
-                    link: '/#/startappt'
-                },
-                {
-                    name: 'Sitter Prefs',
-                    link: '/#/sitterprefs'
                 }
             ]
         };
+        
+        this.createNavLink = this.createNavLink.bind(this);
     }
     
-    render() {        
-        var createNavLink = function(curVal, index, array) {
-            if (curVal.name == this.props.pageName) {
-                return (<li key={index} className="nav-item active"><a className="nav-link" href={curVal.link}>{curVal.name}<span className="sr-only">(current)</span></a></li>);
-            } else {
-                return (<li key={index} className="nav-item"><a className="nav-link" href={curVal.link}>{curVal.name}</a></li>);
-            }
-        }.bind(this);
-        
-        var navButtons;
-        console.log('auth check: ' + JSON.stringify(this.props));
+    logout() {
+        this.props.dispatch({type:'UNAUTH_USER'});
+        this.forceUpdate();
+    }
+    
+    createNavLink(curVal, index, array) {
+        if (curVal.name == this.props.pageName) {
+            return (<li key={index} className="nav-item active"><a className="nav-link" href={curVal.link}>{curVal.name}<span className="sr-only">(current)</span></a></li>);
+        } else {
+            return (<li key={index} className="nav-item"><a className="nav-link" href={curVal.link}>{curVal.name}</a></li>);
+        }
+    }
+    
+    getNavButtons() {
         if (this.props.authed) {
-            console.log('authed');
-            navButtons = (
+            return (
                 <ul className="nav navbar-nav navbar-right">
+                    <li className="nav-item dropdown right-buffer-sm">
+                        <a className="nav-link dropdown-toggle" href="#" id="profileDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>{this.props.userData.username}</span>
+                            <i className="fa fa-user-circle-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
+                        </a>
+                        <div className="dropdown-menu" aria-labelledby="profileDropdownMenuLink">
+                            <a className="dropdown-item" href="/#/profile">Profile</a>
+                            <a className="dropdown-item" href="/#/startappt">Start Appointment</a>
+                            <a className="dropdown-item" href="/#/sitterprefs">Sitter Prefs</a>
+                        </div>
+                    </li>
                     <li>
-                        Logged In
+                        <button className='btn btn-primary btn-block' onClick={() => this.logout()}>
+                            <span>Logout</span>
+                            <i className="fa fa-sign-out fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
+                        </button>
                     </li>
                 </ul>
             );
         } else {
-            console.log('not authed');
-            navButtons = (
+            return (
                 <ul className="nav navbar-nav navbar-right">
                     <li className="right-buffer-sm">
                         <LoginButton />
@@ -65,7 +74,9 @@ export class Navbar extends React.Component {
                 </ul>
             );
         }
-        
+    }
+    
+    render() {        
         return (
             <div>
                 <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
@@ -76,9 +87,9 @@ export class Navbar extends React.Component {
             
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav mr-auto">
-                            {this.state.pages.map(createNavLink)}
+                            {this.state.pages.map(this.createNavLink)}
                         </ul>
-                        {navButtons}
+                        {this.getNavButtons()}
                     </div>
                 </nav>
                 <div className="top-buffer-lg" />
@@ -91,7 +102,8 @@ export class Navbar extends React.Component {
 
 const mapStateToProps = (store) => {
     return {
-        authed: store.user.authed
+        authed: store.user.authed,
+        userData: store.user.userData
     };
 };
 

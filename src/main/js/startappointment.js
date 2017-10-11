@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
 import { AddPetModal } from 'js/addpetmodal.js';
 import { connect } from 'react-redux';
-import { Navbar } from 'js/navbar';
+import Navbar from 'js/navbar';
 
 export class StartAppointment extends React.Component {
     render() {
@@ -85,5 +85,3 @@ export class LocationRadios extends React.Component {
         );
     }
 }
-
-export default connect()(LocationRadios);

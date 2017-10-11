@@ -76,8 +76,6 @@ export class AddPetModal extends React.Component {
     }
 }
 
-export default connect()(AddPetModal);
-
 export class PetCheckList extends React.Component {
     constructor(props) {
         super(props);
@@ -130,5 +128,3 @@ export class PetCheckList extends React.Component {
         );
     }
 }
-
-//export default connect()(PetCheckList);

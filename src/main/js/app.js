@@ -8,17 +8,14 @@ import Index from 'js/index';
 import 'styles/main.scss';
 
 function userReducer(state = {}, action) {
+    // Must return NEW state here, instead of altering previous
     switch (action.type) {
         case 'AUTH_USER':
-            state.authed = true;
-            state.userData = action.userData;
-            return state;
+            return {authed: true, userData: action.userData};
         case 'UNAUTH_USER':
-            state.authed = false;
-            return state;
+            return {authed: false};
         case 'UPDATE_USER':
-            state.userData = action.userData;
-            return state;
+            return {authed: true, userData: action.userData};
         default:
             return state;
     }
@@ -30,7 +27,7 @@ const reducers = {
 };
 
 const reducer = combineReducers(reducers);
-const store = createStore(reducer, {user: {authed: true}});
+const store = createStore(reducer, {user: {authed: true, userData: {username: 'testUser'}}});
 
 const mountNode = document.querySelector('#main');
 ReactDOM.render(<Provider store={store}><Index /></Provider>, mountNode);

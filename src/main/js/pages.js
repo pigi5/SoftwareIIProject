@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { RegisterModal } from 'js/registermodal';
-import { LoginModal } from 'js/loginmodal';
+import RegisterModal from 'js/registermodal';
+import LoginModal from 'js/loginmodal';
 import { GetterButton } from 'js/buttons';
-import { Navbar } from 'js/navbar';
+import Navbar from 'js/navbar';
 
 export class Home extends React.Component {
     render() {

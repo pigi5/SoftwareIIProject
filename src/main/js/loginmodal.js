@@ -7,13 +7,13 @@ export class LoginButton extends React.Component {
         return (
             <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#loginModal">
                 <span>Login</span>
-                <i className="fa fa-sign-in fa-fw pull-left" aria-hidden="true"></i>
+                <i className="fa fa-sign-in fa-fw pull-left center-icon-vertical"  aria-hidden="true"></i>
             </button>
         );
     }
 }
 
-export class LoginModal extends React.Component {
+class LoginModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

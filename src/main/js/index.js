@@ -22,7 +22,6 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
 
 export class Index extends React.Component {    
 	render() {
-        console.log('auth check: ' + JSON.stringify(this.props));
 		return (
 			<HashRouter>
 			    <div>

@@ -7,13 +7,13 @@ export class RegisterButton extends React.Component {
         return (
             <button type="button" className="btn btn-success btn-block" data-toggle="modal" data-target="#registerModal">
                 <span>Register</span>
-                <i className="fa fa-user-plus pull-left" aria-hidden="true"></i>
+                <i className="fa fa-user-plus pull-left center-icon-vertical" aria-hidden="true"></i>
             </button>
         );
     }
 }
 
-export class RegisterModal extends React.Component {
+class RegisterModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
