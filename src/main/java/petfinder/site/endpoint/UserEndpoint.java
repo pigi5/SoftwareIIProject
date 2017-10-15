@@ -161,7 +161,7 @@ public class UserEndpoint {
     */
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public Response createOwner(@RequestBody UserDto user) throws IOException {
+    public String createOwner(@RequestBody UserDto user) throws IOException {
         try {
 
             System.out.println("\n\nowner recognized as: " + user.toString());
@@ -217,9 +217,8 @@ public class UserEndpoint {
 			);
 			*/
 
-
             restClient.close();
-            return response;
+            return response.toString();
 
         } catch (IOException e){
             e.printStackTrace();
