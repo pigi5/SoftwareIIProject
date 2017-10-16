@@ -11,6 +11,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -62,11 +63,11 @@ public class UserEndpoint {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+   /* @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserDto findOwner(@PathVariable(name = "id") Long id) {
         UserDto user = userService.getUser(id).get();
         return user;
-    }
+    }*/
 
     @RequestMapping(path = "/auth", method = RequestMethod.GET)
     public Response authenticate(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
@@ -114,6 +115,74 @@ public class UserEndpoint {
             return null;
         }
     }
+
+    //Checks if username and password combination exists in database
+    //Returns false if the username password combination DNE and true if it does
+    @RequestMapping(path = "/authuser", method = RequestMethod.GET)
+    public boolean SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+        //Set up connection to database
+        try{
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
+
+            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
+                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                        @Override
+                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                        }
+                    })
+                    .build();
+            //Testing purposes
+            //System.out.println(username + " " + password);
+
+            //Create get request to try to find password username combination
+            Response response = null;
+            try{
+                response = restClient.performRequest("GET",
+                        "/users/user/_search?q=%2Busername:" + username +
+                        "%20%2Bpassword:" + password,
+                        Collections.<String, String>emptyMap()
+                );
+
+                //Checking to see if get request was completed
+                System.out.println("\n\nreceived response: " + response);
+
+                //Testing purposes
+                //System.out.println(response.getEntity().getContentLength());
+
+                //Set the result string to Checkhits to parse
+                String Checkhits = EntityUtils.toString(response.getEntity());
+                //Find displacement where it says how many hits were returned
+                char NumHits = Checkhits.charAt(92);
+                //Testing
+                //System.out.println(NumHits);
+
+                //If NumHits != 1 then there was no hits for return false
+                if(NumHits != '1'){
+                    System.out.println("No hits");
+                    return false;
+                }
+                //If NumHits is 1 then there was one hit so return true
+                else{
+                    System.out.println("1 hit");
+                    return true;
+                }
+
+            //Error checking
+            }catch(Exception e){
+                System.out.println(e.toString());
+                return false;
+            }
+        //Error checking
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
     /*
     @RequestMapping(path = "/register", method =RequestMethod.PUT)
     public Response registerUser(@RequestBody UserDto user){

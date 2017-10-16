@@ -45,10 +45,12 @@ class LoginModal extends React.Component {
         //       (pass in username and password)
         //       (receive user information if username and password match, else return http error code 401)
         // EX:
-        /*
-        axios.get('/api/authuser', {
+
+        axios.get('/api/users/authuser', {
+            params: {
                 'username': this.state.username,
                 'password': this.state.password
+                }
             })
             .then((response) => {
                 this.authorizeUser(response['data']);
@@ -57,7 +59,7 @@ class LoginModal extends React.Component {
                 // TODO: Ford - Notify the user that login failed
                 console.log(error);
             });
-        */
+
         
         event.preventDefault();
     }
