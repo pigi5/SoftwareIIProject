@@ -1,36 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
+import Navbar from 'js/navbar';
 
 export class SearchResults extends React.Component {
     render() {
         return (
             <div>
-	        	<nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
-	                <a className="navbar-brand" href="/#/">Tempeturs</a>
-	                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	                    <span className="navbar-toggler-icon"></span>
-	                </button>
-	        
-	                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-	                    <ul className="navbar-nav mr-auto">
-	                        <li className="nav-item active">
-	                            <a className="nav-link" href="/#/">Home</a>
-	                        </li>
-	                        <li className="nav-item">
-	                            <a className="nav-link" href="/#/about">About</a>
-	                        </li>
-	                        <li className="nav-item">
-	                            <a className="nav-link" href="/#/faq">FAQ</a>
-	                        </li>
-	                    </ul>
-	                    <form className="form-inline my-2 my-lg-0">
-	                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"/>
-	                        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-	                    </form>
-	                </div>
-	            </nav>
-				<div className="container top-buffer-lg">
+				<Navbar pageName="Search" />
+            	<div className="container top-buffer-lg">
 		        	<div className="card horizontally-centered" style={{width: '20rem'}}>
 						<img className="card-img-top" src="http://maxpixel.freegreatpicture.com/static/photo/1x/Dog-Pet-Woman-Doberman-Pinscher-Hobby-Portrait-888400.jpg" alt="Card image cap"/>
 						<div className="card-body">
@@ -50,7 +28,7 @@ export class SearchResults extends React.Component {
 						</div>
 					</div>
 					
-					<div className="modal fade" id="sitterRequestedModal" tabindex="-1" role="dialog" aria-labelledby="sitterRequestedModalLabel" aria-hidden="true">
+					<div className="modal fade" id="sitterRequestedModal" tabIndex="-1" role="dialog" aria-labelledby="sitterRequestedModalLabel" aria-hidden="true">
 						<div className="modal-dialog" role="document">
 							<div className="modal-content">
 								<div className="modal-header">

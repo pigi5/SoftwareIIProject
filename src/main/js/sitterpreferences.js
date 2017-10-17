@@ -93,7 +93,7 @@ export class SitterPreferences extends React.Component {
 			    				<legend className="col-form-legend col-sm-2">Profile picture</legend>
 			    				<div className="col-sm-10">
 			    				    <div className="form-group">
-			    				        <label htmlFor="inputStartDate">Web address of your photo</label>
+			    				        <label htmlFor="inputPictureUrl">Web address of your photo</label>
 			    				        <input type="url" className="form-control" id="inputPictureUrl" />
 			    				    </div>
 								</div>
