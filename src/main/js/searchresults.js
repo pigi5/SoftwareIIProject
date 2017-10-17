@@ -32,7 +32,7 @@ export class SearchResults extends React.Component {
 	            </nav>
 				<div className="container top-buffer-lg">
 		        	<div className="card horizontally-centered" style={{width: '20rem'}}>
-						<img className="card-img-top" src="https://cdn.pixabay.com/photo/2015/07/11/19/18/woman-841164_960_720.jpg" alt="Card image cap"/>
+						<img className="card-img-top" src="http://maxpixel.freegreatpicture.com/static/photo/1x/Dog-Pet-Woman-Doberman-Pinscher-Hobby-Portrait-888400.jpg" alt="Card image cap"/>
 						<div className="card-body">
 							<h4 className="card-title">Susie Sitter</h4>
 							<p className="card-text">Zip: 76798</p>
