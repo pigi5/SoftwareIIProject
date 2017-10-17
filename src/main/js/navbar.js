@@ -43,6 +43,18 @@ class Navbar extends React.Component {
         if (this.props.authed) {
             return (
                 <ul className="nav navbar-nav navbar-right">
+                    <li className="nav-item right-buffer-sm">
+                        <a role="button" className='btn btn-success btn-block' href="/#/dashboard/sitter">
+                            <span>Sitter Dashboard</span>
+                            <i className="fa fa-id-card-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li className="nav-item right-buffer-sm">
+                        <a role="button" className="btn btn-success btn-block" href="/#/dashboard/owner">
+                            <span>Owner Dashboard</span>
+                            <i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true"></i>
+                        </a>
+                    </li>
                     <li className="nav-item dropdown right-buffer-sm">
                         <a className="nav-link dropdown-toggle" href="#" id="profileDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span>{this.props.userData.username}</span>
