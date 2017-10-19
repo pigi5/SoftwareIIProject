@@ -119,7 +119,9 @@ public class UserEndpoint {
     //Checks if username and password combination exists in database
     //Returns false if the username password combination DNE and true if it does
     @RequestMapping(path = "/authuser", method = RequestMethod.GET)
-    public boolean SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+    public String SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+        //public Response SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+
         //Set up connection to database
         try{
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -150,34 +152,37 @@ public class UserEndpoint {
 
                 //Testing purposes
                 //System.out.println(response.getEntity().getContentLength());
-
                 //Set the result string to Checkhits to parse
                 String Checkhits = EntityUtils.toString(response.getEntity());
+                String JSONDATA = Checkhits.substring(215, Checkhits.length()-4);
+                System.out.println("JSON:  " + JSONDATA);
                 //Find displacement where it says how many hits were returned
                 char NumHits = Checkhits.charAt(92);
                 //Testing
                 //System.out.println(NumHits);
 
-                //If NumHits != 1 then there was no hits for return false
+                //If NumHits != 1 then there was no hits for return null
                 if(NumHits != '1'){
-                    System.out.println("No hits");
-                    return false;
+                    //System.out.println("No hits");
+                    return null;
                 }
-                //If NumHits is 1 then there was one hit so return true
+                //If NumHits is 1 then there was one hit so return response
                 else{
-                    System.out.println("1 hit");
-                    return true;
+                    System.out.println("1 hit " + Checkhits);
+                    return JSONDATA;
+                    //return Checkhits;
+                    //return response
                 }
 
             //Error checking
             }catch(Exception e){
                 System.out.println(e.toString());
-                return false;
+                return null;
             }
         //Error checking
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
