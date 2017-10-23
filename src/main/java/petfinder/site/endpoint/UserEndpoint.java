@@ -1,8 +1,9 @@
 package petfinder.site.endpoint;
 
 
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -12,34 +13,22 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import static org.elasticsearch.common.xcontent.XContentFactory.*;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.index.query.QueryBuilders.*;
-import org.elasticsearch.search.builder.*;
 import org.apache.http.HttpHost;
 
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.Collections;
-import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -122,6 +111,8 @@ public class UserEndpoint {
     public String SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
         //public Response SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
 
+        HashMap<String,Object> returnInfo = new HashMap<String,Object>();
+        
         //Set up connection to database
         try{
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -141,49 +132,44 @@ public class UserEndpoint {
             //Create get request to try to find password username combination
             Response response = null;
             try{
-                response = restClient.performRequest("GET",
-                        "/users/user/_search?q=%2Busername:" + username +
-                        "%20%2Bpassword:" + password,
-                        Collections.<String, String>emptyMap()
-                );
+            	Map<String, String> params =  new HashMap<String, String>();
+            	params.put("q", "username:" + username + " AND password:" + password);
+                response = restClient.performRequest("GET", "/users/user/_search", params);
 
-                //Checking to see if get request was completed
-                System.out.println("\n\nreceived response: " + response);
-
-                //Testing purposes
-                //System.out.println(response.getEntity().getContentLength());
-                //Set the result string to Checkhits to parse
-                String Checkhits = EntityUtils.toString(response.getEntity());
-                String JSONDATA = Checkhits.substring(215, Checkhits.length()-4);
-                System.out.println("JSON:  " + JSONDATA);
-                //Find displacement where it says how many hits were returned
-                char NumHits = Checkhits.charAt(92);
-                //Testing
-                //System.out.println(NumHits);
-
-                //If NumHits != 1 then there was no hits for return null
-                if(NumHits != '1'){
-                    //System.out.println("No hits");
-                    return null;
-                }
-                //If NumHits is 1 then there was one hit so return response
-                else{
-                    System.out.println("1 hit " + Checkhits);
-                    return JSONDATA;
-                    //return Checkhits;
-                    //return response
+                String responseString = EntityUtils.toString(response.getEntity());
+                
+                HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
+                
+                int hits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
+                
+                //If hits != 1 then there was either no hits or too many hits
+                if(hits != 1){
+                    returnInfo.put("status", 500);
+                    returnInfo.put("content", null);
+                } else {
+                    //If hits is 1 then there was one hit so return response
+                    HashMap<String,Object> userInfo = (HashMap<String, Object>) ((HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0)).get("_source");
+                    returnInfo.put("status", 200);
+                    returnInfo.put("content", userInfo);
                 }
 
             //Error checking
             }catch(Exception e){
                 System.out.println(e.toString());
-                return null;
+                returnInfo.put("status", 500);
+                returnInfo.put("content", null);
             }
         //Error checking
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            returnInfo.put("status", 500);
+            returnInfo.put("content", null);
         }
+        try {
+			return mapper.writeValueAsString(returnInfo);
+		} catch (JsonProcessingException e) {
+			return "{\"status\":500, \"content\":null}";
+		}
     }
 
 

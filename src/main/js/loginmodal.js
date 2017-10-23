@@ -47,9 +47,9 @@ class LoginModal extends React.Component {
         // EX:
 
         axios.get('/api/users/authuser', {
-            params: {
-                'username': this.state.username,
-                'password': this.state.password
+                params: {
+                    'username': this.state.username,
+                    'password': this.state.password
                 }
             })
             .then((response) => {
