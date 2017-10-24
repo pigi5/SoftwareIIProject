@@ -5,6 +5,7 @@ import java.util.Random;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class UserDto {
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
+		this.name = "";
+		this.email = "";
+		this.username = "";
+		this.password = "";
+		this.zipCode = 0;
+		this.pets = Collections.emptyList();
 	}
 	public UserDto(String name, String email, String username, String password, Integer zipCode){
 		this.name = name;
@@ -29,7 +36,7 @@ public class UserDto {
 		this.username = username;
 		this.password = password;
 		this.zipCode = zipCode;
-		this.pets = new LinkedList<PetDto>();
+		this.pets = Collections.emptyList();
 	}
 	public UserDto(UserDto thatUser, List<PetDto> pets){
 		this.name = thatUser.name;
