@@ -1,5 +1,6 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
+import petfinder.site.common.user.Week;
 import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,10 +20,29 @@ public class UserDto {
 	private String password;
 	private Integer zipCode;
 	private List<PetDto> pets;
+	private Week week;
+	private Double rating;
+	private Integer numberOfRatings;
 
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
+	}
+	public UserDto(String name, String email) {
+		this.name = name;
+		this.email = email;
+
+		//rating stuff
+		this.rating = -1.0;
+		this.numberOfRatings = 0;
+	}
+	public UserDto(String name, String email, List<PetDto> pets){
+		this.name = name;
+		this.email = email;
+
+		//rating stuff
+		this.rating = -1.0;
+		this.numberOfRatings = 0;
 		this.name = "";
 		this.email = "";
 		this.username = "";
@@ -36,12 +56,20 @@ public class UserDto {
 		this.username = username;
 		this.password = password;
 		this.zipCode = zipCode;
+
+		//rating stuff
+		this.rating = -1.0;
+		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
 	}
 	public UserDto(UserDto thatUser, List<PetDto> pets){
 		this.name = thatUser.name;
 		this.email = thatUser.email;
 		this.pets = pets;
+
+		//rating stuff
+		this.rating = -1.0;
+		this.numberOfRatings = 0;
 	}
 
 	//Setters
@@ -55,6 +83,10 @@ public class UserDto {
 	public void setPets(List<PetDto> pets) {
 		this.pets = pets;
 	}
+	public void setFullWeekAvailable(){ this.week.setTotalAvailability(); }
+	public void setFullWeekUnavailable(){ this.week.setTotalUnavailable(); }
+	public void setSingleDayAvailalbe(Integer index){ this.week.setAvailable(index); }
+	public void setSingleDayUnavailable(Integer index){this.week.setUnavailable(index); }
 
 	//Getters
 	public String getName() {
@@ -66,16 +98,25 @@ public class UserDto {
 	public List<PetDto> getPets() {
 		return pets;
 	}
-	public String getUsername() {
-		return username;
-	}
-	public String getPassword() {
-		return password;
-	}
+	public String getUsername() { return username; }
+	public String getPassword() { return password; }
+	public Double getRating() { return rating; }
+
+	public Double addRating(Integer newRating) {
+        if (this.numberOfRatings == 0) {
+            this.rating = newRating.doubleValue();
+            this.numberOfRatings++;
+        } else {
+            Double tempVal = (numberOfRatings * this.rating);
+            this.numberOfRatings++;
+            this.rating = (tempVal + newRating.doubleValue()) / numberOfRatings;
+        }
+        return this.rating;
+    }
 	public Integer getZipCode() {
 		return zipCode;
 	}
-	
+
 	@Override
 	public String toString() {
 	    ObjectMapper mapper = new ObjectMapper();
