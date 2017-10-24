@@ -15,11 +15,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * Created by jlutteringer on 8/22/17.
  */
 
+/*
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+*/
 		/*
 		http
 				.authorizeRequests()
@@ -34,6 +36,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.logout()
 					.permitAll();
 					*/
+/*
 		http
 				.csrf().disable();
 	}
@@ -46,9 +49,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.withUser("admin").password("admin").roles("USER", "ADMIN");
 	}
 }
+*/
 
 
-/*
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -66,17 +70,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//require authentication
 					//.antMatchers("/**").permitAll()
 
-					.antMatchers("/api/login").permitAll()
-					.antMatchers("/statics/**").permitAll()
+					//.antMatchers("/api/login").permitAll()
+					//.antMatchers("/statics/**").permitAll()
 
 				//.anyRequest().authenticated()
 					//.and()
-				.formLogin()
-					.loginPage("/")
-					.permitAll()
-					.and()
-				.logout()
-					.permitAll();
+				//.formLogin()
+				//	.loginPage("/")
+				//	.permitAll()
+				//	.and()
+				//.logout()
+				//	.permitAll();
 	}
 
 	@Autowired
@@ -88,6 +92,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		//ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
 
+		/*
 		for(int i = 0; i < users.size(); i++){
 			auth.inMemoryAuthentication()
 					.withUser("username").password("password").roles("USER");
@@ -95,13 +100,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
 
 		}
+		*/
 
 
-		//auth.inMemoryAuthentication()
-				//.withUser("user").password("password").roles("USER")
-				//.and()
-				//.withUser("admin").password("admin").roles("USER", "ADMIN");
+		auth.inMemoryAuthentication()
+				.withUser("user").password("password").roles("USER")
+				.and()
+				.withUser("admin").password("admin").roles("USER", "ADMIN");
 
 	}
 }
-*/
