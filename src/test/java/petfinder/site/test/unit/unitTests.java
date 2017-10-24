@@ -30,9 +30,10 @@ public class unitTests {
 	 @Autowired
 	 private MockMvc mockMvc;
 	 
+	 /*
 	 @Test
 	 public void testAlexaEndpoint() throws Exception {
 		 this.mockMvc.perform(get("/api/alexa/getSitters")).andDo(print()).andExpect(status().isOk());
 	  }
-
+    */
 }
