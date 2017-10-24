@@ -31,7 +31,8 @@ class LoginModal extends React.Component {
 
     authorizeUser(obj) {
         this.props.dispatch({
-            type: 'AUTH_USER',
+            //changed from AUTH_USER to USER for spring security
+            type: 'USER',
             userData: obj
         });
         console.log('Logged in as:');
@@ -40,7 +41,7 @@ class LoginModal extends React.Component {
     
     handleSubmit(event) {
         // login
-        axios.get('/api/users/authuser', {
+        axios.get('/api/login', {
                 params: {
                     'username': this.state.username,
                     'password': this.state.password
