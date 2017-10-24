@@ -112,13 +112,14 @@ public class UserEndpoint {
         //public Response SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
 
         HashMap<String,Object> returnInfo = new HashMap<String,Object>();
+        RestClient restClient = null;
         
         //Set up connection to database
         try{
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
-            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
+            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -160,10 +161,18 @@ public class UserEndpoint {
                 returnInfo.put("content", null);
             }
         //Error checking
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
             returnInfo.put("status", 500);
             returnInfo.put("content", null);
+        } finally {
+        	if (restClient != null) {
+        		try {
+					restClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
         }
         try {
 			return mapper.writeValueAsString(returnInfo);
@@ -221,15 +230,17 @@ public class UserEndpoint {
     */
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public String createOwner(@RequestBody UserDto user) throws IOException {
+    public String createOwner(@RequestBody UserDto user) {
+        HashMap<String,Object> returnInfo = new HashMap<String,Object>();
+    	RestClient restClient = null;
+    	
         try {
-
             System.out.println("\n\nowner recognized as: " + user.toString());
 
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
-            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
+            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -237,8 +248,6 @@ public class UserEndpoint {
                         }
                     })
                     .build();
-
-            user.generateID();
 
             String json = mapper.writeValueAsString(user);
 
@@ -277,12 +286,27 @@ public class UserEndpoint {
 			);
 			*/
 
-            restClient.close();
-            return response.toString();
+            returnInfo.put("status", 200);
+            returnInfo.put("content", EntityUtils.toString(response.getEntity()));
 
         } catch (IOException e){
             e.printStackTrace();
-            return null;
+
+            returnInfo.put("status", 500);
+            returnInfo.put("content", null);
+        } finally {
+        	if (restClient != null) {
+        		try {
+					restClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
         }
+        try {
+			return mapper.writeValueAsString(returnInfo);
+		} catch (JsonProcessingException e) {
+			return "{\"status\":500, \"content\":null}";
+		}
     }
 }
