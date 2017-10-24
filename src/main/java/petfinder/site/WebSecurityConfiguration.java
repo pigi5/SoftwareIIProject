@@ -14,6 +14,41 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * Created by jlutteringer on 8/22/17.
  */
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		/*
+		http
+				.authorizeRequests()
+					.antMatchers("/").permitAll()
+				.antMatchers("/statics/**").permitAll()
+			//	.anyRequest().authenticated()
+					.and()
+				.formLogin()
+					.loginPage("/login")
+					.permitAll()
+					.and()
+				.logout()
+					.permitAll();
+					*/
+		http
+				.csrf().disable();
+	}
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+				.withUser("user").password("password").roles("USER")
+				.and()
+				.withUser("admin").password("admin").roles("USER", "ADMIN");
+	}
+}
+
+
+/*
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -30,10 +65,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//anyrequest().authenticated() which makes all requests
 					//require authentication
 					//.antMatchers("/**").permitAll()
-					/*
+
 					.antMatchers("/api/login").permitAll()
 					.antMatchers("/statics/**").permitAll()
-					*/
+
 				//.anyRequest().authenticated()
 					//.and()
 				.formLogin()
@@ -53,19 +88,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		//ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
 
-		for(int i = 0; i < 10;/*users.size();*/ i++){
+		for(int i = 0; i < users.size(); i++){
 			auth.inMemoryAuthentication()
 					.withUser("username").password("password").roles("USER");
-					/*
-					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-					*/
+
+					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+
 		}
 
-		/*
-		auth.inMemoryAuthentication()
-				.withUser("user").password("password").roles("USER")
-				.and()
-				.withUser("admin").password("admin").roles("USER", "ADMIN");
-		*/
+
+		//auth.inMemoryAuthentication()
+				//.withUser("user").password("password").roles("USER")
+				//.and()
+				//.withUser("admin").password("admin").roles("USER", "ADMIN");
+
 	}
 }
+*/
