@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Route, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { Home, SittersPage, OwnersPage, AboutPage, FAQPage } from 'js/pages';
@@ -25,7 +25,7 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
 class Index extends React.Component {    
 	render() {
 		return (
-			<HashRouter>
+			<Router>
 			    <div>
         			<Route exact path="/" component={Home} />
                     <Route exact path="/about" component={AboutPage} />
@@ -39,7 +39,7 @@ class Index extends React.Component {
                     <PrivateRoute exact path="/dashboard/sitter" authed={this.props.authed} component={SitterDashboard} />
                     <PrivateRoute exact path="/profile" authed={this.props.authed} component={Profile} />
                 </div>
-    		</HashRouter>
+    		</Router>
 		);
 	}
 }

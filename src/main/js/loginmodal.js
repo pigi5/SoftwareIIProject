@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 export class LoginButton extends React.Component {
     render() {
@@ -18,7 +19,8 @@ class LoginModal extends React.Component {
         super(props);
         this.state = {
                         username: '',
-                        password: ''
+                        password: '',
+                        status: 0
                      };
 
         this.handleChange = this.handleChange.bind(this);
@@ -47,20 +49,31 @@ class LoginModal extends React.Component {
                 }
             })
             .then((response) => {
-                this.authorizeUser(response['data']);
+                console.log(JSON.stringify(response, null, 4));
+                this.setState({status: response.status});
+                this.authorizeUser(response.data);
             })
-            .catch(function(error) {
-                // TODO: Ford - Notify the user that login failed
-                console.log(error);
+            .catch((error) => {
+                console.log(JSON.stringify(error, null, 4));
+                if (typeof error.response !== 'undefined') {
+                    this.setState({status: error.response.status});
+                    console.log(this.state.status);
+                }
             });
 
-        
         event.preventDefault();
     }
 
     render() {
+        var errorMess = null;
+        if (this.state.status == 401) {
+            errorMess = (<p className='text-danger text-center top-buffer-sm'>Invalid username and/or password.</p>);
+        } else if (this.state.status == 500) {
+            errorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        }
+
         return (
-            <div>                
+            <div>
                 <div className="modal fade" id="loginModal" tabIndex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -80,10 +93,11 @@ class LoginModal extends React.Component {
                                         <span className="input-group-addon"><i className="fa fa-key fa-fw"></i></span>
                                         <input className="form-control" name="password" type="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} />
                                     </div>
+                                    {errorMess}
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-primary">Login</button>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleSubmit} data-dismiss="modal">Login</button>
                                 </div>
                             </form>
                         </div>

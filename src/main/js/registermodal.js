@@ -115,7 +115,7 @@ class RegisterModal extends React.Component {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-success">Register</button>
+                                    <button type="submit" className="btn btn-success" onClick={this.handleSubmit} data-dismiss="modal">Register</button>
                                 </div>
                             </form>
                         </div>

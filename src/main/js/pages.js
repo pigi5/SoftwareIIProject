@@ -19,13 +19,13 @@ export class Home extends React.Component {
                         </ol>
                         <div className="carousel-inner">
                             <div className="carousel-item active">
-                                <img className="d-block w-100" src="https://az616578.vo.msecnd.net/files/responsive/embedded/any/desktop/2016/10/10/636116545535774772-190236060_kittens.jpg" alt="First slide"/>
+                                <img className="d-block w-100" src="https://az616578.vo.msecnd.net/files/responsive/embedded/any/desktop/2016/10/10/636116545535774772-190236060_kittens.jpg" alt="First slide" />
                             </div>
                             <div className="carousel-item">
-                                <img className="d-block w-100" src="http://1.bp.blogspot.com/-btvO5UMNMS0/Vphlz_Gq9XI/AAAAAAAACu0/1w27XjMQByg/s1600/pets%2B%25286%2529.jpg" alt="Second slide"/>
+                                <img className="d-block w-100" src="http://1.bp.blogspot.com/-btvO5UMNMS0/Vphlz_Gq9XI/AAAAAAAACu0/1w27XjMQByg/s1600/pets%2B%25286%2529.jpg" alt="Second slide" />
                             </div>
                             <div className="carousel-item">
-                                <img className="d-block w-100" src="http://cdn5.hawaiilife.com/2014/05/dogkisses2.jpg" alt="Third slide"/>
+                                <img className="d-block w-100" src="http://cdn5.hawaiilife.com/2014/05/dogkisses2.jpg" alt="Third slide" />
                             </div>
                         </div>
                         <a className="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -37,9 +37,6 @@ export class Home extends React.Component {
                             <span className="sr-only">Next</span>
                         </a>
                     </div>
-                </div>
-                <div className="container top-buffer-sm">
-                    <GetterButton />
                 </div>
             </div>
         );
