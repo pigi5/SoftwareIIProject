@@ -51,9 +51,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
+		//ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
 
-		for(int i = 0; i < users.size(); i++){
+		for(int i = 0; i < 10;/*users.size();*/ i++){
 			auth.inMemoryAuthentication()
 					.withUser("username").password("password").roles("USER");
 					/*
