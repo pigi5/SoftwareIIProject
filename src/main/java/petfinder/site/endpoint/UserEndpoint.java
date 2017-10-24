@@ -17,6 +17,8 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.apache.http.HttpHost;
 
@@ -57,62 +59,23 @@ public class UserEndpoint {
         UserDto user = userService.getUser(id).get();
         return user;
     }*/
-
-    @RequestMapping(path = "/auth", method = RequestMethod.GET)
-    public Response authenticate(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-        try{
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
-
-            RestClient restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-            //QueryBuilder qb = QueryBuilders.matchQuery("name", "Steve");
-
-            //SearchRequest searchRequest = new SearchRequest("users");
-
-            //SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-            //sourceBuilder.query(QueryBuilders.termQuery("name", "Steve"));
-
-            //searchRequest.source(sourceBuilder);
-
-            Response response = null;
-            try{
-                response = restClient.performRequest("GET",
-                        "users/user/_search?q=name:" + "Steve"
-                );
-                System.out.println("\n\nreceived response: " + response);
-
-            }catch(Exception e){
-                System.out.println(e.toString());
-                return null;
-            }
-
-            if(response == null){
-                return null;
-            }
-            return response;
-
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    
+    /*
+     * params: query - elasticsearch query string
+     * return: defaults to lessResponse of 404 and moreResponse of 500
+     */
+    private ResponseEntity<String> getOneQuery(String query) {
+    	return getOneQuery(query, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
-
-    //Checks if username and password combination exists in database
-    //Returns false if the username password combination DNE and true if it does
-    @RequestMapping(path = "/authuser", method = RequestMethod.GET)
-    public String SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-        //public Response SearchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-
-        HashMap<String,Object> returnInfo = new HashMap<String,Object>();
-        RestClient restClient = null;
+    
+    /*
+     * params: query - elasticsearch query string
+     *         lessResponse - ResponseEntity to return if 0 hits are found
+     *         moreResponse - ResponseEntity to return if >1 hits are found
+     * return: reponseEntity containing data for the query
+     */
+    private ResponseEntity<String> getOneQuery(String query, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
+    	RestClient restClient = null;
         
         //Set up connection to database
         try{
@@ -127,44 +90,37 @@ public class UserEndpoint {
                         }
                     })
                     .build();
-            //Testing purposes
-            //System.out.println(username + " " + password);
 
-            //Create get request to try to find password username combination
-            Response response = null;
             try{
             	Map<String, String> params =  new HashMap<String, String>();
-            	params.put("q", "username:" + username + " AND password:" + password);
-                response = restClient.performRequest("GET", "/users/user/_search", params);
+            	params.put("q", query);
+            	Response response = restClient.performRequest("GET", "/users/user/_search", params);
 
                 String responseString = EntityUtils.toString(response.getEntity());
                 
                 HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
                 
+                // We need one hit, so determine if there are less ore more
                 int hits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
                 
-                //If hits != 1 then there was either no hits or too many hits
-                if(hits != 1){
-                    returnInfo.put("status", 500);
-                    returnInfo.put("content", null);
-                } else {
-                    //If hits is 1 then there was one hit so return response
-                    HashMap<String,Object> userInfo = (HashMap<String, Object>) ((HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0)).get("_source");
-                    returnInfo.put("status", 200);
-                    returnInfo.put("content", userInfo);
+                if(hits < 1){
+                	return lessResponse;
+                } else if (hits > 1) {
+                	return moreResponse;
                 }
+                //If hits is 1 then there was one hit so return response
+                HashMap<String,Object> userInfo = (HashMap<String, Object>) ((HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0)).get("_source");
+                return ResponseEntity.ok(mapper.writeValueAsString(userInfo));
 
             //Error checking
             }catch(Exception e){
                 System.out.println(e.toString());
-                returnInfo.put("status", 500);
-                returnInfo.put("content", null);
+            	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
         //Error checking
         } catch (Exception e){
             e.printStackTrace();
-            returnInfo.put("status", 500);
-            returnInfo.put("content", null);
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } finally {
         	if (restClient != null) {
         		try {
@@ -174,13 +130,20 @@ public class UserEndpoint {
 				}
         	}
         }
-        try {
-			return mapper.writeValueAsString(returnInfo);
-		} catch (JsonProcessingException e) {
-			return "{\"status\":500, \"content\":null}";
-		}
     }
 
+    // Returns user information for a given username
+    @RequestMapping(path = "/user", method = RequestMethod.GET)
+    public ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
+        return getOneQuery("username:" + username);
+    }
+
+
+    // Returns user information if username and password are correct
+    @RequestMapping(path = "/authuser", method = RequestMethod.GET)
+    public ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+	    return getOneQuery("username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+	}
 
 
     /*
@@ -230,7 +193,7 @@ public class UserEndpoint {
     */
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public String createOwner(@RequestBody UserDto user) {
+    public ResponseEntity<String> createOwner(@RequestBody UserDto user) {
         HashMap<String,Object> returnInfo = new HashMap<String,Object>();
     	RestClient restClient = null;
     	
@@ -253,20 +216,12 @@ public class UserEndpoint {
 
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
 
-            Response response = null;
-            try{
-                response = restClient.performRequest("POST",
+            Response response = restClient.performRequest("POST",
                         "/users/user",
                         Collections.<String, String>emptyMap(),
                         entity
                 );
-                System.out.println("\n\nreceived response: " + response);
-
-
-            }catch(Exception e){
-                System.out.println(e.toString());
-            }
-
+            System.out.println("\n\nreceived response: " + response);
 
 
 			/*
@@ -286,14 +241,12 @@ public class UserEndpoint {
 			);
 			*/
 
-            returnInfo.put("status", 200);
-            returnInfo.put("content", EntityUtils.toString(response.getEntity()));
+            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
 
         } catch (IOException e){
             e.printStackTrace();
 
-            returnInfo.put("status", 500);
-            returnInfo.put("content", null);
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } finally {
         	if (restClient != null) {
         		try {
@@ -303,10 +256,5 @@ public class UserEndpoint {
 				}
         	}
         }
-        try {
-			return mapper.writeValueAsString(returnInfo);
-		} catch (JsonProcessingException e) {
-			return "{\"status\":500, \"content\":null}";
-		}
     }
 }

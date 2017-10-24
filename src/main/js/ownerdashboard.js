@@ -17,6 +17,7 @@ class OwnerDashboard extends React.Component {
     }
     
     render() { 
+        console.log(JSON.stringify(this.props.userData, null, 4));
         return(
             <div>
                 <Navbar pageName='Owner Dashboard' />

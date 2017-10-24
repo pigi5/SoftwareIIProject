@@ -40,12 +40,6 @@ class LoginModal extends React.Component {
     
     handleSubmit(event) {
         // login
-
-        // TODO: Austin - add the axios REST request to authenticate the user
-        //       (pass in username and password)
-        //       (receive user information if username and password match, else return http error code 401)
-        // EX:
-
         axios.get('/api/users/authuser', {
                 params: {
                     'username': this.state.username,
