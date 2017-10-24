@@ -14,8 +14,6 @@ import petfinder.site.common.user.UserDto;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetService;
 
-import javax.swing.text.html.Option;
-
 /**
  * Created by jlutteringer on 8/23/17.
  */
