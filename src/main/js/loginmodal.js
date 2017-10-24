@@ -33,8 +33,7 @@ class LoginModal extends React.Component {
 
     authorizeUser(obj) {
         this.props.dispatch({
-            //changed from AUTH_USER to USER for spring security
-            type: 'USER',
+            type: 'AUTH_USER',
             userData: obj
         });
         console.log('Logged in as:');
