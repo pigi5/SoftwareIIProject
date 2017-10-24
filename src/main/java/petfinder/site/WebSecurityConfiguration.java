@@ -92,21 +92,21 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		//ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
 
-		/*
-		for(int i = 0; i < users.size(); i++){
+
+		for(int i = 0; i < 10/*users.size()*/; i++){
 			auth.inMemoryAuthentication()
 					.withUser("username").password("password").roles("USER");
 
 					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
 
 		}
-		*/
 
 
+		/*
 		auth.inMemoryAuthentication()
 				.withUser("user").password("password").roles("USER")
 				.and()
 				.withUser("admin").password("admin").roles("USER", "ADMIN");
-
+		*/
 	}
 }
