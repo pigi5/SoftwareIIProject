@@ -31,10 +31,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/api/login").permitAll()
 					.antMatchers("/statics/**").permitAll()
 					*/
-				.anyRequest().authenticated()
+				//.anyRequest().authenticated()
 					.and()
 				.formLogin()
-					.loginPage("/login")
+					.loginPage("/")
 					.permitAll()
 					.and()
 				.logout()
