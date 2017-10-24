@@ -42,7 +42,7 @@ class LoginModal extends React.Component {
     
     handleSubmit(event) {
         // login
-        axios.get('/api/login', {
+        axios.get('/api/users/authuser', {
                 params: {
                     'username': this.state.username,
                     'password': this.state.password
@@ -70,6 +70,8 @@ class LoginModal extends React.Component {
             errorMess = (<p className='text-danger text-center top-buffer-sm'>Invalid username and/or password.</p>);
         } else if (this.state.status == 500) {
             errorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        } else if (this.state.status == 200) {
+            errorMess = (<p className='text-success text-center top-buffer-sm'>Login successful.</p>);
         }
 
         return (
@@ -97,7 +99,7 @@ class LoginModal extends React.Component {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-primary" onClick={this.handleSubmit} data-dismiss="modal">Login</button>
+                                    <button type="submit" className="btn btn-primary">Login</button>
                                 </div>
                             </form>
                         </div>

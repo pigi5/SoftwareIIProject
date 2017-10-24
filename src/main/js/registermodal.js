@@ -22,7 +22,8 @@ class RegisterModal extends React.Component {
                         password: '',
                         passwordRetype: '',
                         name: '',
-                        zip: ''
+                        zip: '',
+                        status: 0
                      };
 
         this.handleChange = this.handleChange.bind(this);
@@ -54,11 +55,14 @@ class RegisterModal extends React.Component {
                 'zipCode': this.state.zip
             })
             .then((response) => {
-                //this.userRegistered(response['data']);
+                this.setState({status: response.status});
+                //this.authorizeUser(response.data);
             })
-            .catch(function(error) {
-                // TODO: Ford - Notify the user that registration failed
-                console.log(error);
+            .catch((error) => {
+                console.log(JSON.stringify(error, null, 4));
+                if (typeof error.response !== 'undefined') {
+                    this.setState({status: error.response.status});
+                }
             });
 
         
@@ -73,6 +77,15 @@ class RegisterModal extends React.Component {
             } else {
                 retypeIcon = 'fa fa-times fa-fw text-danger';
             }
+        }
+        
+        var errorMess = null;
+        if (this.state.status == 401) {
+            errorMess = (<p className='text-danger text-center top-buffer-sm'>That username is already taken.</p>);
+        } else if (this.state.status == 500) {
+            errorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        } else if (this.state.status == 200) {
+            errorMess = (<p className='text-success text-center top-buffer-sm'>Registration successful.</p>);
         }
         
         return (
@@ -112,10 +125,11 @@ class RegisterModal extends React.Component {
                                         <span className="input-group-addon"><i className="fa fa-map-marker fa-fw" /></span>
                                         <input className="form-control" name="zip" type="number" placeholder="Zip Code" value={this.state.zip} onChange={this.handleChange} />
                                     </div>
+                                    {errorMess}
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-success" onClick={this.handleSubmit} data-dismiss="modal">Register</button>
+                                    <button type="submit" className="btn btn-success">Register</button>
                                 </div>
                             </form>
                         </div>

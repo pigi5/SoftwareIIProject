@@ -76,6 +76,13 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public ResponseEntity<String> createOwner(@RequestBody UserDto user) {
+    	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername());
+    	if (userCheck.getStatusCode() == HttpStatus.OK) {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    	} else if (userCheck.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+    		return userCheck;
+    	}
+    	
     	RestClient restClient = null;
     	
         try {
@@ -102,7 +109,7 @@ public class UserEndpoint {
                         Collections.<String, String>emptyMap(),
                         entity
                 );
-            System.out.println("\n\nreceived response: " + response);
+            System.out.println("\n\nreceived response: " + EntityUtils.toString(response.getEntity()));
 
 
 			/*
