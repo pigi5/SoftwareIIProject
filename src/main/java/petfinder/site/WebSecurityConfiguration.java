@@ -63,7 +63,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-				.csrf().disable()
+				.csrf().disable();
 				//.authorizeRequests()
 					//why have these specific restrictions when we just have
 					//anyrequest().authenticated() which makes all requests
