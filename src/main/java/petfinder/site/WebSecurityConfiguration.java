@@ -25,17 +25,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.csrf().disable()
-				.authorizeRequests()
+				//.authorizeRequests()
 					//why have these specific restrictions when we just have
 					//anyrequest().authenticated() which makes all requests
 					//require authentication
-					.antMatchers("/**").permitAll()
+					//.antMatchers("/**").permitAll()
 					/*
 					.antMatchers("/api/login").permitAll()
 					.antMatchers("/statics/**").permitAll()
 					*/
 				//.anyRequest().authenticated()
-					.and()
+					//.and()
 				.formLogin()
 					.loginPage("/")
 					.permitAll()
@@ -55,7 +55,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		for(int i = 0; i < users.size(); i++){
 			auth.inMemoryAuthentication()
+					.withUser("username").password("password").roles("USER");
+					/*
 					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+					*/
 		}
 
 		/*
