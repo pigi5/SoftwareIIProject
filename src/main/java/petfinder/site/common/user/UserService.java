@@ -28,22 +28,23 @@ public class UserService {
 	@Autowired
 	private PetService petService;
 
-	private final Multimap<Long, Long> userMapping =
-			ImmutableMultimap.<Long, Long> builder()
-					.put(3L, 1L)
-					.put(2L, 2L)
-					.put(1L, 3L)
-					.put(2L, 4L)
-					.put(1L, 5L)
+	private final Multimap<String, Long> userMapping =
+			ImmutableMultimap.<String, Long> builder()
+					.put("sarah1", 1L)
+					.put("bob1", 2L)
+					.put("john1", 3L)
+					.put("bob1", 4L)
+					.put("john1", 5L)
 					.build();
 
-	public Optional<UserDto> getUser(Long id) {
-		Optional<UserDto> user = userDao.findUser(id);
+	
+	public Optional<UserDto> getUser(String username) {
+		Optional<UserDto> user = userDao.findUser(username);
 		if(!user.isPresent()){
 			return Optional.empty();
 		}
 
-		List<PetDto> pets = userMapping.get(user.get().getId()).stream().map(petId -> petService.findPet(petId))
+		List<PetDto> pets = userMapping.get(user.get().getUsername()).stream().map(petId -> petService.findPet(petId))
 				.flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
 				.collect(Collectors.toList());
 
