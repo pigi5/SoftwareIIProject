@@ -106,7 +106,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
 
-		tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
+		tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
 
 		for(int i = 0; i < 10/*users.size()*/; i++){
