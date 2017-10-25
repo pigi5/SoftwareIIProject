@@ -1,5 +1,5 @@
 package petfinder.site;
-
+import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
 import java.util.ArrayList;
 import petfinder.site.endpoint.UserEndpoint;
@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import javax.xml.ws.Endpoint;
 
 /**
  * Created by jlutteringer on 8/22/17.
@@ -58,7 +60,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	ObjectMapper mapper = new ObjectMapper();
-	UserEndpoint userEndpoint = new UserEndpoint();
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -85,20 +86,27 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
+		EndpointUtil endpointUtil = new EndpointUtil();
+
+		//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
+		//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
+		final static String ACCESS_KEY = "f1cjmlsx";
+		final static String SECRET_KEY = "tp7vjypq3wdxiowv";
+		final static String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
+
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		//ArrayList<UserDto> users = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
+		ArrayList<UserDto> users = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
 
 
 		for(int i = 0; i < 10/*users.size()*/; i++){
 			auth.inMemoryAuthentication()
-					.withUser("username").password("password").roles("USER");
-
-					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-
+					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+					//.withUser("username").password("password").roles("USER");
 		}
 
 
