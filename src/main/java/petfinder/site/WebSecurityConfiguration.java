@@ -1,4 +1,12 @@
 package petfinder.site;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.web.client.RestTemplate;
 import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
@@ -98,17 +106,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-		RestTemplate restTemplate = new RestTemplate();
+		UserEndpoint userEndpoint = new UserEndpoint();
+
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
 		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
-		
+
 
 		//TODO FORD- can you check the syntax here for ur new endpoint? its crashing at this endpoint
-		String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
+		String result = userEndpoint.getAllUsers();
+		//String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
 		System.out.println(result);
 
 		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
