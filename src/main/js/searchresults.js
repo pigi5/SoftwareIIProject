@@ -22,7 +22,7 @@ export class SearchResults extends React.Component {
                         pic: 'https://c.pxhere.com/photos/77/9b/maine_coon_cat_man_pet_longhair_cat_cool_maine_coon_cat_adidas-845518.jpg!d'
                     }
                 ]
-        }
+        };
     }
     
     createSitterCard(curVal, index, array) {
