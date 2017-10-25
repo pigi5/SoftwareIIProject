@@ -55,7 +55,9 @@ public class EndpointUtil {
                     .build();
             
         	Map<String, String> params =  new HashMap<String, String>();
-        	params.put("q", query);
+        	if (query != null) {
+        		params.put("q", query);
+        	}
         	Response response = restClient.performRequest("GET", esEndpoint, params);
 
             String responseString = EntityUtils.toString(response.getEntity());
@@ -124,7 +126,9 @@ public class EndpointUtil {
                     .build();
             
         	Map<String, String> params =  new HashMap<String, String>();
-        	params.put("q", query);
+        	if (query != null) {
+        		params.put("q", query);
+        	}
         	Response response = restClient.performRequest("GET", esEndpoint, params);
 
             String responseString = EntityUtils.toString(response.getEntity());

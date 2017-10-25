@@ -44,11 +44,11 @@ public class UserEndpoint {
 
     //BONSAI INFORMATION DO NOT DELETE OR CHANGE:
     //BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
-    final String ACCESS_KEY = "f1cjmlsx";
-    final String SECRET_KEY = "tp7vjypq3wdxiowv";
-    final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
+    static final String ACCESS_KEY = "f1cjmlsx";
+    static final String SECRET_KEY = "tp7vjypq3wdxiowv";
+    static final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
 
-    ObjectMapper mapper = new ObjectMapper();
+    static final ObjectMapper mapper = new ObjectMapper();
 
    /* @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserDto findOwner(@PathVariable(name = "id") Long id) {
@@ -58,24 +58,24 @@ public class UserEndpoint {
 
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
-    public ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
+    public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
         return EndpointUtil.getOneQuery("/users/user/_search", "username:" + username);
     }
 
     // Returns user information if username and password are correct
     @RequestMapping(path = "/authuser", method = RequestMethod.GET)
-    public ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
+    public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
 	    return EndpointUtil.getOneQuery("/users/user/_search", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
     
     // Returns all users
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
-    public ResponseEntity<String> getAllUsers(){
+    public static ResponseEntity<String> getAllUsers(){
 	    return EndpointUtil.getMultipleQuery("/users/user/_search", null);
 	}
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public ResponseEntity<String> createOwner(@RequestBody UserDto user) {
+    public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
     	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername());
     	if (userCheck.getStatusCode() == HttpStatus.OK) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
