@@ -1,4 +1,5 @@
 package petfinder.site;
+import org.springframework.web.client.RestTemplate;
 import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
 import java.util.ArrayList;
@@ -100,16 +101,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		EndpointUtil endpointUtil = new EndpointUtil();
 		UserEndpoint userEndpoint = new UserEndpoint();
 
+		RestTemplate restTemplate = new RestTemplate();
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
+		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
 
 		//tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
-		tempUsers = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
+		String result  = restTemplate.getForObject("http://https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
+		System.out.println(result);
+
+		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
 
 		/*
@@ -118,7 +123,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 				.withUser("admin").password("admin").roles("USER", "ADMIN");
 		*/
-		
+
 		for(int i = 0; i < 10/*users.size()*/; i++){
 			auth.inMemoryAuthentication()
 					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
