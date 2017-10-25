@@ -98,9 +98,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-		EndpointUtil endpointUtil = new EndpointUtil();
-		UserEndpoint userEndpoint = new UserEndpoint();
-
 		RestTemplate restTemplate = new RestTemplate();
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
@@ -108,9 +105,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
 		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
+		
 
-		//tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
-
+		//TODO FORD- can you check the syntax here for ur new endpoint? its crashing at this endpoint
 		String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
 		System.out.println(result);
 
