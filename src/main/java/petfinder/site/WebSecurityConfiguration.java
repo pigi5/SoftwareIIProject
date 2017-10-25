@@ -63,6 +63,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+	//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
+	//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
+	final static String ACCESS_KEY = "f1cjmlsx";
+	final static String SECRET_KEY = "tp7vjypq3wdxiowv";
+	final static String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
+
 	ObjectMapper mapper = new ObjectMapper();
 
 	@Override
@@ -92,12 +98,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
 		EndpointUtil endpointUtil = new EndpointUtil();
-
-		//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
-		//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
-		final static String ACCESS_KEY = "f1cjmlsx";
-		final static String SECRET_KEY = "tp7vjypq3wdxiowv";
-		final static String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
 
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
