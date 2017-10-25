@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.lang.String;
 import petfinder.site.endpoint.UserEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +118,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
 		//TODO FORD- can you check the syntax here for ur new endpoint? its crashing at this endpoint
-		String result = userEndpoint.getAllUsers();
+		String result = userEndpoint.getAllUsers().toString();
 		//String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
 		System.out.println(result);
 
