@@ -98,6 +98,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
 		EndpointUtil endpointUtil = new EndpointUtil();
+		UserEndpoint userEndpoint = new UserEndpoint();
 
 		//how to pull the stored passwords from db
 		//LDAP? seems really complex, probably an easier way
@@ -106,14 +107,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
 
-		tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
-
-
-		for(int i = 0; i < 10/*users.size()*/; i++){
-			auth.inMemoryAuthentication()
-					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-					.withUser("username").password("password").roles("USER");
-		}
+		//tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
+		
+		tempUsers = mapper.readValue(userEndpoint.getAllUsers().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
 
 		/*
@@ -122,5 +118,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 				.withUser("admin").password("admin").roles("USER", "ADMIN");
 		*/
+
+		tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
+
+		for(int i = 0; i < 10/*users.size()*/; i++){
+			auth.inMemoryAuthentication()
+					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+					.withUser("username").password("password").roles("USER");
+		}
 	}
 }
