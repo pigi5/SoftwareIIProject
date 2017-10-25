@@ -111,7 +111,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		//tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null).toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
-		String result  = restTemplate.getForObject("http://https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
+		String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
 		System.out.println(result);
 
 		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
