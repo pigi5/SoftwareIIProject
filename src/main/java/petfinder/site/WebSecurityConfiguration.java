@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.lang.String;
 import petfinder.site.endpoint.UserEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,9 +115,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
 
 
-		//TODO FORD- can you check the syntax here for ur new endpoint? its crashing at this endpoint
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
-		//String result  = restTemplate.getForObject("https://heroku-group4-tempeturs.herokuapp.com/api/users/allusers", String.class);
 		System.out.println(result.getBody());
 
 		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
