@@ -1,7 +1,12 @@
 package petfinder.site;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 import petfinder.site.endpoint.UserEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,13 +105,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		ArrayList<UserDto> users = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null), mapper.getTypeFactory().constructCollectionType(ArrayList.class, UserDto.class));
+		List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
+
+		tempUsers = mapper.readValue(endpointUtil.getMultipleQuery("/users/user/_search", null), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
 
 		for(int i = 0; i < 10/*users.size()*/; i++){
 			auth.inMemoryAuthentication()
-					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-					//.withUser("username").password("password").roles("USER");
+					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+					.withUser("username").password("password").roles("USER");
 		}
 
 
