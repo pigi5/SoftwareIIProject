@@ -122,7 +122,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		users = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
-		for(int i = 0; i < 10/*users.size()*/; i++){
+		for(int i = 0; i < users.size(); i++){
 			auth.inMemoryAuthentication()
 					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
 		}
