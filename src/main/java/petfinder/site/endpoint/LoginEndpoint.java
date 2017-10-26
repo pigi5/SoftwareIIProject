@@ -1,6 +1,7 @@
 package petfinder.site.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petfinder.site.common.user.UserDto;
@@ -33,6 +34,9 @@ public class LoginEndpoint {
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
 
         ResponseEntity<String> result = UserEndpoint.searchUserPass(username, password);
+        if(result.getStatusCode() == HttpStatus.NOT_FOUND){
+            return ResponseEntity.notFound().build();
+        }
 
         try {
 
