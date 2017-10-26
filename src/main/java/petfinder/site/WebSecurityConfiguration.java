@@ -89,10 +89,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http
 				.csrf().disable()
 				.authorizeRequests()
-					//why have these specific restrictions when we just have
-					//anyrequest().authenticated() which makes all requests
-					//require authentication
 					.antMatchers("/statics/**").permitAll()
+					.antMatchers("/api/users/**").permitAll()
 				.anyRequest().authenticated()
 					.and()
 				.formLogin()
