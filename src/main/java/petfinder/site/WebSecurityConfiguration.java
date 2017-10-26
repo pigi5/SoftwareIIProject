@@ -92,8 +92,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//why have these specific restrictions when we just have
 					//anyrequest().authenticated() which makes all requests
 					//require authentication
-					.antMatchers("/").permitAll()
-					.antMatchers("/#/").permitAll()
 					.antMatchers("/statics/**").permitAll()
 				.anyRequest().authenticated()
 					.and()
