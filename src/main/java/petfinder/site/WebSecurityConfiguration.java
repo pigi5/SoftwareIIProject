@@ -92,7 +92,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//why have these specific restrictions when we just have
 					//anyrequest().authenticated() which makes all requests
 					//require authentication
-					.antMatchers("/**").permitAll()
+					.antMatchers("/#/").permitAll()
+					.antMatchers("/").permitAll()
 					//.antMatchers("/statics/**").permitAll()
 					.anyRequest().authenticated()
 					.and()
@@ -102,9 +103,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//how to pull the stored passwords from db
-		//LDAP? seems really complex, probably an easier way
-		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
 		ArrayList<UserDto> users = new ArrayList<>();
