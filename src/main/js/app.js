@@ -29,26 +29,8 @@ const reducers = {
 const reducer = combineReducers(reducers);
 const store = createStore(reducer, {
     user: {
-        authed: true, 
+        authed: false,
         userData: {
-            username: 'testUser', 
-            pets:[
-                {
-                    name: 'Spot', 
-                    type: 'Dog', 
-                    description: 'Spot is a good boy.'
-                }, 
-                {
-                    name: 'Fred', 
-                    type: 'Dog', 
-                    description: 'Large & cuddly. Likes bones and walks in the park.'
-                }, 
-                {
-                    name: 'Mittens', 
-                    type: 'Cat', 
-                    description: 'Fiesty, adventurous, biter.'
-                }
-            ]
         }
     }
 });
