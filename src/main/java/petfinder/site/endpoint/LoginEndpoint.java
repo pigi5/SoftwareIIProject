@@ -1,7 +1,6 @@
 package petfinder.site.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petfinder.site.common.user.UserDto;
