@@ -10,6 +10,8 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.web.client.RestTemplate;
 import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -112,14 +114,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
-
+		ArrayList<UserDto> tempUsers = new ArrayList<>();
 
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
 		System.out.println(result.getBody());
 
-		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
+		tempUsers = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
+
+		for(int i = 0; i < tempUsers.size(); i++){
+			System.out.println("Username: " + tempUsers.get(i).getUsername());
+			System.out.println("Password: " + tempUsers.get(i).getPassword());
+		}
 
 		/*
 		auth.inMemoryAuthentication()
