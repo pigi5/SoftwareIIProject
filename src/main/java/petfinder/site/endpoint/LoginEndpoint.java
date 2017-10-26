@@ -32,7 +32,7 @@ public class LoginEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
 
-        ResponseEntity<String> result = UserEndpoint.getUser(username);
+        ResponseEntity<String> result = UserEndpoint.searchUserPass(username, password);
 
         try {
 
