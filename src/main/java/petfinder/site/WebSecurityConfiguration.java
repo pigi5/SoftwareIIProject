@@ -93,7 +93,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//anyrequest().authenticated() which makes all requests
 					//require authentication
 					.antMatchers("/#/").permitAll()
-					.antMatchers("/").permitAll()()
+					.antMatchers("/").permitAll()
 					.antMatchers("/api/login").permitAll()
 					//.antMatchers("/statics/**").permitAll()
 				.anyRequest().authenticated()
