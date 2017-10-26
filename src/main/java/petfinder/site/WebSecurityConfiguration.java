@@ -114,30 +114,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		ArrayList<UserDto> tempUsers = new ArrayList<>();
+		ArrayList<UserDto> users = new ArrayList<>();
 
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
 		System.out.println(result.getBody());
 
 
-		tempUsers = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
-
-		for(int i = 0; i < tempUsers.size(); i++){
-			System.out.println("Username: " + tempUsers.get(i).getUsername());
-			System.out.println("Password: " + tempUsers.get(i).getPassword());
-		}
-
-		/*
-		auth.inMemoryAuthentication()
-				.withUser("user").password("password").roles("USER")
-				.and()
-				.withUser("admin").password("admin").roles("USER", "ADMIN");
-		*/
+		users = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
 		for(int i = 0; i < 10/*users.size()*/; i++){
 			auth.inMemoryAuthentication()
-					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-					.withUser("username").password("password").roles("USER");
+					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
 		}
 	}
 }
