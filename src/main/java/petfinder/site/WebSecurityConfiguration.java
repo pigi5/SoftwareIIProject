@@ -94,8 +94,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					//require authentication
 					.antMatchers("/").permitAll()
 					.antMatchers("/#/").permitAll()
-					//.antMatchers("/statics/**").permitAll()
-					.anyRequest().authenticated()
+					.antMatchers("/statics/**").permitAll()
+				.anyRequest().authenticated()
 					.and()
 				.formLogin()
 					.loginPage("/#/")
