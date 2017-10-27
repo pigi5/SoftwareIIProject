@@ -29,7 +29,6 @@ public class LoginEndpoint {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    private InMemoryUserDetailsManager inMemoryUserDetailsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
@@ -39,11 +38,10 @@ public class LoginEndpoint {
 	        try {
 	            UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
 
-	            inMemoryUserDetailsManager.createUser(User.withUsername(user.getUsername()).password(user.getPassword()).roles("USER").build());
 
 	            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 	            Authentication auth = authenticationManager.authenticate(token);
-	
+	            
 	            SecurityContextImpl securityContext = new SecurityContextImpl();
 	            securityContext.setAuthentication(auth);
 	            SecurityContextHolder.setContext(securityContext);
