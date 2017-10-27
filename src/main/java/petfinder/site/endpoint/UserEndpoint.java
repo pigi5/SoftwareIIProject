@@ -18,6 +18,8 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 import org.apache.http.HttpHost;
 
@@ -99,6 +101,9 @@ public class UserEndpoint {
                         }
                     })
                     .build();
+
+            InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+            manager.createUser(User.withUsername(user.getUsername()).password(user.getPassword()).roles("USER").build());
 
             String json = mapper.writeValueAsString(user);
 
