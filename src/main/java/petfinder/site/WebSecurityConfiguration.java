@@ -10,6 +10,8 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.web.client.RestTemplate;
 import petfinder.site.endpoint.EndpointUtil;
 import petfinder.site.common.user.UserDto;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -85,53 +87,35 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-				.csrf().disable();
-				//.authorizeRequests()
-					//why have these specific restrictions when we just have
-					//anyrequest().authenticated() which makes all requests
-					//require authentication
-					//.antMatchers("/**").permitAll()
-
-					//.antMatchers("/api/login").permitAll()
-					//.antMatchers("/statics/**").permitAll()
-
-				//.anyRequest().authenticated()
-					//.and()
-				//.formLogin()
-				//	.loginPage("/")
-				//	.permitAll()
-				//	.and()
-				//.logout()
-				//	.permitAll();
+				.csrf().disable()
+				.authorizeRequests()
+					.antMatchers("/statics/**").permitAll()
+					.antMatchers("/api/login").permitAll()
+				.anyRequest().authenticated()
+					.and()
+				.formLogin()
+					.loginPage("/")
+					.permitAll()
+					.and()
+				.logout()
+					.permitAll();
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//how to pull the stored passwords from db
-		//LDAP? seems really complex, probably an easier way
-		//JDBC? jdbc seems pretty specific to sql
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
-		//List<HashMap<String, Object>> tempUsers = new LinkedList<HashMap<String, Object>>();
-
+		ArrayList<UserDto> users = new ArrayList<>();
 
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
 		System.out.println(result.getBody());
 
-		//tempUsers = mapper.readValue(restTemplate.getForObject(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
+		users = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
-		/*
-		auth.inMemoryAuthentication()
-				.withUser("user").password("password").roles("USER")
-				.and()
-				.withUser("admin").password("admin").roles("USER", "ADMIN");
-		*/
-
-		for(int i = 0; i < 10/*users.size()*/; i++){
+		for(int i = 0; i < users.size(); i++){
 			auth.inMemoryAuthentication()
-					//.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
-					.withUser("username").password("password").roles("USER");
+					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
 		}
 	}
 }
