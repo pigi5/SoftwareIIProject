@@ -37,9 +37,9 @@ class Index extends React.Component {
                     <Route exact path="/sitterprefs" component={SitterPreferences} />
                     <Route exact path="/startappt" component={StartAppointment} />
                    
-                    <PrivateRoute exact path="/dashboard/owner" authed={this.props.authed} component={OwnerDashboard} />
-                    <PrivateRoute exact path="/dashboard/sitter" authed={this.props.authed} component={SitterDashboard} />
-                    <PrivateRoute exact path="/profile" authed={this.props.authed} component={Profile} />
+                    <Route exact path="/dashboard/owner" authed={this.props.authed} component={OwnerDashboard} />
+                    <Route exact path="/dashboard/sitter" authed={this.props.authed} component={SitterDashboard} />
+                    <Route exact path="/profile" authed={this.props.authed} component={Profile} />
                 </div>
     		</Router>
 		);
