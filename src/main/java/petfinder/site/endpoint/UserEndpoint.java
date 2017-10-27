@@ -22,11 +22,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 import org.apache.http.HttpHost;
+import javax.servlet.http.HttpSession;
 
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -73,7 +75,7 @@ public class UserEndpoint {
     // Returns all users
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.getMultipleQuery("/users/user/_search", null);
+	    return EndpointUtil.getMultipleQuery("/users/user/_search?size=1000", null);
 	}
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
@@ -102,8 +104,6 @@ public class UserEndpoint {
                     })
                     .build();
 
-            InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-            manager.createUser(User.withUsername(user.getUsername()).password(user.getPassword()).roles("USER").build());
 
             String json = mapper.writeValueAsString(user);
 
@@ -133,6 +133,8 @@ public class UserEndpoint {
 					entity
 			);
 			*/
+
+
 
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
 
