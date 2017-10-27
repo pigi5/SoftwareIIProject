@@ -2,6 +2,14 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome.scss";
 
+.text-white {
+  color: #fff !important;
+}
+
+.text-white:focus, .text-white:hover {
+  color: #ccc !important;
+}
+
 .button {
     background-color: #4CAF50; /* Green */
     border: none;

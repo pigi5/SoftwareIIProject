@@ -43,14 +43,22 @@ class MyNavbar extends React.Component {
         if (this.props.authed) {
             return (
                 <Nav pullRight activeHref={'/#' + this.props.pageUrl}>
-                    <NavItem href="/#/dashboard/sitter">Sitter Dashboard<i className="fa fa-id-card-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
-                    <NavItem href="/#/dashboard/owner">Owner Dashboard<i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
-                    <NavDropdown title={this.props.userData.username} id="basic-nav-dropdown">
+                    <NavItem href="/#/dashboard/sitter" className="bg-success">
+                        <span>Sitter Dashboard</span>
+                        <i className="fa fa-id-card-o fa-fw pull-left center-icon-vertical" aria-hidden="true" />
+                    </NavItem>
+                    <NavItem href="/#/dashboard/owner" className="bg-info">
+                        <span>Owner Dashboard</span>
+                        <i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true" />
+                    </NavItem>
+                    <NavDropdown title={<span>{this.props.userData.username}<i className="fa fa-user fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>} id="profile-dropdown">
                         <MenuItem href="/#/profile">Profile</MenuItem>
                         <MenuItem href="/#/startappt">Start Appointment</MenuItem>
                         <MenuItem href="/#/sitterprefs">Sitter Prefs</MenuItem>
                     </NavDropdown>
-                    <NavItem onClick={this.logout}>Logout<i className="fa fa-sign-out pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
+                    <NavItem href="/logout" onClick={this.logout} className="bg-primary">
+                        <span className="text-white">Logout<i className="fa fa-sign-out fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
+                    </NavItem>
                 </Nav>
             );
         } else {

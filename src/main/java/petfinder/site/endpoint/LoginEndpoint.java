@@ -34,27 +34,22 @@ public class LoginEndpoint {
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
 
         ResponseEntity<String> result = UserEndpoint.searchUserPass(username, password);
-        if(result.getStatusCode() == HttpStatus.NOT_FOUND){
-            return ResponseEntity.notFound().build();
+        if(result.getStatusCode() == HttpStatus.OK) {
+	        try {
+	            UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
+	
+	            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+	            Authentication auth = authenticationManager.authenticate(token);
+	
+	            SecurityContextImpl securityContext = new SecurityContextImpl();
+	            securityContext.setAuthentication(auth);
+	            SecurityContextHolder.setContext(securityContext);
+	
+	        }catch(Exception e){
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	        }
         }
-
-        try {
-
-            UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
-
-
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            Authentication auth = authenticationManager.authenticate(token);
-
-            SecurityContextImpl securityContext = new SecurityContextImpl();
-            securityContext.setAuthentication(auth);
-            SecurityContextHolder.setContext(securityContext);
-
-        }catch(Exception e){
-            e.printStackTrace();
-            //TODO- failed authentication handling
-        }
-
         return result;
     }
 }

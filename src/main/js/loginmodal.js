@@ -76,9 +76,8 @@ class LoginModal extends React.Component {
         }
 
         return (
-            <NavItem onClick={this.open}>
-                <span>Login</span>
-                <i className="fa fa-sign-in fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
+            <NavItem onClick={this.open} className="bg-primary">
+                <span className="text-white">Login<i className="fa fa-sign-in fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
                 <Modal show={this.state.showModal} onHide={this.close}>
                     <Modal.Header closeButton>
                         <Modal.Title>Welcome Back!</Modal.Title>
