@@ -3,6 +3,8 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 import petfinder.site.common.user.UserDto;
 
@@ -27,8 +29,7 @@ public class LoginEndpoint {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-
+    private InMemoryUserDetailsManager inMemoryUserDetailsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
@@ -37,7 +38,9 @@ public class LoginEndpoint {
         if(result.getStatusCode() == HttpStatus.OK) {
 	        try {
 	            UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
-	
+
+	            inMemoryUserDetailsManager.createUser(User.withUsername(user.getUsername()).password(user.getPassword()).roles("USER").build());
+
 	            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 	            Authentication auth = authenticationManager.authenticate(token);
 	
