@@ -95,7 +95,7 @@ class LoginModal extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={this.close}>Close</Button>
-                        <Button onClick={this.handleSubmit}>Login</Button>
+                        <Button onClick={this.handleSubmit} bsStyle="primary">Login</Button>
                     </Modal.Footer>
                 </Modal>
             </NavItem>

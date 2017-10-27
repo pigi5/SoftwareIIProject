@@ -111,12 +111,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
 		System.out.println(result.getBody());
 
-
 		users = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
 
-		for(int i = 0; i < users.size(); i++){
+		for(UserDto user : users) {
 			auth.inMemoryAuthentication()
-					.withUser(users.get(i).getUsername()).password(users.get(i).getPassword()).roles("USER");
+					.withUser(user.getUsername()).password(user.getPassword()).roles("USER");
 		}
 	}
 }

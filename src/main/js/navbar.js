@@ -24,8 +24,6 @@ class MyNavbar extends React.Component {
             ]
         };
         
-        console.log(JSON.stringify(this.props, null, 4));
-        
         this.createNavLink = this.createNavLink.bind(this);
         this.logout = this.logout.bind(this);
     }

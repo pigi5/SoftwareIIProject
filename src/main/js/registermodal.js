@@ -126,7 +126,7 @@ class RegisterModal extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={this.close}>Close</Button>
-                        <Button onClick={this.handleSubmit}>Register</Button>
+                        <Button onClick={this.handleSubmit} bsStyle="primary">Register</Button>
                     </Modal.Footer>
                 </Modal>
             </NavItem>
