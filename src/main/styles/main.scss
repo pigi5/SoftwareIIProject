@@ -10,6 +10,14 @@ $fa-font-path: "~font-awesome/fonts";
   color: #ccc !important;
 }
 
+.text-dark {
+  color: #343a40 !important;
+}
+
+.text-dark:focus, .text-dark:hover {
+  color: #1d2124 !important;
+}
+
 .button {
     background-color: #4CAF50; /* Green */
     border: none;

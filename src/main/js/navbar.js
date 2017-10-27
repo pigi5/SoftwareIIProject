@@ -77,7 +77,7 @@ class MyNavbar extends React.Component {
                 <Navbar fluid fixedTop>
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <a href="/#/">Tempeturs</a>
+                            <a href="/#/" className="text-dark">Tempeturs</a>
                         </Navbar.Brand>
                     </Navbar.Header>
                     <Navbar.Collapse>
