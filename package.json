@@ -63,7 +63,7 @@
   "dependencies": {
     "axios": "0.15.3",
     "babel-polyfill": "^6.23.0",
-    "bootstrap": "4.0.0-beta",
+    "bootstrap": "3.3.7",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.4",
     "react": "^15.5.4",

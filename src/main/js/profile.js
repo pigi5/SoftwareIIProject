@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import Navbar from 'js/navbar';
+import MyNavbar from 'js/navbar';
 
 export class Profile extends React.Component {
     render() { 
         return(
             <div>
-                <Navbar pageName='Profile' />
-                <div className='container padded'>
+                <MyNavbar pageUrl={this.props.match.url} />
+                <div className='container'>
                     <p>This is your user profile.</p>
                     <div>
                 		<div className="row">

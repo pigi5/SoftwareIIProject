@@ -2,17 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-
-export class LoginButton extends React.Component {
-    render() {
-        return (
-            <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#loginModal">
-                <span>Login</span>
-                <i className="fa fa-sign-in fa-fw pull-left center-icon-vertical"  aria-hidden="true"></i>
-            </button>
-        );
-    }
-}
+import { NavItem, Modal, Button } from 'react-bootstrap';
 
 class LoginModal extends React.Component {
     constructor(props) {
@@ -20,11 +10,22 @@ class LoginModal extends React.Component {
         this.state = {
                         username: '',
                         password: '',
-                        status: 0
+                        status: 0,
+                        showModal: this.props.show
                      };
-
+        
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.close = this.close.bind(this);
+        this.open = this.open.bind(this);
+    }
+
+    close() {
+        this.setState({ showModal: false });
+    }
+
+    open() {
+        this.setState({ showModal: true });
     }
     
     handleChange(event) {
@@ -75,37 +76,30 @@ class LoginModal extends React.Component {
         }
 
         return (
-            <div>
-                <div className="modal fade" id="loginModal" tabIndex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <form onSubmit={this.handleSubmit}>
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="loginModalLabel">Welcome Back!</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
-                                        <input className="form-control" name="username" type="text" placeholder="Username" value={this.state.username} onChange={this.handleChange} />
-                                    </div>
-                                    <div className="input-group top-buffer-sm">
-                                        <span className="input-group-addon"><i className="fa fa-key fa-fw"></i></span>
-                                        <input className="form-control" name="password" type="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} />
-                                    </div>
-                                    {errorMess}
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-primary">Login</button>
-                                </div>
-                            </form>
+            <NavItem onClick={this.open}>
+                <span>Login</span>
+                <i className="fa fa-sign-in fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
+                <Modal show={this.state.showModal} onHide={this.close}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Welcome Back!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="input-group">
+                            <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
+                            <input className="form-control" name="username" type="text" placeholder="Username" value={this.state.username} onChange={this.handleChange} />
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <div className="input-group top-buffer-sm">
+                            <span className="input-group-addon"><i className="fa fa-key fa-fw"></i></span>
+                            <input className="form-control" name="password" type="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} />
+                        </div>
+                        {errorMess}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.close}>Close</Button>
+                        <Button onClick={this.handleSubmit}>Login</Button>
+                    </Modal.Footer>
+                </Modal>
+            </NavItem>
         );
     }
 }

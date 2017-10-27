@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import Navbar from 'js/navbar';
+import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
 
 class OwnerDashboard extends React.Component {
@@ -20,7 +20,7 @@ class OwnerDashboard extends React.Component {
         console.log(JSON.stringify(this.props.userData, null, 4));
         return(
             <div>
-                <Navbar pageName='Owner Dashboard' />
+                <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
                     <div className="card-deck">
                         {this.props.userData.pets.map(this.createPetCard)}

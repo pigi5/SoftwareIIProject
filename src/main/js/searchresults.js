@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
-import Navbar from 'js/navbar';
+import MyNavbar from 'js/navbar';
 
 export class SearchResults extends React.Component {
     constructor(props) {
@@ -42,7 +42,7 @@ export class SearchResults extends React.Component {
     render() {
         return (
             <div>
-				<Navbar pageName="Search" />
+                <MyNavbar pageUrl={this.props.match.url} />
             	<div className="container top-buffer-lg">
 		        	{this.state.sitter.map(this.createSitterCard)}
 					

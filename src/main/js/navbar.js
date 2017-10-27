@@ -1,11 +1,12 @@
 import React from 'react';
 import RegisterModal, { RegisterButton } from 'js/registermodal';
-import LoginModal, { LoginButton } from 'js/loginmodal';
+import LoginModal from 'js/loginmodal';
 import { connect } from 'react-redux';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 
-class Navbar extends React.Component {
-    constructor() {
-        super();
+class MyNavbar extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
             pages: [
                 {
@@ -23,67 +24,41 @@ class Navbar extends React.Component {
             ]
         };
         
+        console.log(JSON.stringify(this.props, null, 4));
+        
         this.createNavLink = this.createNavLink.bind(this);
+        this.logout = this.logout.bind(this);
     }
-    
+
     logout() {
         this.props.dispatch({type:'UNAUTH_USER'});
         this.forceUpdate();
     }
     
     createNavLink(curVal, index, array) {
-        if (curVal.name == this.props.pageName) {
-            return (<li key={index} className="nav-item active"><a className="nav-link" href={curVal.link}>{curVal.name}<span className="sr-only">(current)</span></a></li>);
-        } else {
-            return (<li key={index} className="nav-item"><a className="nav-link" href={curVal.link}>{curVal.name}</a></li>);
-        }
+        return (<NavItem eventKey={index} key={index} href={curVal.link}>{curVal.name}</NavItem>);
     }
     
     getNavButtons() {
         if (this.props.authed) {
             return (
-                <ul className="nav navbar-nav navbar-right">
-                    <li className="nav-item right-buffer-sm">
-                        <a role="button" className='btn btn-success btn-block' href="/#/dashboard/sitter">
-                            <span>Sitter Dashboard</span>
-                            <i className="fa fa-id-card-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
-                        </a>
-                    </li>
-                    <li className="nav-item right-buffer-sm">
-                        <a role="button" className="btn btn-success btn-block" href="/#/dashboard/owner">
-                            <span>Owner Dashboard</span>
-                            <i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true"></i>
-                        </a>
-                    </li>
-                    <li className="nav-item dropdown right-buffer-sm">
-                        <a className="nav-link dropdown-toggle" href="#" id="profileDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span>{this.props.userData.username}</span>
-                            <i className="fa fa-user-circle-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
-                        </a>
-                        <div className="dropdown-menu" aria-labelledby="profileDropdownMenuLink">
-                            <a className="dropdown-item" href="/#/profile">Profile</a>
-                            <a className="dropdown-item" href="/#/startappt">Start Appointment</a>
-                            <a className="dropdown-item" href="/#/sitterprefs">Sitter Prefs</a>
-                        </div>
-                    </li>
-                    <li>
-                        <button className='btn btn-primary btn-block' onClick={() => this.logout()}>
-                            <span>Logout</span>
-                            <i className="fa fa-sign-out fa-fw pull-left center-icon-vertical" aria-hidden="true"></i>
-                        </button>
-                    </li>
-                </ul>
+                <Nav pullRight activeHref={'/#' + this.props.pageUrl}>
+                    <NavItem href="/#/dashboard/sitter">Sitter Dashboard<i className="fa fa-id-card-o fa-fw pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
+                    <NavItem href="/#/dashboard/owner">Owner Dashboard<i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
+                    <NavDropdown title={this.props.userData.username} id="basic-nav-dropdown">
+                        <MenuItem href="/#/profile">Profile</MenuItem>
+                        <MenuItem href="/#/startappt">Start Appointment</MenuItem>
+                        <MenuItem href="/#/sitterprefs">Sitter Prefs</MenuItem>
+                    </NavDropdown>
+                    <NavItem onClick={this.logout}>Logout<i className="fa fa-sign-out pull-left center-icon-vertical" aria-hidden="true"></i></NavItem>
+                </Nav>
             );
         } else {
             return (
-                <ul className="nav navbar-nav navbar-right">
-                    <li className="right-buffer-sm">
-                        <LoginButton />
-                    </li>
-                    <li>
-                        <RegisterButton />
-                    </li>
-                </ul>
+                <Nav pullRight>
+                    <LoginModal show={this.props.pageUrl === '/login'} />
+                    <RegisterModal show={this.props.pageUrl === '/register'} />
+                </Nav>
             );
         }
     }
@@ -91,22 +66,20 @@ class Navbar extends React.Component {
     render() {        
         return (
             <div>
-                <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-                    <a className="navbar-brand" href="/#/">Tempeturs</a>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-            
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mr-auto">
+                <Navbar fluid fixedTop>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <a href="/#/">Tempeturs</a>
+                        </Navbar.Brand>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav activeHref={'/#' + this.props.pageUrl}>
                             {this.state.pages.map(this.createNavLink)}
-                        </ul>
+                        </Nav>
                         {this.getNavButtons()}
-                    </div>
-                </nav>
+                    </Navbar.Collapse>
+                </Navbar>
                 <div className="top-buffer-lg" />
-                <LoginModal />
-                <RegisterModal />
             </div>
         );
     }
@@ -119,4 +92,4 @@ const mapStateToProps = (store) => {
     };
 };
 
-export default connect(mapStateToProps)(Navbar);
+export default connect(mapStateToProps)(MyNavbar);

@@ -28,6 +28,8 @@ class Index extends React.Component {
 			<Router>
 			    <div>
         			<Route exact path="/" component={Home} />
+                    <Route exact path="/login" component={Home} />
+                    <Route exact path="/register" component={Home} />
                     <Route exact path="/about" component={AboutPage} />
                     <Route exact path="/faq" component={FAQPage} />
         

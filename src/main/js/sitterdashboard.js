@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import Navbar from 'js/navbar';
+import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
 
 class SitterDashboard extends React.Component {
     render() { 
         return(
             <div>
-                <Navbar pageName='Sitter Dashboard' />
+                <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
                     
                 </div>

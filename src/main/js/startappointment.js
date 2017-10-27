@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
 import { AddPetModal } from 'js/addpetmodal.js';
 import { connect } from 'react-redux';
-import Navbar from 'js/navbar';
+import MyNavbar from 'js/navbar';
 
 export class StartAppointment extends React.Component {
     render() {
         return (
         	<div>
-        	    <Navbar pageName='Start Appointment' />
+        	    <MyNavbar pageUrl={this.props.match.url} />
 	            
 	        	<div className="container left-align-300">
 	        		<h2>Search for a sitter</h2>
