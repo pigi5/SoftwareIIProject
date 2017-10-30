@@ -1,14 +1,14 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.user.Week;
-import java.util.Random;
+
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by jlutteringer on 8/23/17.
@@ -117,6 +117,20 @@ public class UserDto {
     }
 	public Integer getZipCode() {
 		return zipCode;
+	}
+
+	//Easy way to add pets to the database
+	public void addPets(List<PetDto> pet){
+		if(pets.isEmpty()){
+			this.setPets(pet);
+		}
+		else{
+			List<PetDto> newList = Stream.of(this.pets, pet)
+									.flatMap(Collection::stream)
+									.collect(Collectors.toList());
+
+			this.setPets(newList);
+		}
 	}
 
 	@Override

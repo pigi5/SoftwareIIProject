@@ -21,7 +21,21 @@ export class AddPetModal extends React.Component {
     handleSubmit(event) {
         // add pet
     	// TODO: add pet name and type to list
-        
+
+		axios.post('/api/users/Addpets', {
+			'name': this.state.name,
+			'type': this.state.type
+		})
+			.then((response) => {
+			this.setState({status: response.status});
+		})
+		.catch((error) => {
+            console.log(JSON.stringify(error, null, 4));
+			if (typeof error.response !== 'undefined') {
+				this.setState({status: error.response.status});
+			}
+		})
+
         event.preventDefault();
     }
 
