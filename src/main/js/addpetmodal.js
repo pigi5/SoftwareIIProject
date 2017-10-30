@@ -34,7 +34,7 @@ export class AddPetModal extends React.Component {
 			if (typeof error.response !== 'undefined') {
 				this.setState({status: error.response.status});
 			}
-		})
+		});
 
         event.preventDefault();
     }

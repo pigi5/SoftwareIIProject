@@ -79,6 +79,8 @@ public class UserEndpoint {
 	    return EndpointUtil.getMultipleQuery("/users/user/_search", null, 1000);
 	}
 
+
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
     	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername());
@@ -134,8 +136,6 @@ public class UserEndpoint {
 					entity
 			);
 			*/
-
-
 
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
 
