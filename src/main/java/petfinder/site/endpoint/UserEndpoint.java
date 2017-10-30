@@ -72,10 +72,11 @@ public class UserEndpoint {
 	    return EndpointUtil.getOneQuery("/users/user/_search", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
     
-    // Returns all users
+    // Returns "all" users (1000)
+    // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.getMultipleQuery("/users/user/_search?size=1000", null);
+	    return EndpointUtil.getMultipleQuery("/users/user/_search", null, 1000);
 	}
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)

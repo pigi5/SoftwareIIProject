@@ -8,7 +8,7 @@ import {SitterPreferences} from 'js/sitterpreferences';
 import {StartAppointment} from 'js/startappointment';
 import OwnerDashboard from 'js/ownerdashboard';
 import SitterDashboard from 'js/sitterdashboard';
-import {Profile} from 'js/profile';
+import Profile from 'js/profile';
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
     return (

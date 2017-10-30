@@ -115,7 +115,7 @@ class RegisterModal extends React.Component {
                             <input className="form-control" name="passwordRetype" type="password" placeholder="Retype Password" value={this.state.passwordRetype} onChange={this.handleChange} />
                         </div>
                         <div className="input-group top-buffer-sm">
-                            <span className="input-group-addon"><i className="fa fa-user fa-fw" /></span>
+                            <span className="input-group-addon"><i className="fa fa-user-o fa-fw" /></span>
                             <input className="form-control" name="name" type="text" placeholder="Full Name" value={this.state.name} onChange={this.handleChange} />
                         </div>
                         <div className="input-group top-buffer-sm">

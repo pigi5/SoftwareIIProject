@@ -2,6 +2,10 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome.scss";
 
+textarea {
+	resize: vertical;
+}
+
 .text-white {
   color: #fff !important;
 }
@@ -29,12 +33,28 @@ $fa-font-path: "~font-awesome/fonts";
     font-size: 16px;
 }
 
+.container {
+	margin-bottom: 20px;
+}
+
 .top-buffer-sm {
 	margin-top:20px;
 }
 
+.top-buffer-xs {
+    margin-top:2px;
+}
+
 .top-buffer-lg {
     margin-top:80px;
+}
+
+.bottom-buffer-sm {
+    margin-bottom:20px;
+}
+
+.bottom-buffer-md {
+    margin-bottom:40px;
 }
 
 .right-buffer-sm {

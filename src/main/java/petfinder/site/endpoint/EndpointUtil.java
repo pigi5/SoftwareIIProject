@@ -37,7 +37,7 @@ public class EndpointUtil {
      *         query - elasticsearch query string
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> getMultipleQuery(String esEndpoint, String query) {
+    static ResponseEntity<String> getMultipleQuery(String esEndpoint, String query, int amount) {
     	RestClient restClient = null;
         
         //Set up connection to database
@@ -57,6 +57,7 @@ public class EndpointUtil {
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
         		params.put("q", query);
+        		params.put("size", Integer.toString(amount));
         	}
         	Response response = restClient.performRequest("GET", esEndpoint, params);
 

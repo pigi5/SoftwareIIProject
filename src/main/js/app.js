@@ -30,8 +30,27 @@ const reducer = combineReducers(reducers);
 const store = createStore(reducer, 
         {
             user: {
-                authed: false,
-                userData: {}
+                authed: true,
+                userData: {
+                    name: 'Test User',
+                    email: 'test@test.com',
+                    username: 'testuser2',
+                    password: 'password',
+                    zipCode: 11111,
+                    pets: [
+                        {
+                            name: 'Fido',
+                            type: 'Dog',
+                            description: 'Good Boy'
+                        },
+                        {
+                            name: 'Milo',
+                            type: 'Cat',
+                            description: 'Good Girl'
+                        }
+                    ],
+                    rating: null
+                }
             }
         }
 );

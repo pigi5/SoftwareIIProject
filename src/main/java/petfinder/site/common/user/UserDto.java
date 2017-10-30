@@ -27,6 +27,7 @@ public class UserDto {
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
+		this.pets = Collections.emptyList();
 	}
 	public UserDto(String name, String email) {
 		this.name = name;
@@ -35,6 +36,7 @@ public class UserDto {
 		//rating stuff
 		this.rating = -1.0;
 		this.numberOfRatings = 0;
+		this.pets = Collections.emptyList();
 	}
 	public UserDto(String name, String email, List<PetDto> pets){
 		this.name = name;

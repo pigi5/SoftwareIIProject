@@ -1,308 +1,329 @@
 import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
+import { connect } from 'react-redux';
+import { PageHeader, Tab, Nav, NavItem, Grid, Row, Col, Button } from 'react-bootstrap';
 
-export class Profile extends React.Component {
+function mapPetsToForms(curVal, index, array) {
+    return {...curVal, editable: false};
+}
+
+class Profile extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+                        status: 0,
+                        inputForms: {
+                            name: {
+                                name: 'Full Name',
+                                value: this.props.userData.name,
+                                type: 'text',
+                                icon: 'user-o',
+                                editable: false
+                            },
+                            email: {
+                                name: 'Email',
+                                value: this.props.userData.email,
+                                type: 'email',
+                                icon: 'envelope',
+                                editable: false
+                            },
+                            password: {
+                                name: 'Password',
+                                value: this.props.userData.password,
+                                type: 'password',
+                                icon: 'key',
+                                editable: false
+                            },
+                            zipCode: {
+                                name: 'Zip Code',
+                                value: this.props.userData.zipCode,
+                                type: 'number',
+                                icon: 'map-marker',
+                                editable: false
+                            }
+                        },
+                        petForms: this.props.userData.pets.map(mapPetsToForms)
+                     };
+    }
+
+    userUpdated(obj) {
+        this.props.dispatch({
+            type: 'AUTH_USER',
+            userData: obj
+        });
+        console.log('User Updated Profile:');
+        console.log(JSON.stringify(obj, null, 4));
+    }
+    
+    handleGeneralChange(event) {
+        // have to use spread operator in order to not wipe out the rest of inputForms
+        this.setState({inputForms: {...this.state.inputForms, [event.target.name]: {...this.state.inputForms[event.target.name], value: event.target.value}}});
+    }
+    
+    cancelGeneral(event) {
+        var formsClone = JSON.parse(JSON.stringify(this.state.inputForms));
+        
+        for (var attr in formsClone) {
+            formsClone[attr].value = this.props.userData[attr];
+            formsClone[attr].editable = false;
+        }
+        this.setState({inputForms: formsClone});
+    }
+    
+    handleGeneralSubmit(event) {
+        // update general
+        /*
+        axios.get('/api/login', {
+                params: {
+                    'username': this.state.inputValues.username,
+                    'password': this.state.inputValues.password,
+                    'email': this.state.inputValues.email,
+                    'zipCode': this.state.inputValues.zipCode
+                }
+            })
+            .then((response) => {
+                this.setState({status: response.status});
+                this.authorizeUser(response.data);
+            })
+            .catch((error) => {
+                if (typeof error.response !== 'undefined') {
+                    this.setState({status: error.response.status});
+                    console.log(this.state.status);
+                }
+            });
+        */
+        event.preventDefault();
+    }
+
+    handleOwnerChange(event) {
+        var arrayClone = JSON.parse(JSON.stringify(this.state.petForms));
+        arrayClone[event.target.id] = {...this.state.petForms[event.target.id], [event.target.name]: event.target.value};
+        this.setState({petForms: arrayClone});
+    }
+    
+    cancelOwner(event) {
+        this.setState({petForms: this.props.userData.pets.map(mapPetsToForms)});
+    }
+    
+    handleOwnerSubmit(event) {
+        // update owner
+        /*
+        axios.get('/api/login', {
+                params: {
+                    'username': this.state.inputValues.username,
+                    'password': this.state.inputValues.password,
+                    'email': this.state.inputValues.email,
+                    'zipCode': this.state.inputValues.zipCode
+                }
+            })
+            .then((response) => {
+                this.setState({status: response.status});
+                this.authorizeUser(response.data);
+            })
+            .catch((error) => {
+                if (typeof error.response !== 'undefined') {
+                    this.setState({status: error.response.status});
+                    console.log(this.state.status);
+                }
+            });
+        */
+        event.preventDefault();
+    }
+
+    handleSitterChange(event) {
+        // set sitter state here
+    }
+    
+    cancelSitter(event) {
+        // reset sitter state here
+    }
+    
+    handleSitterSubmit(event) {
+        // update sitter
+        /*
+        axios.get('/api/login', {
+                params: {
+                    'username': this.state.inputValues.username,
+                    'password': this.state.inputValues.password,
+                    'email': this.state.inputValues.email,
+                    'zipCode': this.state.inputValues.zipCode
+                }
+            })
+            .then((response) => {
+                this.setState({status: response.status});
+                this.authorizeUser(response.data);
+            })
+            .catch((error) => {
+                if (typeof error.response !== 'undefined') {
+                    this.setState({status: error.response.status});
+                    console.log(this.state.status);
+                }
+            });
+        */
+        event.preventDefault();
+    }
+    
+    createProfileFormLine(key, index) {
+        var curVal = this.state.inputForms[key];
+        return(
+            <Row className="top-buffer-sm" key={index}>
+                <Col sm={3}>
+                    <legend>{curVal.name}</legend>
+                </Col>
+                <Col sm={7} md={5}>
+                    <div className="input-group">
+                        <span className="input-group-addon"><i className={'fa fa-' + curVal.icon + ' fa-fw'} /></span>
+                        <input className="form-control" name={key} type={curVal.type} placeholder={curVal.name} value={curVal.value} onChange={(event) => this.handleGeneralChange(event)} disabled={!curVal.editable} />
+                        <span className="input-group-btn"><Button onClick={() => this.setState({inputForms: {...this.state.inputForms, [key]: {...this.state.inputForms[key], editable:!curVal.editable}}})} bsStyle="primary"><i className="fa fa-pencil fa-fw" /></Button></span>
+                    </div>
+                </Col>
+            </Row>
+        );
+    }
+    
+    createPetFormLine(curVal, index) {
+        var arrayClone = JSON.parse(JSON.stringify(this.state.petForms));
+        return(
+            <div className="bottom-buffer-sm" key={index}>
+                <div className="input-group">
+                    <span className="input-group-addon"><i className="fa fa-tag fa-fw" /></span>
+                    <input id={index} className="form-control" name="name" type="text" placeholder="Name" value={curVal.name} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
+                </div>
+                <div className="input-group top-buffer-xs">
+                    <span className="input-group-addon"><i className="fa fa-paw fa-fw" /></span>
+                    <input id={index} className="form-control" name="type" type="text" placeholder="Type" value={curVal.type} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
+                </div>
+                <div className="input-group top-buffer-xs">
+                    <span className="input-group-addon"><i className="fa fa-comment fa-fw" /></span>
+                    <textarea id={index} className="form-control" name="description" type="text" placeholder="Description" value={curVal.description} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
+                </div>
+                <Row className="top-buffer-sm bottom-buffer-md">
+                    <Col sm={6}>
+                        <Button onClick={() => {
+                                arrayClone[index].editable = !curVal.editable;
+                                this.setState({petForms: arrayClone});
+                            }} bsStyle="primary" block><i className="fa fa-pencil fa-fw" /></Button>
+                    </Col>
+                    <Col sm={6}>
+                        <Button onClick={() => {
+                                arrayClone.splice(index, 1);
+                                this.setState({petForms: arrayClone});
+                            }} bsStyle="danger" block><i className="fa fa-trash fa-fw" /></Button>
+                    </Col>
+                </Row>
+            </div>
+        );
+    }
+    
+
+    
     render() { 
+        var isGeneralChanged = false;
+        for (var attr in this.state.inputForms) {
+            if (this.state.inputForms[attr].value != this.props.userData[attr]) {
+                isGeneralChanged = true;
+            }
+        }
+        
+        var isOwnerChanged = false;
+        if (this.state.petForms.length != this.props.userData.pets.length) {
+            isOwnerChanged = true;
+        } else {
+            for (var i = 0; i < this.state.petForms.length; i++) {
+                if (this.state.petForms[i].name != this.props.userData.pets[i].name || 
+                        this.state.petForms[i].type != this.props.userData.pets[i].type || 
+                        this.state.petForms[i].description != this.props.userData.pets[i].description) {
+                    isOwnerChanged = true;
+                }
+            }
+        }
+        
         return(
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
-                    <p>This is your user profile.</p>
-                    <div>
-                		<div className="row">
-                			<legend className="col-form-legend col-sm-2">Name</legend>
-                			<div className="col-sm-10">
-                				<EditNameModal />
-                			</div>
-                		</div>
-                		<div className="row top-buffer-sm">
-	            			<legend className="col-form-legend col-sm-2">Email</legend>
-	            			<div className="col-sm-10">
-	            				<EditEmailModal />
-	            			</div>
-	            		</div>
-	            		<div className="row top-buffer-sm">
-	            			<legend className="col-form-legend col-sm-2">Password</legend>
-	            			<div className="col-sm-10">
-	            				<button className="btn btn-primary" data-toggle="modal" data-target="">Change password...</button>
-	            			</div>
-	            		</div>
-	            		<div className="row top-buffer-sm">
-	            			<legend className="col-form-legend col-sm-2">Zip Code</legend>
-	            			<div className="col-sm-10">
-	            				<EditZipCodeModal />
-	            			</div>
-	            		</div>
-	            		<div className="row top-buffer-sm">
-	            			<legend className="col-form-legend col-sm-2">Pets</legend>
-	            			<div className="col-sm-10">
-	            				<p>Fido, dog</p>
-	            				<p>Fluffy, cat</p>
-	            				<button className="btn btn-primary" data-toggle="modal" data-target="">Add or remove...</button>
-	            			</div>
-	            		</div>
-                    </div>
-                    
+                    <PageHeader>
+                        Profile
+                    </PageHeader>
+                    <Tab.Container id="profile-tabs" defaultActiveKey={1}>
+                        <Row>
+                            <Col xs={10} sm={2}>
+                                <Nav bsStyle="pills" stacked>
+                                    <NavItem eventKey={1}>General</NavItem>
+                                    <NavItem eventKey={2}>Owner</NavItem>
+                                    <NavItem eventKey={3}>Sitter</NavItem>
+                                </Nav>
+                            </Col>
+                            <Col xs={10} sm={10}>
+                            <Tab.Content animation>
+                                <Tab.Pane eventKey={1}>
+                                    <Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={3}>
+                                                <legend>Username</legend>
+                                            </Col>
+                                            <Col sm={7} md={5}>
+                                                <div className="input-group">
+                                                    <span className="input-group-addon"><i className="fa fa-user fa-fw" /></span>
+                                                    <input className="form-control" name="name" type="text" placeholder="Username" value={this.props.userData.username} disabled />
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        {Object.keys(this.state.inputForms).map((key, index) => this.createProfileFormLine(key, index))}
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelGeneral(event)} disabled={!isGeneralChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} md={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleGeneralSubmit(event)} bsStyle="success" disabled={!isGeneralChanged}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                    </Grid>
+                                </Tab.Pane>
+                                <Tab.Pane eventKey={2}>
+                                    <Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={3}>
+                                                <legend>Pets</legend>
+                                            </Col>
+                                            <Col sm={7} md={5}>
+                                                {this.state.petForms.map((curVal, index) => this.createPetFormLine(curVal, index))}
+                                                <Button onClick={() => this.setState({petForms: [...this.state.petForms, {name:'', type:'', description:'', editable:true}]})} bsStyle="success" className="bottom-buffer-sm" block>
+                                                    <span>Add Pet</span>
+                                                    <i className="fa fa-plus pull-left center-icon-vertical" />
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelOwner(event)} disabled={!isOwnerChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} md={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleOwnerSubmit(event)} bsStyle="success" disabled={!isOwnerChanged}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                    </Grid>
+                                </Tab.Pane>
+                                <Tab.Pane eventKey={3}>
+                                    Sitter Prefs will go here
+                                </Tab.Pane>
+                                </Tab.Content>
+                            </Col>
+                        </Row>
+                    </Tab.Container>
                 </div>
             </div>
         );
     }
 }
 
-class EditNameModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-                        name: 'Simon Sitter',
-                     };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-    
-    changeName(obj) {
-    	// TODO: Joseph - send the name change to DB
-    	// Mostly copied from loginmodal.js
-        this.props.dispatch({
-            type: '', // not sure what this is supposed to be
-            userData: obj
-        });
-        console.log('Name changed to:');
-        console.log(JSON.stringify(obj, null, 4));
+const mapStateToProps = (store) => {
+    return {
+        authed: store.user.authed,
+        userData: store.user.userData
+    };
+};
 
-    }
-
-	
-    handleSubmit(event) {
-        // Doesn't quite work yet
-    	//*
-    	axios.get('/api/users/WHATEVER_GOES_HERE', { // Is there an interface for this yet?
-            params: {
-                'name': this.state.name,
-                }
-            })
-            .then((response) => {
-                // Is this right?
-                this.authorizeUser(response['data']);
-            })
-            .catch(function(error) {
-                // TODO: Joseph - Notify the user that name edit failed
-                console.log(error);
-            });
-		//*/
-        
-        event.preventDefault();
-    }
-
-    render() {
-        return (
-        		<div>
-			    	<div className="col-sm-10">
-			    		<p>{this.state.name}</p>
-			    		<button type="add" className="btn btn-primary" data-toggle="modal" data-target="#editNameModal">Edit...</button>
-			    	</div>
-	        
-					<div className="modal fade" id="editNameModal" tabIndex="-1" role="dialog" aria-labelledby="editNameModalLabel" aria-hidden="true">
-						<div className="modal-dialog" role="document">
-							<div className="modal-content">
-                            	<form onSubmit={this.handleSubmit}>
-		                            <div className="modal-header">
-		                                <h5 className="modal-title" id="editNameModalLabel">Edit name</h5>
-		                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-		                                    <span aria-hidden="true">&times;</span>
-		                                </button>
-		                            </div>
-		                            <div className="modal-body">
-		                                <div className="input-group">
-		                                    <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
-		                                    <input className="form-control" name="name" type="text" value={this.state.name} onChange={this.handleChange} />
-		                                </div>
-		                            </div>
-		                            <div className="modal-footer">
-		                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-		                                <button type="submit" className="btn btn-primary" data-dismiss="modal">Save</button>
-		                            </div>
-		                        </form>
-					      	</div>
-					    </div>
-					</div>
-	            </div>
-        );
-    }
-}
-
-class EditEmailModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-                        email: 'simon.sitter@example.com',
-                     };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-    
-    changeName(obj) {
-    	// TODO: Joseph - send the email change to DB
-    	// Mostly copied from loginmodal.js
-        this.props.dispatch({
-            type: '', // not sure what this is supposed to be
-            userData: obj
-        });
-        console.log('Email changed to:');
-        console.log(JSON.stringify(obj, null, 4));
-
-    }
-
-	
-    handleSubmit(event) {
-        // Doesn't quite work yet
-    	//*
-    	axios.get('/api/users/WHATEVER_GOES_HERE', { // Is there an interface for this yet?
-            params: {
-                'email': this.state.email,
-                }
-            })
-            .then((response) => {
-                // Is this right?
-                this.authorizeUser(response['data']);
-            })
-            .catch(function(error) {
-                // TODO: Joseph - Notify the user that email edit failed
-                console.log(error);
-            });
-		//*/
-        
-        event.preventDefault();
-    }
-
-    render() {
-        return (
-        		<div>
-			    	<div className="col-sm-10">
-			    		<p>{this.state.email}</p>
-			    		<button type="add" className="btn btn-primary" data-toggle="modal" data-target="#editEmailModal">Edit...</button>
-			    	</div>
-	        
-					<div className="modal fade" id="editEmailModal" tabIndex="-1" role="dialog" aria-labelledby="editEmailModalLabel" aria-hidden="true">
-						<div className="modal-dialog" role="document">
-							<div className="modal-content">
-                            	<form onSubmit={this.handleSubmit}>
-		                            <div className="modal-header">
-		                                <h5 className="modal-title" id="editEmailModalLabel">Edit email</h5>
-		                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-		                                    <span aria-hidden="true">&times;</span>
-		                                </button>
-		                            </div>
-		                            <div className="modal-body">
-		                                <div className="input-group">
-		                                    
-		                                    <input className="form-control" name="email" type="email" value={this.state.email} onChange={this.handleChange} />
-		                                </div>
-		                            </div>
-		                            <div className="modal-footer">
-		                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-		                                <button type="submit" className="btn btn-primary" data-dismiss="modal">Save</button>
-		                            </div>
-		                        </form>
-					      	</div>
-					    </div>
-					</div>
-	            </div>
-        );
-    }
-}
-
-class EditZipCodeModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-                        zipCode: '76798',
-                     };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-    
-    changeName(obj) {
-    	// TODO: Joseph - send the zipCode change to DB
-    	// Mostly copied from loginmodal.js
-        this.props.dispatch({
-            type: '', // not sure what this is supposed to be
-            userData: obj
-        });
-        console.log('Zip code changed to:');
-        console.log(JSON.stringify(obj, null, 4));
-
-    }
-
-	
-    handleSubmit(event) {
-        // Doesn't quite work yet
-    	//*
-    	axios.get('/api/users/WHATEVER_GOES_HERE', { // Is there an interface for this yet?
-            params: {
-                'zipCode': this.state.zipCode,
-                }
-            })
-            .then((response) => {
-                // Is this right?
-                this.authorizeUser(response['data']);
-            })
-            .catch(function(error) {
-                // TODO: Joseph - Notify the user that email edit failed
-                console.log(error);
-            });
-		//*/
-        
-        event.preventDefault();
-    }
-
-    render() {
-        return (
-        		<div>
-			    	<div className="col-sm-10">
-			    		<p>{this.state.zipCode}</p>
-			    		<button type="add" className="btn btn-primary" data-toggle="modal" data-target="#editZipCodeModal">Edit...</button>
-			    	</div>
-	        
-					<div className="modal fade" id="editZipCodeModal" tabIndex="-1" role="dialog" aria-labelledby="editZipCodeModalLabel" aria-hidden="true">
-						<div className="modal-dialog" role="document">
-							<div className="modal-content">
-                            	<form onSubmit={this.handleSubmit}>
-		                            <div className="modal-header">
-		                                <h5 className="modal-title" id="editZipCodeModalLabel">Edit zip code</h5>
-		                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-		                                    <span aria-hidden="true">&times;</span>
-		                                </button>
-		                            </div>
-		                            <div className="modal-body">
-		                                <div className="input-group">
-		                                    <input className="form-control" name="zipCode" type="integer" value={this.state.zipCode} onChange={this.handleChange} />
-		                                </div>
-		                            </div>
-		                            <div className="modal-footer">
-		                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-		                                <button type="submit" className="btn btn-primary" data-dismiss="modal">Save</button>
-		                            </div>
-		                        </form>
-					      	</div>
-					    </div>
-					</div>
-	            </div>
-        );
-    }
-}
+export default connect(mapStateToProps)(Profile);
