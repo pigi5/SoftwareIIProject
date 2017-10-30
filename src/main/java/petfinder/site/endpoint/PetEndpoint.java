@@ -22,6 +22,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.user.UserDao;
+import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserService;
 
 import java.io.IOException;
@@ -58,13 +59,12 @@ public class PetEndpoint {
 
     // Returns user information for a given username
     @RequestMapping(path = "/Addpets", method = RequestMethod.POST)
-    public static ResponseEntity<String> addPet(@RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
+    public static ResponseEntity<String> addPet(@RequestBody UserDto user, @RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
         //public static ResponseEntity<String> addPet(@RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType,@RequestParam(name = "username") String username){
         RestClient restClient = null;
         try {
             String responseString = null;
-            String username = "newuser";
-            System.out.println("\n\nowner recognized as: " + username);
+            System.out.println("\n\nowner recognized as: " + user.getUsername());
             //Setting up connections
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
@@ -78,13 +78,24 @@ public class PetEndpoint {
                     })
                     .build();
 
-            HttpEntity entity = new NStringEntity("{\n" +
-                            "    \"username\" : \"" + username + "\"\n" +
+            List<PetDto> temp = null;
+            PetDto tempPet = new PetDto((long)1, petName, petType);
+            temp.add(tempPet);
+
+            user.addPets(temp);
+
+            String jsonTemp = mapper.writeValueAsString(user);
+
+
+            /*HttpEntity entity = new NStringEntity("{\n" +
+                            "    \"username\" : \"" + user.getUsername() + "\"\n" +
                             //"    \"type\" : \"nested\"\n" +
                             "    \"Pets\" : " + "[" + "\n" +
                             "{\n    \"PetName\" : \"" + petName + "\",\n" +
                             "    \"PetType\" : \"" + petType + "\"\n" +
-                            "}\n  ]\n  }", ContentType.APPLICATION_JSON);
+                            "}\n  ]\n  }", ContentType.APPLICATION_JSON);*/
+
+            HttpEntity entity = new NStringEntity(jsonTemp, ContentType.APPLICATION_JSON);
 
             Response response = restClient.performRequest("POST", "/users/user",
                     Collections.<String, String>emptyMap(),
