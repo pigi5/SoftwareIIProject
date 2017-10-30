@@ -88,17 +88,6 @@ export class SitterPreferences extends React.Component {
 								</div>
 							</div>
 						</fieldset>
-			    		<fieldset className="form-group">
-			    			<div className="row">
-			    				<legend className="col-form-legend col-sm-2">Profile picture</legend>
-			    				<div className="col-sm-10">
-			    				    <div className="form-group">
-			    				        <label htmlFor="inputPictureUrl">Web address of your photo</label>
-			    				        <input type="url" className="form-control" id="inputPictureUrl" />
-			    				    </div>
-								</div>
-							</div>
-						</fieldset>
 						<div className="form-group row">
 					    	<div className="col-sm-10">
 					    		<button type="submit" className="btn btn-primary" data-toggle="modal" data-target="#sitterPrefsSavedModal">Save preferences</button>

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { StartAppointment } from 'js/startappointment.js';
 
 export class AddPetModal extends React.Component {
     constructor(props) {
@@ -94,12 +95,24 @@ export class PetCheckList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                        // TODO: retrieve the user's pets from DB
-        				/*
-        				/api/users/getPets (?)
-        				for each pet, the checkbox should be checked
-                        */
-                     };
+            // TODO: retrieve the user's pets from DB
+			/*
+			/api/users/getPets (?)
+			for each pet, the checkbox should be checked
+            */
+            pets: [
+            	{
+            		name: 'Fido',
+            		type: 'dog',
+            		checked: true
+            	},
+            	{
+            		name: 'Fluffy',
+            		type: 'cat',
+            		checked: true
+            	}
+            ]
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -113,8 +126,19 @@ export class PetCheckList extends React.Component {
     	/* TODO: send checked pets into search function in order to restrict
     	 *       sitters to those that match the pet types
     	 */
-        
+        for (var i = 0; i < this.state.pets.size; i++) {
+        	if (this.state.parent.state.searchUrl != '/#/search?') this.state.parent.state.searchUrl += '&';
+        	this.state.parent.state.searchUrl += 'pets=' + this.state.pets[i].name; 
+        }
         event.preventDefault();
+    }
+    
+    createPetCheckbox(curVal, index, array) {
+    	return (
+    			<div className="form-check" key={index}>
+    				<input className="form-check-input" type="checkbox" id={curVal.name} defaultChecked/> <label className="form-check-label" htmlFor={curVal.name}> {curVal.name}, {curVal.type}</label>
+				</div>
+    	);
     }
 
     render() {
@@ -123,18 +147,8 @@ export class PetCheckList extends React.Component {
 	    		<fieldset className="form-group top-buffer-sm">
 					<div className="row">
 						<div className="col-sm-10">
-			    			<div className="form-check">
-			    				<label className="form-check-label">
-			    					<input className="form-check-input" type="checkbox" value="Fido"/>
-			    					Fido, dog
-			    				</label>
-			    			</div>
-			    			<div className="form-check">
-								<label className="form-check-label">
-									<input className="form-check-input" type="checkbox" value="Fluffy"/>
-									Fluffy, cat
-								</label>
-							</div>
+							{this.state.pets.map(this.createPetCheckbox)}
+			    			
 						</div>
 					</div>
 				</fieldset>

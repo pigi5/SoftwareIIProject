@@ -1,11 +1,42 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { GetterButton } from 'js/buttons.js';
-import { AddPetModal } from 'js/addpetmodal.js';
+import { AddPetModal, PetCheckList } from 'js/addpetmodal.js';
 import { connect } from 'react-redux';
 import MyNavbar from 'js/navbar';
 
 export class StartAppointment extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+                        searchUrl: '/#/search?',
+                        startDate: '',
+                        endDate: ''
+                     };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    
+    handleChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
+    handleSubmit(event) {
+    	// TODO
+    	this.state = {
+    			startDate: document.getElementById('inputStartDate').value,
+    			endDate: document.getElementById('inputEndDate').value
+    	};
+    	
+    	if (this.state.searchUrl != '/#/search?') this.state.searchUrl += '&';
+    	this.state.searchUrl += 'date=' + this.state.startDate;
+    	
+    	window.location.href = this.state.searchUrl;
+        
+        event.preventDefault();
+    }
+
     render() {
         return (
         	<div>
@@ -14,24 +45,32 @@ export class StartAppointment extends React.Component {
 	        	<div className="container left-align-300">
 	        		<h2>Search for a sitter</h2>
 	        		<div>
-			    		<div className="top-buffer-sm">
-		                    <AddPetModal />
-		                </div>
+			    		<fieldset className="top-buffer-lg">
+			    			<div className='row'>
+				    			<legend className="col-form-legend col-sm-2">Pets</legend>
+				    			<PetCheckList parent={this} />
+			    			</div>
+		                </fieldset>
 
-			  			<div>
+			  			<fieldset>
 			  				<LocationRadios />
-			  			</div>
-		    			<div className="form-group">
-		  		    		<label htmlFor="inputStartDate">Start date</label>
-		  		    		<input type="date" className="form-control date-box-style" id="inputStartDate" placeholder="mm/dd/yyyy"/>
-		  		    	</div>
-		    			<div className="form-group">
-				    		<label htmlFor="inputEndDate">End date</label>
-				    		<input type="date" className="form-control date-box-style" id="inputEndDate" placeholder="mm/dd/yyyy"/>
-				    	</div>
+			  			</fieldset>
+			  			<fieldset className="top-buffer-lg">
+			  				<div className='row'>
+					  			<legend className="col-form-legend col-sm-2">Dates</legend>
+				    			<div className="form-group">
+				  		    		<label htmlFor="inputStartDate">Start date</label>
+				  		    		<input type="date" className="form-control date-box-style" id="inputStartDate" placeholder="mm/dd/yyyy"/>
+				  		    	</div>
+				    			<div className="form-group">
+						    		<label htmlFor="inputEndDate">End date</label>
+						    		<input type="date" className="form-control date-box-style" id="inputEndDate" placeholder="mm/dd/yyyy"/>
+						    	</div>
+					    	</div>
+				    	</fieldset>
 						<div className="form-group row">
 					    	<div className="col-sm-10">
-					    		<a href="/#/search" type="submit" className="btn btn-primary">Search</a>
+					    		<button type="submit" className="btn btn-primary">Search</button>
 					    	</div>
 					    </div>
 
@@ -67,7 +106,7 @@ export class LocationRadios extends React.Component {
 
     render() {
         return (
-        	<form>
+        	<form className="top-buffer-lg">
 				<legend className="col-form-legend col-sm-2">Location</legend>
 	  			<div className="form-check top-buffer-sm">
 					<label className="form-check-label">
