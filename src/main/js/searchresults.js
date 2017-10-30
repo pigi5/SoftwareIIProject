@@ -1,72 +1,149 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { GetterButton } from 'js/buttons.js';
 import MyNavbar from 'js/navbar';
+import { PageHeader, Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import { parseQuery } from 'js/util';
+import { connect } from 'react-redux';
 
-export class SearchResults extends React.Component {
+class SearchResults extends React.Component {
     constructor(props) {
         super(props);
+        
+        var queryParams = parseQuery(this.props.location.search);
+
+        if (!queryParams.hasOwnProperty('date') || !queryParams.hasOwnProperty('pets')) {
+            queryParams = null;
+        } else {
+            if (!Array.isArray(queryParams.pets)) {
+                queryParams.pets = [queryParams.pets];
+            }
+            this.getSitters(queryParams);
+        }
+        
         this.state = {
-            sitters: 
-                [
-                    {
-                        name: 'Susie Sitter',
-                        zip: 76798,
-                        rating: 4.4,
-                        pic: 'http://maxpixel.freegreatpicture.com/static/photo/1x/Dog-Pet-Woman-Doberman-Pinscher-Hobby-Portrait-888400.jpg'
-                    },
-                    {
-                        name: 'Simon Sitter',
-                        zip: 76800,
-                        rating: 4.2,
-                        pic: 'https://c.pxhere.com/photos/77/9b/maine_coon_cat_man_pet_longhair_cat_cool_maine_coon_cat_adidas-845518.jpg!d'
-                    }
-                ]
+            queryParams: queryParams,
+            sitters: [],
+            showModal: false,
+            selectedUsername: ''
         };
+        
+        this.createSitterCard = this.createSitterCard.bind(this);
+    }
+    
+    mapNamesToTypes(curVal, index) {
+        return this.props.userData.pets.find((element) => element.name == curVal).type;
+    }
+    
+    getSitters(queryParams) {
+        // get search results from backend algorithm
+        /*
+        axios.get('/api/login', {
+                params: {
+                    date: queryParams.date,
+                    zipCode: this.props.userData.zipCode
+                    petTypes: queryParams.pets.map((curVal, index) => this.mapNamesToTypes(curVal, index))
+                }
+            })
+            .then((response) => {
+
+            })
+            .catch((error) => {
+                if (typeof error.response !== 'undefined') {
+
+                    console.log(this.state.status);
+                }
+            });
+        */
     }
     
     createSitterCard(curVal, index, array) {
         return (
-                <div className="card horizontally-centered" key={index} style={{width: '20rem'}}>
-                    <img className="card-img-top" src={curVal.pic} alt="Card image cap" />
-                    <div className="card-body">
-                        <h4 className="card-title">{curVal.name}</h4>
-                        <p className="card-text">Zip: {curVal.zip}</p>
-                        <p className="card-text">{curVal.rating} stars</p>
-                        <a href="#" className="btn btn-primary" data-toggle="modal" data-target="#sitterRequestedModal">Request</a>
+            <Col key={index} xs={12} sm={6} md={4} lg={3}>
+                <div className="sr-card">
+                    <h3><strong>{curVal.name}</strong> <small>({curVal.username})</small></h3>
+                    <p>Zip: {curVal.zipCode}</p>
+                    <p>{curVal.rating} stars</p>
+                    <div className="push-bottom">
+                        <Button onClick={() => this.request(curVal.username)} bsStyle="success" block>Request</Button>
                     </div>
                 </div>
+            </Col>
         );
+    }
+
+    close() {
+        this.setState({ showModal: false });
+    }
+
+    request(username) {
+        this.setState({ showModal: true, selectedUsername: username });
+        // logic to request appointment with sitter
+        /*
+        axios.get('/api/login', {
+                params: {
+                    ownerUsername: this.props.userData.username,
+                    sitterUsername: username,
+                    date: queryParams.date,
+                    petNames: queryParams.pets
+                }
+            })
+            .then((response) => {
+
+            })
+            .catch((error) => {
+                if (typeof error.response !== 'undefined') {
+
+                    console.log(this.state.status);
+                }
+            });
+        */
     }
     
     render() {
+        var results;
+        if (this.state.sitters.length > 0) {
+            results = (
+                    <Grid>
+                        <Row className="equal-height">
+                            {this.state.sitters.map(this.createSitterCard)}
+                        </Row>
+                    </Grid>
+                );
+        } else {
+            results = (<h3>Sorry, there were no search results that match that query.</h3>);
+        }
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
-            	<div className="container top-buffer-lg">
-		        	{this.state.sitter.map(this.createSitterCard)}
-					
-					<div className="modal fade" id="sitterRequestedModal" tabIndex="-1" role="dialog" aria-labelledby="sitterRequestedModalLabel" aria-hidden="true">
-						<div className="modal-dialog" role="document">
-							<div className="modal-content">
-								<div className="modal-header">
-									<h5 className="modal-title" id="sitterRequestedModalLabel">Sitter requested</h5>
-									<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div className="modal-body">
-									A request has been sent to the sitter you selected. The sitter may accept or decline your request.
-								</div>
-								<div className="modal-footer">
-						        	<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-						        </div>
-					      	</div>
-					    </div>
-					</div>
+            	<div className="container">
+                    <PageHeader>
+                        Search Results
+                    </PageHeader>
+                    {results}
+		        	<Modal show={this.state.showModal} onHide={this.close}>
+    		            <Modal.Header closeButton>
+    		                <Modal.Title>Request Sent!</Modal.Title>
+    		            </Modal.Header>
+    		            <Modal.Body>
+    		                <p>A request for your pet-sitting appointment has been sent to <strong>{this.state.selectedUsername}</strong>.</p>
+    		                <p>You will receive a notification when they accept or decline your request.</p>
+    		            </Modal.Body>
+    		            <Modal.Footer>
+    		              <Button onClick={() => this.close()} bsStyle="primary">Okay</Button>
+    		            </Modal.Footer>
+		            </Modal>
 				</div>
 			</div>
 		);
     }
 }
+
+
+const mapStateToProps = (store) => {
+    return {
+        authed: store.user.authed,
+        userData: store.user.userData
+    };
+};
+
+export default connect(mapStateToProps)(SearchResults);
 

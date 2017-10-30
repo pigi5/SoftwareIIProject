@@ -47,7 +47,7 @@ export class AboutPage extends React.Component {
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
-                <div className='container padded'>
+                <div className='container'>
                     {'This is the about page.'}
                 </div>
             </div>
@@ -60,8 +60,21 @@ export class FAQPage extends React.Component {
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
-                <div className='container padded'>
+                <div className='container'>
                     {'This is the faq page.'}
+                </div>
+            </div>
+        );
+    }
+}
+
+export class NotFoundPage extends React.Component {
+    render() {
+        return (
+            <div>
+                <MyNavbar pageUrl={this.props.match.url} />
+                <div className='container'>
+                    {'Error 404 - Not Found'}
                 </div>
             </div>
         );

@@ -37,6 +37,33 @@ textarea {
 	margin-bottom: 20px;
 }
 
+.sr-card {
+	border: 1px solid #AAA;
+	border-radius: 6px;
+	background: #EEE;
+	padding: 20px;
+	padding-top: 5px;
+	margin-top: 15px;
+    margin-bottom: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.equal-height {
+    display: flex;
+    flex-wrap: wrap;
+}
+.equal-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.push-bottom {
+    display: flex;
+    margin-top: auto;
+}
+
 .top-buffer-sm {
 	margin-top:20px;
 }
