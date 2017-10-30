@@ -177,7 +177,7 @@ class Profile extends React.Component {
     
     cancelSitter(event) {
         var sitterClone = JSON.parse(JSON.stringify(this.state.sitterForms));
-        sitterClone.availability.values = this.props.userData.availability.slice();
+        sitterClone.availability.value = this.props.userData.availability.slice();
         this.setState({sitterForms: sitterClone});
     }
     
@@ -209,7 +209,7 @@ class Profile extends React.Component {
                 <Col sm={3}>
                     <legend>{curVal.name}</legend>
                 </Col>
-                <Col sm={7} md={5}>
+                <Col sm={7} lg={5}>
                     <div className="input-group">
                         <span className="input-group-addon"><i className={'fa fa-' + curVal.icon + ' fa-fw'} /></span>
                         <input className="form-control" name={key} type={curVal.type} placeholder={curVal.name} value={curVal.value} onChange={(event) => this.handleGeneralChange(event)} disabled={!curVal.editable} />
@@ -237,13 +237,13 @@ class Profile extends React.Component {
                     <textarea id={index} className="form-control" name="description" type="text" placeholder="Description" value={curVal.description} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
                 </div>
                 <Row className="top-buffer-sm bottom-buffer-md">
-                    <Col sm={6}>
+                    <Col sm={6} className="top-buffer-xs">
                         <Button onClick={() => {
                                 arrayClone[index].editable = !curVal.editable;
                                 this.setState({petForms: arrayClone});
                             }} bsStyle="primary" block><i className="fa fa-pencil fa-fw" /></Button>
                     </Col>
-                    <Col sm={6}>
+                    <Col sm={6} className="top-buffer-xs">
                         <Button onClick={() => {
                                 arrayClone.splice(index, 1);
                                 this.setState({petForms: arrayClone});
@@ -271,7 +271,7 @@ class Profile extends React.Component {
                             sitterClone.availability.value.push(curVal.name);
                         }
                         this.setState({sitterForms: sitterClone});
-                    }} bsStyle={color} bsSize="lg" style={{marginTop: 0}} key={index} active={ind >= 0} block>{curVal.abbrev}</Button>
+                    }} bsStyle={color} bsSize="lg" className="weekday-button" key={index} active={ind >= 0}>{curVal.abbrev}</Button>
         );
     }
     
@@ -316,14 +316,14 @@ class Profile extends React.Component {
                     </PageHeader>
                     <Tab.Container id="profile-tabs" defaultActiveKey={1}>
                         <Row>
-                            <Col xs={10} sm={2}>
+                            <Col sm={3} md={2}>
                                 <Nav bsStyle="pills" stacked>
                                     <NavItem eventKey={1}>General</NavItem>
                                     <NavItem eventKey={2}>Owner</NavItem>
                                     <NavItem eventKey={3}>Sitter</NavItem>
                                 </Nav>
                             </Col>
-                            <Col xs={10} sm={10}>
+                            <Col sm={9} md={10}>
                             <Tab.Content animation>
                                 <Tab.Pane eventKey={1}>
                                     <Grid>
@@ -331,7 +331,7 @@ class Profile extends React.Component {
                                             <Col sm={3}>
                                                 <legend>Username</legend>
                                             </Col>
-                                            <Col sm={7} md={5}>
+                                            <Col sm={7} lg={5}>
                                                 <div className="input-group">
                                                     <span className="input-group-addon"><i className="fa fa-user fa-fw" /></span>
                                                     <input className="form-control" name="name" type="text" placeholder="Username" value={this.props.userData.username} disabled />
@@ -340,7 +340,7 @@ class Profile extends React.Component {
                                         </Row>
                                         {Object.keys(this.state.inputForms).map((key, index) => this.createProfileFormLine(key, index))}
                                         <Row className="top-buffer-sm">
-                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                            <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelGeneral(event)} disabled={!isGeneralChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>
@@ -355,7 +355,7 @@ class Profile extends React.Component {
                                             <Col sm={3}>
                                                 <legend>Pets</legend>
                                             </Col>
-                                            <Col sm={7} md={5}>
+                                            <Col sm={7} lg={5}>
                                                 {this.state.petForms.map((curVal, index) => this.createPetFormLine(curVal, index))}
                                                 <Button onClick={() => this.setState({petForms: [...this.state.petForms, {name:'', type:'', description:'', editable:true}]})} bsStyle="success" className="bottom-buffer-sm" block>
                                                     <span>Add Pet</span>
@@ -364,7 +364,7 @@ class Profile extends React.Component {
                                             </Col>
                                         </Row>
                                         <Row className="top-buffer-sm">
-                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                            <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelOwner(event)} disabled={!isOwnerChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>
@@ -379,14 +379,14 @@ class Profile extends React.Component {
                                             <Col sm={3}>
                                                 <legend>{this.state.sitterForms.availability.name}</legend>
                                             </Col>
-                                            <Col sm={7} md={5}>
+                                            <Col sm={7} lg={5}>
                                                 <div className="weekday-row">
                                                     {weekdays.map((curVal, index) => this.createWeekdayButton(curVal, index))}
                                                 </div>
                                             </Col>
                                         </Row>
                                         <Row className="top-buffer-sm">
-                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                            <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelSitter(event)} disabled={!isSitterChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>

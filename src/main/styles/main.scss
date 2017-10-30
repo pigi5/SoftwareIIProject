@@ -64,6 +64,21 @@ textarea {
     margin-top: auto;
 }
 
+.weekday-button {
+	margin-top: 0;
+	flex: 1;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+@media (min-width: 768px) {
+    .weekday-button {
+        width: 100%;
+        width: 0;
+    }
+}
+
 .weekday-row {
     display: flex;
     flex-direction: column;
@@ -76,12 +91,13 @@ textarea {
     }
 }
 
-.top-buffer-sm {
-	margin-top:20px;
-}
 
 .top-buffer-xs {
     margin-top:2px;
+}
+
+.top-buffer-sm {
+	margin-top:20px;
 }
 
 .top-buffer-lg {
