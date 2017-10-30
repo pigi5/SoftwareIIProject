@@ -8,6 +8,37 @@ function mapPetsToForms(curVal, index, array) {
     return {...curVal, editable: false};
 }
 
+const weekdays = [
+    {
+        name: 'Sunday',
+        abbrev: 'Sun'
+    },
+    {
+        name: 'Monday',
+        abbrev: 'Mon'
+    },
+    {
+        name: 'Tuesday',
+        abbrev: 'Tue'
+    },
+    {
+        name: 'Wednesday',
+        abbrev: 'Wed'
+    },
+    {
+        name: 'Thursday',
+        abbrev: 'Thu'
+    },
+    {
+        name: 'Friday',
+        abbrev: 'Fri'
+    },
+    {
+        name: 'Saturday',
+        abbrev: 'Sat'
+    }
+];
+
 class Profile extends React.Component {
     constructor(props) {
         super(props);
@@ -43,7 +74,16 @@ class Profile extends React.Component {
                                 editable: false
                             }
                         },
-                        petForms: this.props.userData.pets.map(mapPetsToForms)
+                        petForms: this.props.userData.pets.map(mapPetsToForms),
+                        sitterForms: {
+                            availability: {
+                                name: 'Days Available',
+                                value: this.props.userData.availability,
+                                type: 'text',
+                                icon: 'calendar',
+                                editable: false
+                            }
+                        }
                      };
     }
 
@@ -136,7 +176,9 @@ class Profile extends React.Component {
     }
     
     cancelSitter(event) {
-        // reset sitter state here
+        var sitterClone = JSON.parse(JSON.stringify(this.state.sitterForms));
+        sitterClone.availability.values = this.props.userData.availability.slice();
+        this.setState({sitterForms: sitterClone});
     }
     
     handleSitterSubmit(event) {
@@ -144,19 +186,15 @@ class Profile extends React.Component {
         /*
         axios.get('/api/login', {
                 params: {
-                    'username': this.state.inputValues.username,
-                    'password': this.state.inputValues.password,
-                    'email': this.state.inputValues.email,
-                    'zipCode': this.state.inputValues.zipCode
+                    availability: this.state.sitterForms.availability.values
                 }
             })
             .then((response) => {
-                this.setState({status: response.status});
-                this.authorizeUser(response.data);
+                
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
-                    this.setState({status: error.response.status});
+                    
                     console.log(this.state.status);
                 }
             });
@@ -216,7 +254,26 @@ class Profile extends React.Component {
         );
     }
     
-
+    createWeekdayButton(curVal, index) {
+        var sitterClone = JSON.parse(JSON.stringify(this.state.sitterForms));
+        var ind = sitterClone.availability.value.indexOf(curVal.name);
+        var color;
+        if (ind >= 0) {
+            color = 'primary';
+        } else {
+            color = 'default';
+        }
+        return(
+                <Button onClick={() => {
+                        if (ind >= 0) {
+                            sitterClone.availability.value.splice(ind, 1);
+                        } else {
+                            sitterClone.availability.value.push(curVal.name);
+                        }
+                        this.setState({sitterForms: sitterClone});
+                    }} bsStyle={color} bsSize="lg" style={{marginTop: 0}} key={index} active={ind >= 0} block>{curVal.abbrev}</Button>
+        );
+    }
     
     render() { 
         var isGeneralChanged = false;
@@ -235,6 +292,17 @@ class Profile extends React.Component {
                         this.state.petForms[i].type != this.props.userData.pets[i].type || 
                         this.state.petForms[i].description != this.props.userData.pets[i].description) {
                     isOwnerChanged = true;
+                }
+            }
+        }
+        
+        var isSitterChanged = false;
+        if (this.state.sitterForms.availability.value.length != this.props.userData.availability.length) {
+            isSitterChanged = true;
+        } else {
+            for (var val in this.state.sitterForms.availability.value) {
+                if (this.props.userData.availability.indexOf(val) < 0) {
+                    isSitterChanged = true;
                 }
             }
         }
@@ -306,7 +374,26 @@ class Profile extends React.Component {
                                     </Grid>
                                 </Tab.Pane>
                                 <Tab.Pane eventKey={3}>
-                                    Sitter Prefs will go here
+                                    <Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={3}>
+                                                <legend>{this.state.sitterForms.availability.name}</legend>
+                                            </Col>
+                                            <Col sm={7} md={5}>
+                                                <div className="weekday-row">
+                                                    {weekdays.map((curVal, index) => this.createWeekdayButton(curVal, index))}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} md={3} mdOffset={1}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelSitter(event)} disabled={!isSitterChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} md={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleSitterSubmit(event)} bsStyle="success" disabled={!isSitterChanged}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                    </Grid>
                                 </Tab.Pane>
                                 </Tab.Content>
                             </Col>

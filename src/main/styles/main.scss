@@ -64,6 +64,18 @@ textarea {
     margin-top: auto;
 }
 
+.weekday-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+@media (min-width: 768px) {
+    .weekday-row {
+        flex-direction: row;
+    }
+}
+
 .top-buffer-sm {
 	margin-top:20px;
 }

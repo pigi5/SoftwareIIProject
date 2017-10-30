@@ -49,6 +49,7 @@ const store = createStore(reducer,
                             description: 'Good Girl'
                         }
                     ],
+                    availability: [],
                     rating: null
                 }
             }
