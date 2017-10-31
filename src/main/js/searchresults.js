@@ -26,6 +26,7 @@ class SearchResults extends React.Component {
         // get search results from backend algorithm
 
         if (this.props.booking.hasOwnProperty('startDate') && this.props.booking.hasOwnProperty('endDate') && this.props.booking.hasOwnProperty('pets')) {
+            /*
             axios.get('/api/users/match', {
                     params: {
                         startDate: this.props.booking.startDate,
@@ -44,6 +45,7 @@ class SearchResults extends React.Component {
                     }
                 });
         }
+        */
 
     }
     

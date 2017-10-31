@@ -102,6 +102,7 @@ public class UserEndpoint {
         Date d = new Date(date * 1000);
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
+        
         System.out.println(dayAvailable);
 
         return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
