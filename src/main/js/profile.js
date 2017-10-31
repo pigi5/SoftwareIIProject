@@ -8,6 +8,12 @@ function mapPetsToForms(curVal, index, array) {
     return {...curVal, editable: false};
 }
 
+function mapFormsToPets(curVal, index, array) {
+    var petFormClone = JSON.parse(JSON.stringify(curVal));
+    delete petFormClone.editable;
+    return petFormClone;
+}
+
 const weekdays = [
     {
         name: 'Sunday',
@@ -151,22 +157,16 @@ class Profile extends React.Component {
 
         axios.get('/api/pets/Addpets', {
                 params: {
-                    //'username': this.state.inputValues.username,
-                    //'password': this.state.inputValues.password,
-                    //'email': this.state.inputValues.email,
-                    //'zipCode': this.state.inputValues.zipCode
-                    'name': this.state.petForms[0].name,
-                    'type': this.state.petForms[0].type,
-                    'description': this.state.petForms[0].description
+                    username: this.props.userData.username,
+                    pets: this.state.petForms.map(mapFormsToPets)
                 }
             })
             .then((response) => {
-                this.setState({status: response.status});
-                this.authorizeUser(response.data);
+
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
-                    this.setState({status: error.response.status});
+
                     console.log(this.state.status);
                 }
             });
