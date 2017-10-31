@@ -16,6 +16,10 @@ function userReducer(state = {}, action) {
             return {authed: false};
         case 'UPDATE_USER':
             return {authed: true, userData: action.userData};
+        case 'START_BOOKING':
+            var cloneState = JSON.parse(JSON.stringify(state));
+            cloneState.booking = action.bookingData;
+            return cloneState;
         default:
             return state;
     }
@@ -50,7 +54,8 @@ const store = createStore(reducer,
                         }
                     ],
                     availability: [],
-                    rating: null
+                    rating: null,
+                    booking: {}
                 }
             }
         }

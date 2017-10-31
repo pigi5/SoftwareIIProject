@@ -1,62 +1,100 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { GetterButton } from 'js/buttons.js';
-import { AddPetModal, PetCheckList } from 'js/addpetmodal.js';
 import { connect } from 'react-redux';
 import MyNavbar from 'js/navbar';
-import { PageHeader, Grid, Row, Col } from 'react-bootstrap';
+import { PageHeader, Grid, Row, Col, Button } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
+import { serializeQuery } from 'js/util';
 
 const datePickerClear = (<i className="fa fa-times" aria-hidden="true"></i>);
+
+function mapPetToPetForm(curVal, index) {
+    var petCopy = JSON.parse(JSON.stringify(curVal));
+    petCopy.checked = true;
+    return petCopy;
+}
+
+function filterPetForms(curVal) {
+    return curVal.checked;
+}
+
+function mapPetFormToPet(curVal, index) {
+    var petCopy = JSON.parse(JSON.stringify(curVal));
+    delete petCopy.checked;
+    return petCopy;
+}
 
 class StartAppointment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                        searchUrl: '/#/search?',
                         startDateString: '',
                         startDate: 0,
                         endDateString: '',
-                        endDate: 0
+                        endDate: 0,
+                        pets: this.props.userData.pets.map(mapPetToPetForm),
+                        location: 'My House'
                      };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
     
-    handleStartChange(value, formattedValue) {
-        var myDate = new Date(formattedValue + ' UTC');
-        var result = myDate.getTime();
-        this.setState({startDate: myDate.getTime() / 1000});
-    }
-    
-    handleEndChange(value, formattedValue) {
-        var myDate = new Date(formattedValue + ' UTC');
-        var result = myDate.getTime();
-        this.setState({endDate: myDate.getTime() / 1000});
-    }
-
     handleSubmit(event) {
-    	// TODO
-    	this.state = {
-    			startDate: document.getElementById('inputStartDate').value,
-    			endDate: document.getElementById('inputEndDate').value
-    	};
-    	
-    	if (this.state.searchUrl != '/#/search?') this.state.searchUrl += '&';
-    	this.state.searchUrl += 'date=' + this.state.startDate;
-    	
-    	window.location.href = this.state.searchUrl;
+        var bookingData = {
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            pets: this.state.pets.filter(filterPetForms).map(mapPetFormToPet),
+            location: this.state.location
+        };
         
-        event.preventDefault();
+        this.props.dispatch({
+            type: 'START_BOOKING',
+            bookingData: bookingData
+        });
+        
+        console.log(bookingData);
     }
     
+    reset(event) {
+        this.setState({
+            startDateString: '',
+            startDate: 0,
+            endDateString: '',
+            endDate: 0,
+            pets: this.props.userData.pets.map(mapPetToPetForm),
+            location: 'My House'
+        });
+    }
     
+    onStartChange(value, formattedValue) {
+        var myDate = new Date(formattedValue + ' UTC');
+        var result = myDate.getTime();
+        this.setState({startDateString: value, startDate: myDate.getTime() / 1000});
+    }
+    
+    onEndChange(value, formattedValue) {
+        var myDate = new Date(formattedValue + ' UTC');
+        var result = myDate.getTime();
+        this.setState({endDateString: value, endDate: myDate.getTime() / 1000});
+    }
+    
+    onPetChange(pet) {
+        var petsCopy = JSON.parse(JSON.stringify(this.state.pets));
+        for (var i = 0; i < petsCopy.length; i++) {
+            if (petsCopy[i].name == pet.name && petsCopy[i].type == pet.type) {
+                petsCopy[i].checked = !petsCopy[i].checked;
+                break;
+            }
+        }
+        this.setState({pets: petsCopy});
+    }
+    
+    onLocationChange(event) {
+        this.setState({location: event.target.value});
+    }
     
     createPetCheckbox(curVal, index) {
         return (
             <div className="checkbox" key={index}>
                 <label>
-                    <input type="checkbox" value="" />
+                    <input type="checkbox" value="" checked={curVal.checked} onChange={(event) => this.onPetChange(curVal)} />
                     {curVal.name} <small>({curVal.type})</small>
                 </label>
             </div>
@@ -67,7 +105,6 @@ class StartAppointment extends React.Component {
         return (
         	<div>
         	    <MyNavbar pageUrl={this.props.match.url} />
-	            
 	        	<div className="container">
                     <PageHeader>
                         Search for a sitter
@@ -78,7 +115,7 @@ class StartAppointment extends React.Component {
     			    			<legend>Pets</legend>
                             </Col>
                             <Col sm={4} md={3}>
-                                {this.props.userData.pets.map((curVal, index) => this.createPetCheckbox(curVal, index))}
+                                {this.state.pets.map((curVal, index) => this.createPetCheckbox(curVal, index))}
                             </Col>
 		    			</Row>
                         <Row className="top-buffer-sm">
@@ -88,13 +125,13 @@ class StartAppointment extends React.Component {
                             <Col sm={4} md={3}>
                                 <div className="radio">
                                     <label>
-                                        <input type="radio" name="locationRadios" id="locationRadiosMy" value="My House" defaultChecked />
+                                        <input type="radio" name="locationRadios" value="My House" checked={this.state.location=='My House'} onChange={(event) => this.onLocationChange(event)} />
                                         My House
                                     </label>
                                 </div>
                                 <div className="radio">
                                     <label>
-                                        <input type="radio" name="locationRadios" id="locationRadiosSitter" value="Sitter\'s House" />
+                                        <input type="radio" name="locationRadios" value="Sitter's House" checked={this.state.location=='Sitter\'s House'} onChange={(event) => this.onLocationChange(event)} />
                                         Sitter's House
                                     </label>
                                 </div>
@@ -105,7 +142,7 @@ class StartAppointment extends React.Component {
                                 <legend>Start Date</legend>
                             </Col>
                             <Col sm={4} md={3}>
-                                <DatePicker clearButtonElement={datePickerClear} value={this.state.startDateString} onChange={(value, formattedValue) => this.handleStartChange(value, formattedValue)} />
+                                <DatePicker clearButtonElement={datePickerClear} value={this.state.startDateString} onChange={(value, formattedValue) => this.onStartChange(value, formattedValue)} />
                             </Col>
                         </Row>
                         <Row className="top-buffer-sm">
@@ -113,15 +150,17 @@ class StartAppointment extends React.Component {
                                 <legend>End Date</legend>
                             </Col>
                             <Col sm={4} md={3}>
-                                <DatePicker clearButtonElement={datePickerClear} value={this.state.endDateString} onChange={(value, formattedValue) => this.handleEndChange(value, formattedValue)} />
+                                <DatePicker clearButtonElement={datePickerClear} value={this.state.endDateString} onChange={(value, formattedValue) => this.onEndChange(value, formattedValue)} />
                             </Col>
                         </Row>
-						<div className="form-group row">
-					    	<div className="col-sm-10">
-					    		<button type="submit" className="btn btn-primary">Search</button>
-					    	</div>
-					    </div>
-
+                        <Row className="top-buffer-sm">
+                            <Col sm={3} smOffset={3} md={2} mdOffset={4}>
+                                <Button bsSize="lg" bsStyle="default" className="top-buffer-xs" onClick={(event) => this.reset(event)} block>Reset</Button>
+                            </Col>
+					    	<Col sm={3} md={2}>
+					    		<Button bsSize="lg" bsStyle="primary" className="top-buffer-xs" onClick={(event) => this.handleSubmit(event)} href="/#/search" block>Search</Button>
+					    	</Col>
+	                    </Row>
 				    </Grid>
 			    </div>
 		    </div>
@@ -129,54 +168,11 @@ class StartAppointment extends React.Component {
     }
 }
 
-export class LocationRadios extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-                        // I think this is right
-        				myHouse: true,
-                        sitterHouse: false
-                     };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-
-    handleSubmit(event) {
-    	// TODO: set location
-        
-        event.preventDefault();
-    }
-
-    render() {
-        return (
-        	<form className="top-buffer-lg">
-				<legend className="col-form-legend col-sm-2">Location</legend>
-	  			<div className="form-check top-buffer-sm">
-					<label className="form-check-label">
-						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosMy" value="myHouse" defaultChecked/>
-						My house
-					</label>
-				</div>
-				<div className="form-check">
-					<label className="form-check-label">
-						<input className="form-check-input" type="radio" name="locationRadios" id="locationRadiosSitter" value="sitterHouse"/>
-						Sitter&#39;s house
-					</label>
-				</div>
-        	</form>
-        );
-    }
-}
-
 const mapStateToProps = (store) => {
     return {
         authed: store.user.authed,
-        userData: store.user.userData
+        userData: store.user.userData,
+        booking: store.user.booking
     };
 };
 

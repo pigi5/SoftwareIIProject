@@ -4,7 +4,7 @@ import RegisterModal from 'js/registermodal';
 import LoginModal from 'js/loginmodal';
 import { TestModal } from 'js/buttons';
 import MyNavbar from 'js/navbar';
-import { Carousel } from 'react-bootstrap';
+import { Carousel, PageHeader, Grid, Row, Col, Button } from 'react-bootstrap';
 
 export class Home extends React.Component {
     render() {
@@ -48,7 +48,9 @@ export class AboutPage extends React.Component {
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
-                    {'This is the about page.'}
+                    <PageHeader>
+                        About
+                    </PageHeader>
                 </div>
             </div>
         );
@@ -61,7 +63,9 @@ export class FAQPage extends React.Component {
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
-                    {'This is the faq page.'}
+                    <PageHeader>
+                        FAQ
+                    </PageHeader>
                 </div>
             </div>
         );
@@ -74,7 +78,10 @@ export class NotFoundPage extends React.Component {
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
-                    {'Error 404 - Not Found'}
+                    <PageHeader>
+                        Error 404
+                    </PageHeader>
+                    <p>That page could not be found.</p>
                 </div>
             </div>
         );

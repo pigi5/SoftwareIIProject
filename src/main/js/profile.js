@@ -280,6 +280,7 @@ class Profile extends React.Component {
         for (var attr in this.state.inputForms) {
             if (this.state.inputForms[attr].value != this.props.userData[attr]) {
                 isGeneralChanged = true;
+                break;
             }
         }
         
@@ -292,6 +293,7 @@ class Profile extends React.Component {
                         this.state.petForms[i].type != this.props.userData.pets[i].type || 
                         this.state.petForms[i].description != this.props.userData.pets[i].description) {
                     isOwnerChanged = true;
+                    break;
                 }
             }
         }
@@ -303,6 +305,7 @@ class Profile extends React.Component {
             for (var val in this.state.sitterForms.availability.value) {
                 if (this.props.userData.availability.indexOf(val) < 0) {
                     isSitterChanged = true;
+                    break;
                 }
             }
         }

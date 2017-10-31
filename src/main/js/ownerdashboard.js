@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
+import { PageHeader, Grid, Row, Col, Button} from 'react-bootstrap';
 
 class OwnerDashboard extends React.Component {
     createPetCard(curVal, index, array) {
@@ -22,6 +23,9 @@ class OwnerDashboard extends React.Component {
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
+                    <PageHeader>
+                        Sitter Dashboard
+                    </PageHeader>
                     <div className="card-deck">
                         {this.props.userData.pets.map(this.createPetCard)}
                     </div>

@@ -4,58 +4,50 @@ import { PageHeader, Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { parseQuery } from 'js/util';
 import { connect } from 'react-redux';
 
+
+function mapTypeFromPets(curVal, index) {
+    return curVal.type;
+}
+
 class SearchResults extends React.Component {
     constructor(props) {
         super(props);
         
-        var queryParams = parseQuery(this.props.location.search);
-
-        if (!queryParams.hasOwnProperty('date') || !queryParams.hasOwnProperty('pets')) {
-            queryParams = null;
-        } else {
-            if (!Array.isArray(queryParams.pets)) {
-                queryParams.pets = [queryParams.pets];
-            }
-            this.getSitters(queryParams);
-        }
+        this.getSitters();
         
         this.state = {
-            queryParams: queryParams,
             sitters: [],
             showModal: false,
             selectedUsername: ''
         };
-        
-        this.createSitterCard = this.createSitterCard.bind(this);
     }
     
-    mapNamesToTypes(curVal, index) {
-        return this.props.userData.pets.find((element) => element.name == curVal).type;
-    }
-    
-    getSitters(queryParams) {
+    getSitters() {
         // get search results from backend algorithm
         /*
-        axios.get('/api/login', {
-                params: {
-                    date: queryParams.date,
-                    zipCode: this.props.userData.zipCode
-                    petTypes: queryParams.pets.map((curVal, index) => this.mapNamesToTypes(curVal, index))
-                }
-            })
-            .then((response) => {
-
-            })
-            .catch((error) => {
-                if (typeof error.response !== 'undefined') {
-
-                    console.log(this.state.status);
-                }
-            });
+        if (this.props.booking.hasOwnProperty('startDate') && this.props.booking.hasOwnProperty('endDate') && this.props.booking.hasOwnProperty('pets')) {
+            axios.get('/api/login', {
+                    params: {
+                        startDate: this.props.booking.startDate,
+                        endDate: this.props.booking.endDate,
+                        zipCode: this.props.userData.zipCode,
+                        petTypes: this.props.booking.pets.map(mapNamesToTypes)
+                    }
+                })
+                .then((response) => {
+    
+                })
+                .catch((error) => {
+                    if (typeof error.response !== 'undefined') {
+    
+                        console.log(this.state.status);
+                    }
+                });
+        }
         */
     }
     
-    createSitterCard(curVal, index, array) {
+    createSitterCard(curVal, index) {
         return (
             <Col key={index} xs={12} sm={6} md={4} lg={3}>
                 <div className="sr-card">
@@ -104,7 +96,7 @@ class SearchResults extends React.Component {
             results = (
                     <Grid>
                         <Row className="equal-height">
-                            {this.state.sitters.map(this.createSitterCard)}
+                            {this.state.sitters.map((curVal, index) => this.createSitterCard(curVal, index))}
                         </Row>
                     </Grid>
                 );
@@ -141,7 +133,8 @@ class SearchResults extends React.Component {
 const mapStateToProps = (store) => {
     return {
         authed: store.user.authed,
-        userData: store.user.userData
+        userData: store.user.userData,
+        booking: store.user.booking
     };
 };
 
