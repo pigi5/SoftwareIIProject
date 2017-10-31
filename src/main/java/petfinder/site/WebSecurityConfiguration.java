@@ -107,7 +107,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		//Add this into a for loop after retrieving a list of user names/passwords?
 
 		ArrayList<UserDto> users = new ArrayList<>();
-		ArrayList<String> userNames = new ArrayList<>();
 
 		ResponseEntity<String> result = UserEndpoint.getAllUsers();
 		System.out.println(result.getBody());
