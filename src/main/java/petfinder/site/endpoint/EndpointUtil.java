@@ -41,6 +41,20 @@ public class EndpointUtil {
 
     final static ObjectMapper mapper = new ObjectMapper();
     
+    private static RestClient getRestClient() {
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
+
+        return RestClient.builder(new HttpHost(URL, 443, "https"))
+                .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                    @Override
+                    public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+                        return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                    }
+                })
+                .build();
+    }
+    
 	/*
      * description: performs a "get multiple" type query on the elastic search database
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user)
@@ -48,25 +62,10 @@ public class EndpointUtil {
      * return: reponseEntity containing data for the query
      */
     static ResponseEntity<String> getMultipleQuery(String esEndpoint, String query, int amount) {
-    	RestClient restClient = null;
+    	RestClient restClient = getRestClient();
         
         //Set up connection to database
         try{
-
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
-
-            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-
-            
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
         		params.put("q", query);
@@ -126,23 +125,10 @@ public class EndpointUtil {
      * return: reponseEntity containing data for the query
      */
     static ResponseEntity<String> getOneQuery(String esEndpoint, String query, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
-    	RestClient restClient = null;
+    	RestClient restClient = getRestClient();
         
         //Set up connection to database
         try{
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
-
-            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-            
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
         		params.put("q", query);
@@ -178,29 +164,15 @@ public class EndpointUtil {
         }
     }
 
-    static ResponseEntity<String> updateQuery(String esEndpoint, String docJS) {
-        RestClient restClient = null;
+    private static ResponseEntity<String> baseUpdateQuery(String esEndpoint, String docJS) {
+    	RestClient restClient = getRestClient();
 
         //Set up connection to database
         try {
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
+            HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
 
-            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-            HttpEntity entity = new NStringEntity("{\"doc\":" + docJS + "}", ContentType.APPLICATION_JSON);
-
-            Response response = restClient.performRequest("POST", esEndpoint + "/_update", Collections.<String, String>emptyMap(), entity);
-
-            System.out.println("\n\nreceived response: " + EntityUtils.toString(response.getEntity()));
-
+            Response response = restClient.performRequest("POST", esEndpoint, Collections.<String, String>emptyMap(), entity);
+            
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
         } catch (IOException e){
             e.printStackTrace();
@@ -214,5 +186,13 @@ public class EndpointUtil {
                 }
             }
         }
+    }
+
+    static ResponseEntity<String> addQuery(String esEndpoint, String docJS) {
+    	return baseUpdateQuery(esEndpoint, docJS);
+    }
+    
+    static ResponseEntity<String> updateQuery(String esEndpoint, String docJS) {
+    	return baseUpdateQuery(esEndpoint + "/_update", "{\"doc\":" + docJS + "}");
     }
 }

@@ -135,8 +135,6 @@ public class UserEndpoint {
                     })
                     .build();
 
-
-
             String json = mapper.writeValueAsString(user);
 
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);

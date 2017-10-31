@@ -1,5 +1,6 @@
 package petfinder.site.endpoint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -58,61 +59,14 @@ public class PetEndpoint {
     }*/
 
     // Returns user information for a given username
-    @RequestMapping(path = "/addpets", method = RequestMethod.POST)
+    @RequestMapping(path = "/updatepets", method = RequestMethod.POST)
     public static ResponseEntity<String> addPet(@RequestParam(name = "name") String userName, @RequestParam(name = "pets") List<PetDto> pets){
-        //Put this back
-        RestClient restClient = null;
-        try {
-            String responseString = null;
-            //System.out.println("\n\nowner recognized as: " + user.getUsername());
-            //Setting up connections
-
-            //Here
-
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
-
-            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-
-            UserDto User1 = mapper.readValue(UserEndpoint.getUser(userName).toString(), UserDto.class);
-
-            User1.setPets(pets);
-
-            String jsonTemp = mapper.writeValueAsString(User1);
-
-
-            HttpEntity entity = new NStringEntity(jsonTemp, ContentType.APPLICATION_JSON);
-
-            Response response = restClient.performRequest("POST", "/users/user",
-                    Collections.<String, String>emptyMap(),
-                    entity
-            );
-
-            System.out.println("\n\nreceived response: " + EntityUtils.toString(response.getEntity()));
-            System.out.println("\n\nreceived status: " + ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
-
-            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
-
-        } catch (IOException e){
+    	try {
+			return EndpointUtil.updateQuery("/users/user/" + userName, "{\"pets\":" + mapper.writeValueAsString(pets) + "}");
+		} catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } finally {
-            if (restClient != null) {
-                try {
-                    restClient.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+		}
     }
 
     /*
