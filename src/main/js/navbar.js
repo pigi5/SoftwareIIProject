@@ -77,6 +77,7 @@ class MyNavbar extends React.Component {
                         <Navbar.Brand>
                             <a href="/#/" className="text-dark">Tempeturs</a>
                         </Navbar.Brand>
+                        <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav activeHref={'/#' + this.props.pageUrl}>
