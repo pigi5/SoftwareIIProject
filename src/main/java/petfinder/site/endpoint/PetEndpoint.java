@@ -115,10 +115,12 @@ public class PetEndpoint {
         }
     }
 
+    /*
     // Returns a pet for a given user
     @RequestMapping(path = "/Getpets", method = RequestMethod.GET)
     public static ResponseEntity<String> getPet(@RequestBody UserDto user, @RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
         return EndpointUtil.getOneQuery("/users/user/_search", "_source=petName,petType AND username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
         //ResponseEntity<String> Ret = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
     }
+    */
 }

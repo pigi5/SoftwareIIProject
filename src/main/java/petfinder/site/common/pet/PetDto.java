@@ -4,7 +4,7 @@ package petfinder.site.common.pet;
  * Created by jlutteringer on 8/23/17.
  */
 public class PetDto {
-	//private Long id;
+	private Long id;
 	private String name;
 	private String type;
 	private String description;
@@ -12,13 +12,13 @@ public class PetDto {
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public PetDto() {
 	}
-	/*
+
 	public PetDto(Long id, String name, String type) {
-		//this.id = id;
+		this.id = id;
 		this.name = name;
 		this.type = type;
 	}
-	*/
+
 
 	public PetDto(String name, String type, String description) {
 		this.name = name;
@@ -26,13 +26,14 @@ public class PetDto {
 		this.description = description;
 	}
 
-	/*public Long getId() {
-		return id;
-	}*/
 
-	/*public void setId(Long id) {
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
 		this.id = id;
-	}*/
+	}
 
 	public String getDescription() {return description;}
 
