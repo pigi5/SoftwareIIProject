@@ -48,12 +48,11 @@ class RegisterModal extends React.Component {
         // register
 
         axios.post('/api/users/add', {
-                'id': '200',
-                'email': this.state.email,
-                'username': this.state.username,
-                'password': this.state.password,
-                'name': this.state.name,
-                'zipCode': this.state.zip
+                email: this.state.email,
+                username: this.state.username,
+                password: this.state.password,
+                name: this.state.name,
+                zipCode: this.state.zip
             })
             .then((response) => {
                 this.setState({status: response.status});
