@@ -194,7 +194,7 @@ class Profile extends React.Component {
         axios.post('/api/users/updateavailability', 
                 querystring.stringify({
                     username: this.props.userData.username,
-                    availability: JSON.stringify(this.state.sitterForms.availability.values)
+                    availability: JSON.stringify(this.state.sitterForms.availability.value)
                 }), {
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded'

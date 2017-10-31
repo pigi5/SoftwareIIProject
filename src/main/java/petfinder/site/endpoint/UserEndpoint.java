@@ -125,4 +125,9 @@ public class UserEndpoint {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
+    
+    @RequestMapping(path = "/updateavailability", method = RequestMethod.POST)
+    public static ResponseEntity<String> updateAvailability(@RequestParam(name = "username") String username, @RequestParam(name = "availability") String availability){
+    	return EndpointUtil.updateQuery("/users/user/" + username, "{\"availability\":" + availability + "}");
+    }
 }

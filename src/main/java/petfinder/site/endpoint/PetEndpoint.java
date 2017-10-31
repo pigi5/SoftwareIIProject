@@ -58,9 +58,8 @@ public class PetEndpoint {
         return user;
     }*/
 
-    // Returns user information for a given username
     @RequestMapping(path = "/updatepets", method = RequestMethod.POST)
-    public static ResponseEntity<String> addPet(@RequestParam(name = "username") String username, @RequestParam(name = "pets") String pets){
+    public static ResponseEntity<String> updatePets(@RequestParam(name = "username") String username, @RequestParam(name = "pets") String pets){
     	return EndpointUtil.updateQuery("/users/user/" + username, "{\"pets\":" + pets + "}");
     }
 
