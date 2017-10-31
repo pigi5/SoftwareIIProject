@@ -148,13 +148,16 @@ class Profile extends React.Component {
     
     handleOwnerSubmit(event) {
         // update owner
-        /*
-        axios.get('/api/login', {
+
+        axios.get('/api/pets/Addpets', {
                 params: {
-                    'username': this.state.inputValues.username,
-                    'password': this.state.inputValues.password,
-                    'email': this.state.inputValues.email,
-                    'zipCode': this.state.inputValues.zipCode
+                    //'username': this.state.inputValues.username,
+                    //'password': this.state.inputValues.password,
+                    //'email': this.state.inputValues.email,
+                    //'zipCode': this.state.inputValues.zipCode
+                    'name': this.state.petForms[0].name,
+                    'type': this.state.petForms[0].type,
+                    'description': this.state.petForms[0].description
                 }
             })
             .then((response) => {
@@ -167,7 +170,7 @@ class Profile extends React.Component {
                     console.log(this.state.status);
                 }
             });
-        */
+
         event.preventDefault();
     }
 
