@@ -32,7 +32,7 @@ const reducers = {
 
 const reducer = combineReducers(reducers);
 const store = createStore(reducer, 
-        {
+        {/*
             user: {
                 authed: true,
                 userData: {
@@ -57,7 +57,7 @@ const store = createStore(reducer,
                     rating: null
                 },
                 booking: {}
-            }
+            }*/
         }
 );
 
