@@ -59,13 +59,18 @@ public class PetEndpoint {
 
     // Returns user information for a given username
     @RequestMapping(path = "/Addpets", method = RequestMethod.POST)
-    public static ResponseEntity<String> addPet(@RequestBody UserDto user, @RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
+    public static ResponseEntity<String> addPet(@RequestBody UserDto user, @RequestParam(name = "name") String petName, @RequestParam(name = "type") String petType, @RequestParam(name = "description") String petdescription){
         //public static ResponseEntity<String> addPet(@RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType,@RequestParam(name = "username") String username){
+        //System.out.println("WE HERE");
+        //Put this back
         RestClient restClient = null;
         try {
             String responseString = null;
             System.out.println("\n\nowner recognized as: " + user.getUsername());
             //Setting up connections
+
+            //Here
+
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
@@ -78,6 +83,24 @@ public class PetEndpoint {
                     })
                     .build();
 
+            //Here
+
+            /*
+            RestClient restClient = RestClient.builder(
+                    new HttpHost("localhost", 9200, "http")).build();
+
+            String json = mapper.writeValueAsString(owner);
+
+            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+
+            Response response = restClient.performRequest(
+                    "PUT",
+                    "/owners/users/" + owner.getUser().getId().toString(),
+                    Collections.<String, String>emptyMap(),
+                    entity
+            );*/
+
+
             List<PetDto> temp = null;
             PetDto tempPet = new PetDto((long)1, petName, petType);
             temp.add(tempPet);
@@ -85,7 +108,6 @@ public class PetEndpoint {
             user.addPets(temp);
 
             String jsonTemp = mapper.writeValueAsString(user);
-
 
             /*HttpEntity entity = new NStringEntity("{\n" +
                             "    \"username\" : \"" + user.getUsername() + "\"\n" +
@@ -119,5 +141,12 @@ public class PetEndpoint {
                 }
             }
         }
+    }
+
+    // Returns a pet for a given user
+    @RequestMapping(path = "/Getpets", method = RequestMethod.GET)
+    public static ResponseEntity<String> getPet(@RequestBody UserDto user, @RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
+        return EndpointUtil.getOneQuery("/users/user/_search", "_source=petName,petType AND username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
+        //ResponseEntity<String> Ret = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
     }
 }
