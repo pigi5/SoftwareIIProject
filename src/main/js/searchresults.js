@@ -44,8 +44,9 @@ class SearchResults extends React.Component {
                         console.log(this.state.status);
                     }
                 });
+             */
         }
-        */
+
 
     }
     
