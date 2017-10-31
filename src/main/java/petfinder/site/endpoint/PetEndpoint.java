@@ -58,7 +58,7 @@ public class PetEndpoint {
     }*/
 
     // Returns user information for a given username
-    @RequestMapping(path = "/Addpets", method = RequestMethod.POST)
+    @RequestMapping(path = "/addpets", method = RequestMethod.POST)
     public static ResponseEntity<String> addPet(@RequestBody UserDto user, @RequestParam(name = "name") String petName, @RequestParam(name = "type") String petType, @RequestParam(name = "description") String petdescription){
         //public static ResponseEntity<String> addPet(@RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType,@RequestParam(name = "username") String username){
         //System.out.println("WE HERE");
