@@ -22,3 +22,19 @@ export function parseQuery(queryString) {
     }
     return query;
 }
+
+export function serializeQuery(obj) {
+    var str = [];
+    for(var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            if (Array.isArray(obj[p])) {
+                for (var i = 0; i < obj[p].length; i++) {
+                    str.push(p + '=' + obj[p][i]);
+                }
+            } else {
+                str.push(p + '=' + obj[p]);
+            }
+        }
+    }
+    return str.join('&');
+}

@@ -44,7 +44,7 @@ const store = createStore(reducer,
                             description: 'Good Boy'
                         },
                         {
-                            name: 'Milo',
+                            name: 'Mittens',
                             type: 'Cat',
                             description: 'Good Girl'
                         }

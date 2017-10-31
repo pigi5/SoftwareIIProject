@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Home, SittersPage, OwnersPage, AboutPage, FAQPage, NotFoundPage } from 'js/pages';
 import SearchResults from 'js/searchresults';
 import {SitterPreferences} from 'js/sitterpreferences';
-import {StartAppointment} from 'js/startappointment';
+import StartAppointment from 'js/startappointment';
 import OwnerDashboard from 'js/ownerdashboard';
 import SitterDashboard from 'js/sitterdashboard';
 import Profile from 'js/profile';
