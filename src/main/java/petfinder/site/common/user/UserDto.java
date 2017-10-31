@@ -20,6 +20,8 @@ public class UserDto {
 	private String password;
 	private Integer zipCode;
 	private List<PetDto> pets;
+	//Can only hold the strings "dog", "cat", "rodent", "bird"
+	private List<String> petPreferences;
 	private Week week;
 	private Double rating;
 	private Integer numberOfRatings;
@@ -32,6 +34,9 @@ public class UserDto {
 	public UserDto(String name, String email) {
 		this.name = name;
 		this.email = email;
+
+		this.pets = Collections.emptyList();
+		this.petPreferences = Collections.emptyList();
 
 		//rating stuff
 		this.rating = -1.0;
@@ -51,6 +56,7 @@ public class UserDto {
 		this.password = "";
 		this.zipCode = 0;
 		this.pets = Collections.emptyList();
+		this.petPreferences = Collections.emptyList();
 	}
 	public UserDto(String name, String email, String username, String password, Integer zipCode){
 		this.name = name;
@@ -63,11 +69,13 @@ public class UserDto {
 		this.rating = -1.0;
 		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
+		this.petPreferences = Collections.emptyList();
 	}
 	public UserDto(UserDto thatUser, List<PetDto> pets){
 		this.name = thatUser.name;
 		this.email = thatUser.email;
 		this.pets = pets;
+		this.petPreferences = Collections.emptyList();
 
 		//rating stuff
 		this.rating = -1.0;
@@ -103,6 +111,14 @@ public class UserDto {
 	public String getUsername() { return username; }
 	public String getPassword() { return password; }
 	public Double getRating() { return rating; }
+	public String getPetType(String name) {
+		for(int i = 0; i < this.pets.size(); i++){
+			if(this.pets.get(i).getName() == name){
+				return this.pets.get(i).getType();
+			}
+		}
+		return null;
+	}
 
 	public Double addRating(Integer newRating) {
         if (this.numberOfRatings == 0) {

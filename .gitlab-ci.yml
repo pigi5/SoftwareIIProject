@@ -4,6 +4,7 @@ deploy:
   stage: deploy
   image: ruby:2.3
   script:
+    - npm install
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl

@@ -27,10 +27,15 @@ import javax.servlet.http.HttpSession;
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
+import petfinder.site.common.pet.PetDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Date;
+import java.text.DateFormat;
 
 
 /**
@@ -80,6 +85,24 @@ public class UserEndpoint {
 	}
 
 
+
+	@RequestMapping(path = "/match", method = RequestMethod.GET)
+    public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "date") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes") ArrayList<String> petTypes) {
+
+        String preferences = "";
+        //create a space delimited string of pet types
+        for(int i = 0; i < petTypes.size(); i++){
+            preferences.concat(petTypes.get(i));
+            preferences.concat(" ");
+        }
+
+        //get date in ms
+        Date d = new Date(date * 1000);
+        DateFormat df = new SimpleDateFormat("EEEE");
+        String dayAvailable = df.format(d);
+
+        return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND ", 1000);
+    }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {

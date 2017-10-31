@@ -41,7 +41,7 @@ public class LoginEndpoint {
 
 	            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 	            Authentication auth = authenticationManager.authenticate(token);
-	            
+
 	            SecurityContextImpl securityContext = new SecurityContextImpl();
 	            securityContext.setAuthentication(auth);
 	            SecurityContextHolder.setContext(securityContext);
