@@ -106,7 +106,7 @@ public class UserEndpoint {
 
         System.out.println(dayAvailable);
 
-        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
+        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
