@@ -68,20 +68,20 @@ public class UserEndpoint {
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
-        return EndpointUtil.getOneQuery("/users/user/_search", "username:" + username);
+        return EndpointUtil.getOneQuery("/users/user", "username:" + username);
     }
 
     // Returns user information if username and password are correct
     @RequestMapping(path = "/authuser", method = RequestMethod.GET)
     public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-	    return EndpointUtil.getOneQuery("/users/user/_search", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+	    return EndpointUtil.getOneQuery("/users/user", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
     
     // Returns "all" users (1000)
     // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.getMultipleQuery("/users/user/_search", null, 1000);
+	    return EndpointUtil.getMultipleQuery("/users/user", null, 1000);
 	}
 
 
@@ -105,7 +105,7 @@ public class UserEndpoint {
 
         System.out.println(dayAvailable);
 
-        return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
+        return EndpointUtil.getMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
