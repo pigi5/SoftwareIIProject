@@ -191,22 +191,24 @@ class Profile extends React.Component {
     
     handleSitterSubmit(event) {
         // update sitter
-        /*
-        axios.get('/api/login', {
-                params: {
-                    availability: this.state.sitterForms.availability.values
+        axios.post('/api/users/updateavailability', 
+                querystring.stringify({
+                    username: this.props.userData.username,
+                    availability: JSON.stringify(this.state.sitterForms.availability.values)
+                }), {
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
             .then((response) => {
-                
+
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
-                    
-                    console.log(this.state.status);
+
+                    console.log(error.response);
                 }
             });
-        */
         event.preventDefault();
     }
     
