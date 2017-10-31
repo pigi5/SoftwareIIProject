@@ -11,11 +11,11 @@ function userReducer(state = {}, action) {
     // Must return NEW state here, instead of altering previous
     switch (action.type) {
         case 'AUTH_USER':
-            return {authed: true, userData: action.userData};
+            return {authed: true, userData: action.userData, booking:{}};
         case 'UNAUTH_USER':
             return {authed: false};
         case 'UPDATE_USER':
-            return {authed: true, userData: action.userData};
+            return {authed: true, userData: action.userData, booking:{}};
         case 'START_BOOKING':
             var cloneState = JSON.parse(JSON.stringify(state));
             cloneState.booking = action.bookingData;
@@ -55,9 +55,9 @@ const store = createStore(reducer,
                         }
                     ],
                     availability: [],
-                    rating: null,
-                    booking: {}
-                }
+                    rating: null
+                },
+                booking: {}
             }
         */
         }
