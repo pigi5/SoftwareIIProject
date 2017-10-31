@@ -110,7 +110,7 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
-    	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername());
+    	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username: " + user.getUsername());
     	if (userCheck.getStatusCode() == HttpStatus.OK) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     	} else if (userCheck.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -135,14 +135,12 @@ public class UserEndpoint {
                     })
                     .build();
 
-
-
             String json = mapper.writeValueAsString(user);
 
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
 
             Response response = restClient.performRequest("POST",
-                        "/users/user",
+                        "/users/user/" + user.getUsername(),
                         Collections.<String, String>emptyMap(),
                         entity
                 );

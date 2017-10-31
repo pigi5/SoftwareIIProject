@@ -56,13 +56,16 @@ public class EndpointUtil {
                     .build();
 
 
-            
+
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
         		params.put("q", query);
         	}
 
+
             params.put("size", Integer.toString(amount));
+
+        	System.out.println(esEndpoint + params);
 
         	Response response = restClient.performRequest("GET", esEndpoint, params);
         	System.out.println(esEndpoint+params);
