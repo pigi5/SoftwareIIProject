@@ -1,6 +1,5 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
-import petfinder.site.common.user.Week;
 
 import java.util.*;
 
@@ -22,7 +21,7 @@ public class UserDto {
 	private List<PetDto> pets;
 	//Can only hold the strings "dog", "cat", "rodent", "bird"
 	private List<String> petPreferences;
-	private Week week;
+	private List<String> availability;
 	private Double rating;
 	private Integer numberOfRatings;
 
@@ -30,6 +29,8 @@ public class UserDto {
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
 		this.pets = Collections.emptyList();
+		this.petPreferences = Collections.emptyList();
+		this.availability = Collections.emptyList();
 	}
 	public UserDto(String name, String email) {
 		this.name = name;
@@ -42,6 +43,8 @@ public class UserDto {
 		this.rating = -1.0;
 		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
+
+		this.availability = Collections.emptyList();
 	}
 	public UserDto(String name, String email, List<PetDto> pets){
 		this.name = name;
@@ -57,6 +60,8 @@ public class UserDto {
 		this.zipCode = 0;
 		this.pets = Collections.emptyList();
 		this.petPreferences = Collections.emptyList();
+
+		this.availability = Collections.emptyList();
 	}
 	public UserDto(String name, String email, String username, String password, Integer zipCode){
 		this.name = name;
@@ -70,6 +75,8 @@ public class UserDto {
 		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
 		this.petPreferences = Collections.emptyList();
+
+		this.availability = Collections.emptyList();
 	}
 	public UserDto(UserDto thatUser, List<PetDto> pets){
 		this.name = thatUser.name;
@@ -80,6 +87,8 @@ public class UserDto {
 		//rating stuff
 		this.rating = -1.0;
 		this.numberOfRatings = 0;
+
+		this.availability = Collections.emptyList();
 	}
 
 	//Setters
@@ -93,10 +102,6 @@ public class UserDto {
 	public void setPets(List<PetDto> pets) {
 		this.pets = pets;
 	}
-	public void setFullWeekAvailable(){ this.week.setTotalAvailability(); }
-	public void setFullWeekUnavailable(){ this.week.setTotalUnavailable(); }
-	public void setSingleDayAvailalbe(Integer index){ this.week.setAvailable(index); }
-	public void setSingleDayUnavailable(Integer index){this.week.setUnavailable(index); }
 
 	//Getters
 	public String getName() {
@@ -111,6 +116,8 @@ public class UserDto {
 	public String getUsername() { return username; }
 	public String getPassword() { return password; }
 	public Double getRating() { return rating; }
+	public List<String> getPetPreferences() { return petPreferences; }
+	public List<String> getAvailability() { return availability; }
 	public String getPetType(String name) {
 		for(int i = 0; i < this.pets.size(); i++){
 			if(this.pets.get(i).getName() == name){

@@ -60,9 +60,12 @@ public class EndpointUtil {
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
         		params.put("q", query);
-        		params.put("size", Integer.toString(amount));
         	}
+
+            params.put("size", Integer.toString(amount));
+
         	Response response = restClient.performRequest("GET", esEndpoint, params);
+        	System.out.println(esEndpoint+params);
 
             String responseString = EntityUtils.toString(response.getEntity());
             
