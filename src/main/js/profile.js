@@ -4,6 +4,8 @@ import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
 import { PageHeader, Tab, Nav, NavItem, Grid, Row, Col, Button } from 'react-bootstrap';
 
+var querystring = require('querystring');
+
 function mapPetsToForms(curVal, index, array) {
     return {...curVal, editable: false};
 }
@@ -155,10 +157,13 @@ class Profile extends React.Component {
     handleOwnerSubmit(event) {
         // update owner
 
-        axios.get('/api/pets/updatpets', {
-                params: {
+        axios.post('/api/pets/updatepets', 
+                querystring.stringify({
                     username: this.props.userData.username,
-                    pets: this.state.petForms.map(mapFormsToPets)
+                    pets: JSON.stringify(this.state.petForms.map(mapFormsToPets))
+                }), {
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
             .then((response) => {
@@ -167,7 +172,7 @@ class Profile extends React.Component {
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
 
-                    console.log(this.state.status);
+                    console.log(error.response);
                 }
             });
 

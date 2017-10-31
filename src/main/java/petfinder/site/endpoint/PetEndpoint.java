@@ -60,13 +60,10 @@ public class PetEndpoint {
 
     // Returns user information for a given username
     @RequestMapping(path = "/updatepets", method = RequestMethod.POST)
-    public static ResponseEntity<String> addPet(@RequestParam(name = "name") String userName, @RequestParam(name = "pets") List<PetDto> pets){
-    	try {
-			return EndpointUtil.updateQuery("/users/user/" + userName, "{\"pets\":" + mapper.writeValueAsString(pets) + "}");
-		} catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
+    public static ResponseEntity<String> addPet(@RequestParam(name = "username") String username, @RequestParam(name = "pets") String pets){
+    	System.out.println("hello");
+    	System.out.println(pets);
+    	return EndpointUtil.updateQuery("/users/user/" + username, "{\"pets\":" + pets + "}");
     }
 
     /*
