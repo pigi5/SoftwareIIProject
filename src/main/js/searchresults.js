@@ -3,6 +3,7 @@ import MyNavbar from 'js/navbar';
 import { PageHeader, Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { parseQuery } from 'js/util';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 
 function mapTypeFromPets(curVal, index) {
@@ -32,7 +33,7 @@ class SearchResults extends React.Component {
                         startDate: this.props.booking.startDate,
                         endDate: this.props.booking.endDate,
                         zipCode: this.props.userData.zipCode,
-                        petTypes: this.props.booking.pets.map(mapNamesToTypes)
+                        petTypes: this.props.booking.pets.map(mapTypeFromPets)
                     }
                 })
                 .then((response) => {
