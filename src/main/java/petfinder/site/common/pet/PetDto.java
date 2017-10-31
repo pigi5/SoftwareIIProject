@@ -4,7 +4,6 @@ package petfinder.site.common.pet;
  * Created by jlutteringer on 8/23/17.
  */
 public class PetDto {
-	private Long id;
 	private String name;
 	private String type;
 	private String description;
@@ -13,8 +12,7 @@ public class PetDto {
 	public PetDto() {
 	}
 
-	public PetDto(Long id, String name, String type) {
-		this.id = id;
+	public PetDto(String name, String type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -24,15 +22,6 @@ public class PetDto {
 		this.name = name;
 		this.type = type;
 		this.description = description;
-	}
-
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getDescription() {return description;}

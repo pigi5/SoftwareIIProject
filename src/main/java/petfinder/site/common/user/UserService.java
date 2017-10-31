@@ -26,6 +26,7 @@ public class UserService {
 	@Autowired
 	private PetService petService;
 
+	/*
 	private final Multimap<String, Long> userMapping =
 			ImmutableMultimap.<String, Long> builder()
 					.put("sarah1", 1L)
@@ -49,6 +50,7 @@ public class UserService {
 		return Optional.of(new UserDto(user.get(), pets));
 	}
 
+	*/
 	/*
 	public Optional<UserDto> getUser(Long id) {
 		Optional<UserDto> user = userDao.findUser(id);
