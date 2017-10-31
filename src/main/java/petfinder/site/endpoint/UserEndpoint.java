@@ -87,7 +87,7 @@ public class UserEndpoint {
 
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
-    public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "date") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes") ArrayList<String> petTypes) {
+    public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes") ArrayList<String> petTypes) {
 
         String preferences = "";
         //create a space delimited string of pet types
@@ -96,10 +96,13 @@ public class UserEndpoint {
             preferences.concat(" ");
         }
 
+        System.out.println(preferences);
+
         //get date in ms
         Date d = new Date(date * 1000);
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
+        System.out.println(dayAvailable);
 
         return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
     }

@@ -24,9 +24,9 @@ class SearchResults extends React.Component {
     
     getSitters() {
         // get search results from backend algorithm
-        /*
+
         if (this.props.booking.hasOwnProperty('startDate') && this.props.booking.hasOwnProperty('endDate') && this.props.booking.hasOwnProperty('pets')) {
-            axios.get('/api/login', {
+            axios.get('/api/users/match', {
                     params: {
                         startDate: this.props.booking.startDate,
                         endDate: this.props.booking.endDate,
@@ -44,7 +44,7 @@ class SearchResults extends React.Component {
                     }
                 });
         }
-        */
+
     }
     
     createSitterCard(curVal, index) {
