@@ -42,6 +42,7 @@ public class EndpointUtil {
         
         //Set up connection to database
         try{
+
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
@@ -53,6 +54,8 @@ public class EndpointUtil {
                         }
                     })
                     .build();
+
+
             
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {
@@ -117,6 +120,7 @@ public class EndpointUtil {
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
+
             restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
@@ -125,6 +129,8 @@ public class EndpointUtil {
                         }
                     })
                     .build();
+
+
             
         	Map<String, String> params =  new HashMap<String, String>();
         	if (query != null) {

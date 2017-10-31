@@ -101,7 +101,7 @@ public class UserEndpoint {
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
 
-        return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND ", 1000);
+        return EndpointUtil.getMultipleQuery("/users/user/_search?", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
@@ -121,6 +121,7 @@ public class UserEndpoint {
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
 
+
             restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
@@ -129,6 +130,7 @@ public class UserEndpoint {
                         }
                     })
                     .build();
+
 
 
             String json = mapper.writeValueAsString(user);
