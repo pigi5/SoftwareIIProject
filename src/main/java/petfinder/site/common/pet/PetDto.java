@@ -7,6 +7,7 @@ public class PetDto {
 	private Long id;
 	private String name;
 	private String type;
+	private String description;
 
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public PetDto() {
@@ -18,6 +19,14 @@ public class PetDto {
 		this.type = type;
 	}
 
+
+	public PetDto(String name, String type, String description) {
+		this.name = name;
+		this.type = type;
+		this.description = description;
+	}
+
+
 	public Long getId() {
 		return id;
 	}
@@ -25,6 +34,10 @@ public class PetDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public String getDescription() {return description;}
+
+	public void setDescription(String Description) {this.description = Description;}
 
 	public String getName() {
 		return name;
