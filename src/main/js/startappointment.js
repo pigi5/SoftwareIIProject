@@ -66,13 +66,13 @@ class StartAppointment extends React.Component {
     onStartChange(value, formattedValue) {
         var myDate = new Date(formattedValue + ' UTC');
         var result = myDate.getTime();
-        this.setState({startDateString: value, startDate: myDate.getTime() / 1000});
+        this.setState({startDateString: value, startDate: myDate.getTime()});
     }
     
     onEndChange(value, formattedValue) {
         var myDate = new Date(formattedValue + ' UTC');
         var result = myDate.getTime();
-        this.setState({endDateString: value, endDate: myDate.getTime() / 1000});
+        this.setState({endDateString: value, endDate: myDate.getTime()});
     }
     
     onPetChange(pet) {

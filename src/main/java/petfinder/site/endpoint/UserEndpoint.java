@@ -1,6 +1,7 @@
 package petfinder.site.endpoint;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;
@@ -68,20 +69,20 @@ public class UserEndpoint {
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
-        return EndpointUtil.getOneQuery("/users/user", "username:" + username);
+        return EndpointUtil.getQuery("/users/user/" + username);
     }
 
     // Returns user information if username and password are correct
     @RequestMapping(path = "/authuser", method = RequestMethod.GET)
     public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-	    return EndpointUtil.getOneQuery("/users/user", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+	    return EndpointUtil.searchOneQuery("/users/user", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
     
     // Returns "all" users (1000)
     // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.getMultipleQuery("/users/user", null, 1000);
+	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000);
 	}
 
 
@@ -99,85 +100,29 @@ public class UserEndpoint {
         System.out.println(preferences);
 
         //get date in ms
-        Date d = new Date(date * 1000);
+        Date d = new Date(date);
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
 
         System.out.println(dayAvailable);
 
-        return EndpointUtil.getMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
+        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND week: day: " + dayAvailable, 1000);
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
-    	ResponseEntity<String> userCheck = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername());
+    	ResponseEntity<String> userCheck = EndpointUtil.searchOneQuery("/users/user/_search", "username: " + user.getUsername());
     	if (userCheck.getStatusCode() == HttpStatus.OK) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     	} else if (userCheck.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
     		return userCheck;
     	}
     	
-    	RestClient restClient = null;
-    	
-        try {
-            System.out.println("\n\nowner recognized as: " + user.toString());
-
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ACCESS_KEY, SECRET_KEY));
-
-
-            restClient = RestClient.builder(new HttpHost(URL, 443, "https"))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                        }
-                    })
-                    .build();
-
-            String json = mapper.writeValueAsString(user);
-
-            HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-
-            Response response = restClient.performRequest("POST",
-                        "/users/user",
-                        Collections.<String, String>emptyMap(),
-                        entity
-                );
-            System.out.println("\n\nreceived response: " + EntityUtils.toString(response.getEntity()));
-
-
-			/*
-			//THIS IS THE LOCAL CONNECTION PROTOCOL DO NOT DELETE
-			RestClient restClient = RestClient.builder(
-					new HttpHost("localhost", 9200, "http")).build();
-
-			String json = mapper.writeValueAsString(owner);
-
-			HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
-
-			Response response = restClient.performRequest(
-					"PUT",
-					"/owners/users/" + owner.getUser().getId().toString(),
-					Collections.<String, String>emptyMap(),
-					entity
-			);
-			*/
-
-            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
-
-        } catch (IOException e){
-            e.printStackTrace();
-
-        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } finally {
-        	if (restClient != null) {
-        		try {
-					restClient.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-        	}
-        }
+    	try {
+			return EndpointUtil.addQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
     }
 }

@@ -22,14 +22,8 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import petfinder.site.common.pet.PetDto;
-import petfinder.site.common.user.UserDto;
 
 public class EndpointUtil {
 
@@ -54,14 +48,49 @@ public class EndpointUtil {
                 })
                 .build();
     }
+
+    /*
+     * description: performs a "get" type query on the elastic search database
+     * params: esEndpoint - elasticsearch endpoint (EX: /users/user/bob)
+     * return: reponseEntity containing data for the query
+     */
+    static ResponseEntity<String> getQuery(String esEndpoint) {
+    	RestClient restClient = getRestClient();
+        
+        //Set up connection to database
+        try{
+        	Response response = restClient.performRequest("GET", esEndpoint);
+
+            String responseString = EntityUtils.toString(response.getEntity());
+            
+            HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
+            
+            if((boolean) responseMap.get("found")){
+            	return ResponseEntity.notFound().build();
+            }
+            
+            return ResponseEntity.ok(mapper.writeValueAsString(responseMap.get("_source")));
+        } catch (Exception e){
+            e.printStackTrace();
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } finally {
+        	if (restClient != null) {
+        		try {
+					restClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        }
+    }
     
 	/*
-     * description: performs a "get multiple" type query on the elastic search database
+     * description: performs a "search multiple" type query on the elastic search database
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user)
      *         query - elasticsearch query string
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> getMultipleQuery(String esEndpoint, String query, int amount) {
+    static ResponseEntity<String> searchMultipleQuery(String esEndpoint, String query, int amount) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -71,10 +100,10 @@ public class EndpointUtil {
         		params.put("q", query);
         	}
 
+
             params.put("size", Integer.toString(amount));
 
         	Response response = restClient.performRequest("GET", esEndpoint + "/_search", params);
-        	System.out.println(esEndpoint+params);
 
             String responseString = EntityUtils.toString(response.getEntity());
             
@@ -111,12 +140,12 @@ public class EndpointUtil {
      * params: query - elasticsearch query string
      * return: defaults to lessResponse of 404 and moreResponse of 500
      */
-    static ResponseEntity<String> getOneQuery(String esEndpoint, String query) {
-    	return getOneQuery(esEndpoint, query, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query) {
+    	return searchOneQuery(esEndpoint, query, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
     
     /*
-     * description: performs a "get one" type query on the elastic search database and allows
+     * description: performs a "search one" type query on the elastic search database and allows
      * 		 for specification of what type of responses to return if only one item is not found
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user)
      *         query - elasticsearch query string
@@ -124,7 +153,7 @@ public class EndpointUtil {
      *         moreResponse - ResponseEntity to return if >1 hits are found
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> getOneQuery(String esEndpoint, String query, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
+    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database

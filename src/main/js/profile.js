@@ -155,7 +155,7 @@ class Profile extends React.Component {
     handleOwnerSubmit(event) {
         // update owner
 
-        axios.get('/api/pets/Addpets', {
+        axios.get('/api/pets/updatpets', {
                 params: {
                     username: this.props.userData.username,
                     pets: this.state.petForms.map(mapFormsToPets)
