@@ -15,11 +15,9 @@ function userReducer(state = {}, action) {
         case 'UNAUTH_USER':
             return {authed: false};
         case 'UPDATE_USER':
-            return {authed: true, userData: action.userData, booking:{}};
+            return Object.assign({}, state, {userData: Object.assign({}, state.userData, action.userData)});
         case 'START_BOOKING':
-            var cloneState = JSON.parse(JSON.stringify(state));
-            cloneState.booking = action.bookingData;
-            return cloneState;
+            return Object.assign({}, state, {booking: action.bookingData});
         default:
             return state;
     }

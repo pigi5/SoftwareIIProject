@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.text.DateFormat;
 
 
@@ -109,25 +110,23 @@ public class UserEndpoint {
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
-    	ResponseEntity<String> userCheck = EndpointUtil.searchOneQuery("/users/user/_search", "username: " + user.getUsername());
-    	if (userCheck.getStatusCode() == HttpStatus.OK) {
-    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    	} else if (userCheck.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-    		return userCheck;
-    	}
-    	
     	try {
-			return EndpointUtil.addQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
+			return EndpointUtil.indexQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
     
-    @RequestMapping(path = "/updateavailability", method = RequestMethod.POST)
-    public static ResponseEntity<String> updateAvailability(@RequestParam(name = "username") String username, @RequestParam(name = "availability") String availability){
-    	return EndpointUtil.updateQuery("/users/user/" + username, "{\"availability\":" + availability + "}");
+    @RequestMapping(path = "/update", method = RequestMethod.POST)
+    public static ResponseEntity<String> updateUser(@RequestParam(name = "username") String username, @RequestBody HashMap<String, Object> partialDoc){
+    	try {
+			return EndpointUtil.updateQuery("/users/user/" + username, mapper.writeValueAsString(partialDoc));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
     }
 }

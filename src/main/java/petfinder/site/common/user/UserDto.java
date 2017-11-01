@@ -17,13 +17,13 @@ public class UserDto {
 	private String email;
 	private String username;
 	private String password;
-	private Integer zipCode;
+	private int zipCode;
 	private List<PetDto> pets;
 	//Can only hold the strings "dog", "cat", "rodent", "bird"
 	private List<String> petPreferences;
 	private List<String> availability;
-	private Double rating;
-	private Integer numberOfRatings;
+	private double rating;
+	private int numberOfRatings;
 
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
@@ -31,7 +31,10 @@ public class UserDto {
 		this.pets = Collections.emptyList();
 		this.petPreferences = Collections.emptyList();
 		this.availability = Collections.emptyList();
+		this.rating = 0;
+		this.numberOfRatings = 0;
 	}
+	
 	public UserDto(String name, String email) {
 		this.name = name;
 		this.email = email;
@@ -40,7 +43,7 @@ public class UserDto {
 		this.petPreferences = Collections.emptyList();
 
 		//rating stuff
-		this.rating = -1.0;
+		this.rating = 0;
 		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
 
@@ -51,7 +54,7 @@ public class UserDto {
 		this.email = email;
 
 		//rating stuff
-		this.rating = -1.0;
+		this.rating = 0;
 		this.numberOfRatings = 0;
 		this.name = "";
 		this.email = "";
@@ -63,7 +66,7 @@ public class UserDto {
 
 		this.availability = Collections.emptyList();
 	}
-	public UserDto(String name, String email, String username, String password, Integer zipCode){
+	public UserDto(String name, String email, String username, String password, int zipCode){
 		this.name = name;
 		this.email = email;
 		this.username = username;
@@ -71,7 +74,7 @@ public class UserDto {
 		this.zipCode = zipCode;
 
 		//rating stuff
-		this.rating = -1.0;
+		this.rating = 0;
 		this.numberOfRatings = 0;
 		this.pets = Collections.emptyList();
 		this.petPreferences = Collections.emptyList();
@@ -85,39 +88,36 @@ public class UserDto {
 		this.petPreferences = Collections.emptyList();
 
 		//rating stuff
-		this.rating = -1.0;
+		this.rating = 0;
 		this.numberOfRatings = 0;
 
 		this.availability = Collections.emptyList();
 	}
 
 	//Setters
-	public void setName(String name) { this.name = name; }
+	public void setName(String name) 		{this.name = name;}
 	public void setUsername(String username){this.username = username;}
-	public void setZipCode(Integer zipCode){this.zipCode = zipCode;}
 	public void setPassword(String password){this.password = password;}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public void setPets(List<PetDto> pets) {
-		this.pets = pets;
-	}
-
+	public void setEmail(String email) 		{this.email = email;}
+	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
+	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
+	public void setPetPreferences(List<String> petPreferences) {this.petPreferences = petPreferences;}
+	public void setRating(double rating) {this.rating = rating;}
+	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
+	public void setAvailability(List<String> availability) {this.availability = availability;}
+	
 	//Getters
-	public String getName() {
-		return name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public List<PetDto> getPets() {
-		return pets;
-	}
-	public String getUsername() { return username; }
-	public String getPassword() { return password; }
-	public Double getRating() { return rating; }
-	public List<String> getPetPreferences() { return petPreferences; }
-	public List<String> getAvailability() { return availability; }
+	public String getName() 				{return name;}
+	public String getUsername() 			{return username;}
+	public String getPassword() 			{return password;}
+	public String getEmail() 				{return email;}
+	public int getZipCode() 				{return zipCode;}
+	public List<PetDto> getPets() 			{return pets;}
+	public List<String> getPetPreferences() {return petPreferences;}
+	public double getRating() 				{return rating;}
+	public int getNumberOfRatings() 		{return numberOfRatings;}
+	public List<String> getAvailability() 	{return availability;}
+	
 	public String getPetType(String name) {
 		for(int i = 0; i < this.pets.size(); i++){
 			if(this.pets.get(i).getName() == name){
@@ -138,9 +138,6 @@ public class UserDto {
         }
         return this.rating;
     }
-	public Integer getZipCode() {
-		return zipCode;
-	}
 
 	//Easy way to add pets to the database
 	public void addPets(List<PetDto> pet){

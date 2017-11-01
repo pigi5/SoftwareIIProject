@@ -47,7 +47,7 @@ class RegisterModal extends React.Component {
     handleSubmit(event) {
         // register
 
-        axios.post('/api/users/add', {
+        axios.put('/api/users/add', {
                 email: this.state.email,
                 username: this.state.username,
                 password: this.state.password,
@@ -55,8 +55,9 @@ class RegisterModal extends React.Component {
                 zipCode: this.state.zip
             })
             .then((response) => {
+                console.log(JSON.stringify(response, null, 4));
                 this.setState({status: response.status});
-                //this.authorizeUser(response.data);
+                this.authorizeUser(response.data);
             })
             .catch((error) => {
                 console.log(JSON.stringify(error, null, 4));
@@ -80,7 +81,7 @@ class RegisterModal extends React.Component {
         }
         
         var errorMess = null;
-        if (this.state.status == 401) {
+        if (this.state.status == 409) {
             errorMess = (<p className='text-danger text-center top-buffer-sm'>That username is already taken.</p>);
         } else if (this.state.status == 500) {
             errorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);

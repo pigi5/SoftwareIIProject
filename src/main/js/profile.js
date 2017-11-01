@@ -97,11 +97,11 @@ class Profile extends React.Component {
 
     userUpdated(obj) {
         this.props.dispatch({
-            type: 'AUTH_USER',
+            type: 'UPDATE_USER',
             userData: obj
         });
         console.log('User Updated Profile:');
-        console.log(JSON.stringify(obj, null, 4));
+        console.log(JSON.stringify(this.props.userData, null, 4));
     }
     
     handleGeneralChange(event) {
@@ -121,26 +121,28 @@ class Profile extends React.Component {
     
     handleGeneralSubmit(event) {
         // update general
-        /*
-        axios.get('/api/login', {
+        
+        var updates = {
+            name: this.state.inputForms.name.value,
+            email: this.state.inputForms.email.value,
+            password: this.state.inputForms.password.value,
+            zipCode: this.state.inputForms.zipCode.value
+        };
+        
+        axios.post('/api/users/update', updates, {
                 params: {
-                    'username': this.state.inputValues.username,
-                    'password': this.state.inputValues.password,
-                    'email': this.state.inputValues.email,
-                    'zipCode': this.state.inputValues.zipCode
+                    username: this.props.userData.username,
                 }
             })
             .then((response) => {
-                this.setState({status: response.status});
-                this.authorizeUser(response.data);
+                this.userUpdated(updates);
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
-                    this.setState({status: error.response.status});
-                    console.log(this.state.status);
+
+                    console.log(error.response);
                 }
             });
-        */
         event.preventDefault();
     }
 
@@ -157,17 +159,17 @@ class Profile extends React.Component {
     handleOwnerSubmit(event) {
         // update owner
 
-        axios.post('/api/pets/updatepets', 
-                querystring.stringify({
+        var updates = {
+            pets: this.state.petForms.map(mapFormsToPets)
+        };
+        
+        axios.post('/api/users/update', updates, {
+                params: {
                     username: this.props.userData.username,
-                    pets: JSON.stringify(this.state.petForms.map(mapFormsToPets))
-                }), {
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
             .then((response) => {
-
+                this.userUpdated(updates);
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
@@ -191,17 +193,18 @@ class Profile extends React.Component {
     
     handleSitterSubmit(event) {
         // update sitter
-        axios.post('/api/users/updateavailability', 
-                querystring.stringify({
+        
+        var updates = {
+            pets: this.state.petForms.map(mapFormsToPets)
+        };
+        
+        axios.post('/api/users/update', updates, {
+                params: {
                     username: this.props.userData.username,
-                    availability: JSON.stringify(this.state.sitterForms.availability.value)
-                }), {
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
             .then((response) => {
-
+                this.userUpdated(updates);
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {

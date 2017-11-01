@@ -18,8 +18,10 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.junit.experimental.theories.Theories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -122,7 +124,9 @@ public class EndpointUtil {
             	retObjs.add((HashMap<String, Object>) obj.get("_source"));
             }
             return ResponseEntity.ok(mapper.writeValueAsString(retObjs));
-        } catch (Exception e){
+        } catch (ResponseException re) {
+        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+        } catch (IOException e) {
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } finally {
@@ -179,7 +183,9 @@ public class EndpointUtil {
             //If hits is 1 then there was one hit so return response
             HashMap<String,Object> userInfo = (HashMap<String, Object>) ((HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0)).get("_source");
             return ResponseEntity.ok(mapper.writeValueAsString(userInfo));
-        } catch (Exception e){
+        } catch (ResponseException re) {
+        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+        } catch (IOException e) {
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } finally {
@@ -193,16 +199,18 @@ public class EndpointUtil {
         }
     }
 
-    private static ResponseEntity<String> baseUpdateQuery(String esEndpoint, String docJS) {
+    static ResponseEntity<String> updateQuery(String esEndpoint, String docJS) {
     	RestClient restClient = getRestClient();
 
-        //Set up connection to database
         try {
-            HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
-
-            Response response = restClient.performRequest("POST", esEndpoint, Collections.<String, String>emptyMap(), entity);
+        	String jsonString = "{\"doc\":" + docJS + "}";
+        	HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
+        	
+            Response response = restClient.performRequest("POST", esEndpoint + "/_update", Collections.emptyMap(), entity);
             
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
+        } catch (ResponseException re) {
+        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
         } catch (IOException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -217,11 +225,31 @@ public class EndpointUtil {
         }
     }
 
-    static ResponseEntity<String> addQuery(String esEndpoint, String docJS) {
-    	return baseUpdateQuery(esEndpoint, docJS);
-    }
-    
-    static ResponseEntity<String> updateQuery(String esEndpoint, String docJS) {
-    	return baseUpdateQuery(esEndpoint + "/_update", "{\"doc\":" + docJS + "}");
+    static ResponseEntity<String> indexQuery(String esEndpoint, String docJS) {
+    	RestClient restClient = getRestClient();
+
+        try {
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("op_type", "create");
+        	
+        	HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
+        	
+            Response response = restClient.performRequest("PUT", esEndpoint, params, entity);
+            
+            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
+        } catch (ResponseException re) {
+        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } finally {
+            if (restClient != null) {
+                try {
+                    restClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
