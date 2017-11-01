@@ -21,7 +21,6 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.junit.experimental.theories.Theories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
