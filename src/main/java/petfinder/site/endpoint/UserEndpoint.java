@@ -27,7 +27,6 @@ import org.apache.http.HttpHost;
 import javax.servlet.http.HttpSession;
 
 import petfinder.site.common.user.UserDto;
-import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
 import petfinder.site.common.pet.PetDto;
 
@@ -54,7 +53,7 @@ public class UserEndpoint {
     @Autowired
     //private OwnerService ownerService;
     private UserService userService;
-    private UserDao userDao;
+    //private UserDao userDao;
 
     //BONSAI INFORMATION DO NOT DELETE OR CHANGE:
     //BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetService;
@@ -19,9 +18,6 @@ import petfinder.site.common.pet.PetService;
  */
 @Service
 public class UserService {
-
-	@Autowired
-	private UserDao userDao;
 
 	@Autowired
 	private PetService petService;

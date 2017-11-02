@@ -36,65 +36,6 @@ public class UserDto {
 		this.numberOfRatings = 0;
 	}
 
-	public UserDto(String name, String email) {
-		this.name = name;
-		this.email = email;
-
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.pets = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
-	public UserDto(String name, String email, List<PetDto> pets){
-		this.name = name;
-		this.email = email;
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.name = "";
-		this.email = "";
-		this.username = "";
-		this.password = "";
-		this.zipCode = 0;
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
-	public UserDto(String name, String email, String username, String password, int zipCode){
-		this.name = name;
-		this.email = email;
-		this.username = username;
-		this.password = password;
-		this.zipCode = zipCode;
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
-	public UserDto(UserDto thatUser, List<PetDto> pets){
-		this.name = thatUser.name;
-		this.email = thatUser.email;
-		this.pets = pets;
-		this.petPreferences = Collections.emptyList();
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-
-		this.availability = Collections.emptyList();
-	}
-
 	//Setters
 	public void setName(String name) 		{this.name = name;}
 	public void setUsername(String username){this.username = username;}
