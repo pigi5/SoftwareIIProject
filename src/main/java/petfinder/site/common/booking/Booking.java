@@ -20,6 +20,8 @@ public class Booking {
         this.sitterApprove = false;
         this.startDate = 0;
         this.endDate = 0;
+        ownerUsername = "";
+        sitterUsername = "";
     }
 
     public Booking(String owner, String sitter, List<PetDto> pets){
@@ -35,11 +37,11 @@ public class Booking {
         this.endDate = endDate;
     }
 
-    public String getOwnerName() {return ownerUsername; }
-    public void setOwnerName(String ownerName) {this.ownerUsername = ownerName; }
+    public String getOwnerUsername() {return ownerUsername; }
+    public void setOwnerUsername(String ownerName) {this.ownerUsername = ownerName; }
 
-    public String getSitterName() {return ownerUsername; }
-    public void setSitterName(String sitterName) {this.ownerUsername = sitterName; }
+    public String getSitterUsername() {return ownerUsername; }
+    public void setSitterUsername(String sitterName) {this.ownerUsername = sitterName; }
 
     public List<PetDto> getPetsSit() {return petsSit; }
     public void setPetsSit(List<PetDto> petsSit) {this.petsSit = petsSit; }
