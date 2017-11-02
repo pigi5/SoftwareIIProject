@@ -64,6 +64,7 @@ public class UserEndpoint {
         //TODO-Ford, make the list display returned users
 
 
+        //Formats pet preference query string
         String preferences = "";
         List<String> petTypes = Arrays.asList(petString.split(","));
         System.out.println("petTypes: " + petTypes.toString());
