@@ -37,11 +37,12 @@ class SearchResults extends React.Component {
                     }
                 })
                 .then((response) => {
-    
+                    this.setState({sitters:response.data});
                 })
                 .catch((error) => {
                     if (typeof error.response !== 'undefined') {
-    
+                        //TODO: something
+                        this.setState({sitters:[]});
                         console.log(this.state.status);
                     }
                 });

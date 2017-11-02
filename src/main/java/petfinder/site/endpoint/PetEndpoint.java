@@ -38,37 +38,15 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/pets")
 public class PetEndpoint {
-
-    @Autowired
-    //private OwnerService ownerService;
-    private UserService userService;
-    private UserDao userDao;
-
-    //BONSAI INFORMATION DO NOT DELETE OR CHANGE:
-    //BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
-    static final String ACCESS_KEY = "f1cjmlsx";
-    static final String SECRET_KEY = "tp7vjypq3wdxiowv";
-    static final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
-
     static final ObjectMapper mapper = new ObjectMapper();
 
-   /* @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserDto findOwner(@PathVariable(name = "id") Long id) {
-        UserDto user = userService.getUser(id).get();
-        return user;
-    }*/
-
-    @RequestMapping(path = "/updatepets", method = RequestMethod.POST)
-    public static ResponseEntity<String> updatePets(@RequestParam(name = "username") String username, @RequestParam(name = "pets") String pets){
-    	return EndpointUtil.updateQuery("/users/user/" + username, "{\"pets\":" + pets + "}");
+    @RequestMapping(path = "/types", method = RequestMethod.GET)
+    public static ResponseEntity<String> getTypes(){
+    	//TODO: return list of pet types here
+    	try {
+			return ResponseEntity.ok(mapper.writeValueAsString(""/*PetDto.PetType.values()*/));
+		} catch (JsonProcessingException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
     }
-
-    /*
-    // Returns a pet for a given user
-    @RequestMapping(path = "/Getpets", method = RequestMethod.GET)
-    public static ResponseEntity<String> getPet(@RequestBody UserDto user, @RequestParam(name = "PetName") String petName, @RequestParam(name = "PetType") String petType){
-        return EndpointUtil.getOneQuery("/users/user/_search", "_source=petName,petType AND username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
-        //ResponseEntity<String> Ret = EndpointUtil.getOneQuery("/users/user/_search", "username:" + user.getUsername() + " AND petName:" + petName + " AND petType:" + petType);
-    }
-    */
 }

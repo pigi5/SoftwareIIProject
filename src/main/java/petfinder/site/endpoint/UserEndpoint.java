@@ -4,38 +4,16 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
-import org.apache.http.HttpEntity;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
-import org.apache.http.HttpHost;
-import javax.servlet.http.HttpSession;
 
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserDao;
 import petfinder.site.common.user.UserService;
-import petfinder.site.common.pet.PetDto;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Date;
@@ -55,20 +33,8 @@ public class UserEndpoint {
     //private OwnerService ownerService;
     private UserService userService;
     private UserDao userDao;
-
-    //BONSAI INFORMATION DO NOT DELETE OR CHANGE:
-    //BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
-    static final String ACCESS_KEY = "f1cjmlsx";
-    static final String SECRET_KEY = "tp7vjypq3wdxiowv";
-    static final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
-
+    
     static final ObjectMapper mapper = new ObjectMapper();
-
-   /* @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserDto findOwner(@PathVariable(name = "id") Long id) {
-        UserDto user = userService.getUser(id).get();
-        return user;
-    }*/
 
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
@@ -88,8 +54,6 @@ public class UserEndpoint {
     public static ResponseEntity<String> getAllUsers(){
 	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000);
 	}
-
-
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
     public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
