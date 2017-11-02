@@ -8,29 +8,38 @@ import java.util.Collections;
 import java.util.List;
 
 public class Booking {
-    private String ownerName;
-    private String sitterName;
+    private String ownerUsername;
+    private String sitterUsername;
     private List<PetDto> petsSit;
     private Boolean sitterApprove;
     private long startDate;
+    private long endDate;
 
     public Booking(){
         this.petsSit = Collections.emptyList();
         this.sitterApprove = false;
+        this.startDate = 0;
+        this.endDate = 0;
     }
 
-    public Booking(String owner, String sitter, List<PetDto> pets,
-                   List<String> Days){
-        this.ownerName = owner;
-        this.sitterName = sitter;
+    public Booking(String owner, String sitter, List<PetDto> pets){
+        this.ownerUsername = owner;
+        this.sitterUsername = sitter;
         this.petsSit = pets;
     }
 
-    public String getOwnerName() {return ownerName; }
-    public void setOwnerName(String ownerName) {this.ownerName = ownerName; }
+    public void setStartDate(long startDate){
+        this.startDate = startDate;
+    }
+    public void setEndDate(long endDate){
+        this.endDate = endDate;
+    }
 
-    public String getSitterName() {return sitterName; }
-    public void setSitterName(String sitterName) {this.sitterName = sitterName; }
+    public String getOwnerName() {return ownerUsername; }
+    public void setOwnerName(String ownerName) {this.ownerUsername = ownerName; }
+
+    public String getSitterName() {return ownerUsername; }
+    public void setSitterName(String sitterName) {this.ownerUsername = sitterName; }
 
     public List<PetDto> getPetsSit() {return petsSit; }
     public void setPetsSit(List<PetDto> petsSit) {this.petsSit = petsSit; }

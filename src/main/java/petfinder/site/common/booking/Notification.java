@@ -20,8 +20,8 @@ public class Notification {
     public long getId() {return id; }
     public void setId(long id) {this.id = id; }
 
-    public Booking getBook() {return booking; }
-    public void setBook(Booking book) {this.booking = book; }
+    public Booking getBooking() {return booking; }
+    public void setBooking(Booking book) {this.booking = book; }
 
     public String getMessage() {return message; }
     public void setMessage(String message) {this.message = message; }
