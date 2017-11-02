@@ -120,6 +120,8 @@ public class UserEndpoint {
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
 
+
+
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }
 

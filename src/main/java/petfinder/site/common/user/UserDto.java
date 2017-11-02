@@ -102,12 +102,14 @@ public class UserDto {
 	public void setEmail(String email) 		{this.email = email;}
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
-	public void setPetPreferences(List<String> petPreferencesString) {
-		List<PetType> petPreferences = Collections.emptyList();
-		for(int i = 0; i < petPreferencesString.size(); i++){
-			petPreferences.add(PetType.get(petPreferencesString.get(i)));
+
+	public void setPetPreferences(List<String> petPreferencesString){
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			this.petPreferences = mapper.readValue(petPreferencesString.toString(), mapper.getTypeFactory().constructCollectionType(List.class, PetType.class));
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		this.petPreferences = petPreferences;
 	}
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
