@@ -1,24 +1,27 @@
 package petfinder.site.common.pet;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Created by jlutteringer on 8/23/17.
  */
 public class PetDto {
 	private String name;
-	private String type;
+	private PetType type;
 	private String description;
 
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public PetDto() {
 	}
 
-	public PetDto(String name, String type) {
+	public PetDto(String name, PetType type) {
 		this.name = name;
 		this.type = type;
 	}
 
 
-	public PetDto(String name, String type, String description) {
+	public PetDto(String name, PetType type, String description) {
 		this.name = name;
 		this.type = type;
 		this.description = description;
@@ -36,11 +39,11 @@ public class PetDto {
 		this.name = name;
 	}
 
-	public String getType() {
+	public PetType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setType(String name){
+		this.type = PetType.get(name);
 	}
 }

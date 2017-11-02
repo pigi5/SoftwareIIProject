@@ -1,5 +1,6 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
+import petfinder.site.common.pet.PetType;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class UserDto {
 	private int zipCode;
 	private List<PetDto> pets;
 	//Can only hold the strings "dog", "cat", "rodent", "bird"
-	private List<String> petPreferences;
+	private List<PetType> petPreferences;
 	private List<String> availability;
 	private double rating;
 	private int numberOfRatings;
@@ -101,7 +102,13 @@ public class UserDto {
 	public void setEmail(String email) 		{this.email = email;}
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
-	public void setPetPreferences(List<String> petPreferences) {this.petPreferences = petPreferences;}
+	public void setPetPreferences(List<String> petPreferencesString) {
+		List<PetType> petPreferences = Collections.emptyList();
+		for(int i = 0; i < petPreferencesString.size(); i++){
+			petPreferences.add(PetType.get(petPreferencesString.get(i)));
+		}
+		this.petPreferences = petPreferences;
+	}
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
 	public void setAvailability(List<String> availability) {this.availability = availability;}
@@ -114,14 +121,14 @@ public class UserDto {
 	public String getEmail() 				{return email;}
 	public int getZipCode() 				{return zipCode;}
 	public List<PetDto> getPets() 			{return pets;}
-	public List<String> getPetPreferences() {return petPreferences;}
+	public List<PetType> getPetPreferences() {return petPreferences;}
 	public double getRating() 				{return rating;}
 	public int getNumberOfRatings() 		{return numberOfRatings;}
 	public List<String> getAvailability() 	{return availability;}
 
-	public String getPetType(String name) {
+	public PetType getPetType(String name) {
 		for(int i = 0; i < this.pets.size(); i++){
-			if(this.pets.get(i).getName() == name){
+			if(this.pets.get(i).getName().equals(name)){
 				return this.pets.get(i).getType();
 			}
 		}
