@@ -34,7 +34,7 @@ public class UserDto {
 		this.rating = 0;
 		this.numberOfRatings = 0;
 	}
-	
+
 	public UserDto(String name, String email) {
 		this.name = name;
 		this.email = email;
@@ -105,7 +105,8 @@ public class UserDto {
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
 	public void setAvailability(List<String> availability) {this.availability = availability;}
-	
+
+
 	//Getters
 	public String getName() 				{return name;}
 	public String getUsername() 			{return username;}
@@ -117,7 +118,7 @@ public class UserDto {
 	public double getRating() 				{return rating;}
 	public int getNumberOfRatings() 		{return numberOfRatings;}
 	public List<String> getAvailability() 	{return availability;}
-	
+
 	public String getPetType(String name) {
 		for(int i = 0; i < this.pets.size(); i++){
 			if(this.pets.get(i).getName() == name){

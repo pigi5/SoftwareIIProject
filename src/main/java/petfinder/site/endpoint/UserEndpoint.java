@@ -4,6 +4,7 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -35,6 +36,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
 import java.text.DateFormat;
@@ -89,13 +92,24 @@ public class UserEndpoint {
 
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
-    public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes") ArrayList<String> petTypes) {
+    public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
+
+
+        //TODO-Ford, need to handle if no pets on front end to pass an empty string array, otherwise it doesnt send pettypes in param and gets a failure
+        //TODO-Ford, when we add a pet, we need to restrict pet type to Dog, Cat, etc. rn the user can enter any old string for type
+        //TODO-Ford, make the list display returned users
+
 
         String preferences = "";
-        //create a space delimited string of pet types
+        List<String> petTypes = Arrays.asList(petString.split(","));
+        System.out.println("petTypes: " + petTypes.toString());
         for(int i = 0; i < petTypes.size(); i++){
-            preferences.concat(petTypes.get(i));
-            preferences.concat(" ");
+            if(i == petTypes.size() - 1) {
+                preferences += petTypes.get(i);
+            }
+            else{
+                preferences += petTypes.get(i) + " AND ";
+            }
         }
 
         System.out.println(preferences);
@@ -104,8 +118,6 @@ public class UserEndpoint {
         Date d = new Date(date);
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
-
-        System.out.println(dayAvailable);
 
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }
