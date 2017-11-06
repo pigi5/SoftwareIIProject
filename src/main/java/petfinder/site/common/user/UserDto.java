@@ -35,38 +35,7 @@ public class UserDto {
 		this.rating = 0;
 		this.numberOfRatings = 0;
 	}
-
-	public UserDto(String name, String email) {
-		this.name = name;
-		this.email = email;
-
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.pets = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
-	public UserDto(String name, String email, List<PetDto> pets){
-		this.name = name;
-		this.email = email;
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.name = "";
-		this.email = "";
-		this.username = "";
-		this.password = "";
-		this.zipCode = 0;
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
+	
 	public UserDto(String name, String email, String username, String password, int zipCode){
 		this.name = name;
 		this.email = email;
@@ -82,19 +51,7 @@ public class UserDto {
 
 		this.availability = Collections.emptyList();
 	}
-	public UserDto(UserDto thatUser, List<PetDto> pets){
-		this.name = thatUser.name;
-		this.email = thatUser.email;
-		this.pets = pets;
-		this.petPreferences = Collections.emptyList();
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-
-		this.availability = Collections.emptyList();
-	}
-
+	
 	//Setters
 	public void setName(String name) 		{this.name = name;}
 	public void setUsername(String username){this.username = username;}
@@ -103,11 +60,10 @@ public class UserDto {
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
 	public void setPetPreferences(List<String> petPreferencesString) {
-		List<PetType> petPreferences = Collections.emptyList();
+		petPreferences.clear();
 		for(int i = 0; i < petPreferencesString.size(); i++){
 			petPreferences.add(PetType.get(petPreferencesString.get(i)));
 		}
-		this.petPreferences = petPreferences;
 	}
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
@@ -126,41 +82,22 @@ public class UserDto {
 	public int getNumberOfRatings() 		{return numberOfRatings;}
 	public List<String> getAvailability() 	{return availability;}
 
-	public PetType getPetType(String name) {
+	public PetType getPetType(String petName) {
 		for(int i = 0; i < this.pets.size(); i++){
-			if(this.pets.get(i).getName().equals(name)){
+			if(this.pets.get(i).getName().equals(petName)){
 				return this.pets.get(i).getType();
 			}
 		}
 		return null;
 	}
 
-	public Double addRating(Integer newRating) {
-        if (this.numberOfRatings == 0) {
-            this.rating = newRating.doubleValue();
-            this.numberOfRatings++;
-        } else {
-            Double tempVal = (numberOfRatings * this.rating);
-            this.numberOfRatings++;
-            this.rating = (tempVal + newRating.doubleValue()) / numberOfRatings;
-        }
-        return this.rating;
+	public void addRating(int newRating) {
+		// Do a weighted average of the previous rating and the new rating
+        double tempVal = (numberOfRatings * this.rating);
+        this.numberOfRatings++;
+        this.rating = (tempVal + newRating) / numberOfRatings;
     }
-
-	//Easy way to add pets to the database
-	public void addPets(List<PetDto> pet){
-		if(pets.isEmpty()){
-			this.setPets(pet);
-		}
-		else{
-			List<PetDto> newList = Stream.of(this.pets, pet)
-									.flatMap(Collection::stream)
-									.collect(Collectors.toList());
-
-			this.setPets(newList);
-		}
-	}
-
+	
 	@Override
 	public String toString() {
 	    ObjectMapper mapper = new ObjectMapper();

@@ -41,15 +41,11 @@ class SearchResults extends React.Component {
                 })
                 .catch((error) => {
                     if (typeof error.response !== 'undefined') {
-                        //TODO: something
                         this.setState({sitters:[]});
-                        console.log(this.state.status);
                     }
                 });
 
         }
-
-
     }
     
     createSitterCard(curVal, index) {
