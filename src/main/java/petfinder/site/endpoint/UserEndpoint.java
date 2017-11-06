@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import petfinder.site.common.user.UserDto;
-import petfinder.site.common.user.UserDao;
-import petfinder.site.common.user.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -30,9 +28,6 @@ import java.text.DateFormat;
 @RequestMapping(value = "/api/users")
 public class UserEndpoint {
     @Autowired
-    //private OwnerService ownerService;
-    private UserService userService;
-    private UserDao userDao;
     
     static final ObjectMapper mapper = new ObjectMapper();
 
@@ -83,6 +78,8 @@ public class UserEndpoint {
         Date d = new Date(date);
         DateFormat df = new SimpleDateFormat("EEEE");
         String dayAvailable = df.format(d);
+
+
 
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }

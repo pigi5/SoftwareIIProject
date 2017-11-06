@@ -35,23 +35,6 @@ public class UserDto {
 		this.rating = 0;
 		this.numberOfRatings = 0;
 	}
-	
-	public UserDto(String name, String email, String username, String password, int zipCode){
-		this.name = name;
-		this.email = email;
-		this.username = username;
-		this.password = password;
-		this.zipCode = zipCode;
-
-		//rating stuff
-		this.rating = 0;
-		this.numberOfRatings = 0;
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-
-		this.availability = Collections.emptyList();
-	}
-	
 	//Setters
 	public void setName(String name) 		{this.name = name;}
 	public void setUsername(String username){this.username = username;}
@@ -59,10 +42,12 @@ public class UserDto {
 	public void setEmail(String email) 		{this.email = email;}
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
-	public void setPetPreferences(List<String> petPreferencesString) {
-		petPreferences.clear();
-		for(int i = 0; i < petPreferencesString.size(); i++){
-			petPreferences.add(PetType.get(petPreferencesString.get(i)));
+	public void setPetPreferences(List<String> petPreferencesString){
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			this.petPreferences = mapper.readValue(petPreferencesString.toString(), mapper.getTypeFactory().constructCollectionType(List.class, PetType.class));
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	public void setRating(double rating) {this.rating = rating;}
