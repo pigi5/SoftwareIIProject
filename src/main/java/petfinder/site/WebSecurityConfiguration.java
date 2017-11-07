@@ -92,6 +92,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/statics/**").permitAll()
 					.antMatchers("/api/login").permitAll()
 					.antMatchers("/api/users/add").permitAll()
+					.antMatchers("/api/users/exists").permitAll()
+					.antMatchers("/api/pets/types").permitAll()
 				.anyRequest().authenticated()
 					.and()
 				.formLogin()

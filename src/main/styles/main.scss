@@ -125,6 +125,13 @@ textarea {
 	maxlength: 10;
 }
 
+select:required:invalid { 
+	color: #999;
+}
+option {
+  color: black;
+}
+
 .horizontally-centered {
 	margin-left: auto;
 	margin-right: auto;

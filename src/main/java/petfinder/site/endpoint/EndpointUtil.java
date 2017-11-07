@@ -55,7 +55,7 @@ public class EndpointUtil {
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user/bob)
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> getQuery(String esEndpoint) {
+    static ResponseEntity<String> getQuery(String esEndpoint, boolean returnSource) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -63,14 +63,16 @@ public class EndpointUtil {
         	Response response = restClient.performRequest("GET", esEndpoint);
 
             String responseString = EntityUtils.toString(response.getEntity());
-            
+
             HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
-            
-            if((boolean) responseMap.get("found")){
-            	return ResponseEntity.notFound().build();
+
+            if (!returnSource) {
+                return ResponseEntity.ok(null);
             }
-            
-            return ResponseEntity.ok(mapper.writeValueAsString(responseMap.get("_source")));
+
+        	return ResponseEntity.ok(mapper.writeValueAsString(responseMap.get("_source")));
+        } catch (ResponseException re) {
+        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
         } catch (Exception e){
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

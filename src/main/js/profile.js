@@ -4,15 +4,36 @@ import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
 import { PageHeader, Tab, Nav, NavItem, Grid, Row, Col, Button } from 'react-bootstrap';
 
-var querystring = require('querystring');
+function getIconFromState(state) {
+    if (state === 1) {
+        return <i className="fa fa-times fa-fw text-danger" />;
+    } else if (state === 2) {
+        return <i className="fa fa-check fa-fw text-success" />;
+    }
+    return <i className="fa fa-asterisk fa-fw text-danger" />;
+}
 
 function mapPetsToForms(curVal, index, array) {
-    return {...curVal, editable: false};
+    var nameStat;
+    if (curVal.name === '') {
+        nameStat = 1;
+    } else {
+        nameStat = 2;
+    }
+    var typeStat;
+    if (curVal.type === '') {
+        typeStat = 1;
+    } else {
+        typeStat = 2;
+    }
+    return {...curVal, editable: false, nameStatus: nameStat, typeStatus: typeStat};
 }
 
 function mapFormsToPets(curVal, index, array) {
     var petFormClone = JSON.parse(JSON.stringify(curVal));
     delete petFormClone.editable;
+    delete petFormClone.nameStatus;
+    delete petFormClone.typeStatus;
     return petFormClone;
 }
 
@@ -47,52 +68,78 @@ const weekdays = [
     }
 ];
 
+var petTypes = [];
+
+axios.get('/api/pets/types')
+    .then((response) => {
+        petTypes = response.data;
+    })
+    .catch((error) => {
+        if (typeof error.response !== 'undefined') {
+            console.log(error.response);
+        }
+    });
+
 class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                        status: 0,
-                        inputForms: {
-                            name: {
-                                name: 'Full Name',
-                                value: this.props.userData.name,
-                                type: 'text',
-                                icon: 'user-o',
-                                editable: false
-                            },
-                            email: {
-                                name: 'Email',
-                                value: this.props.userData.email,
-                                type: 'email',
-                                icon: 'envelope',
-                                editable: false
-                            },
-                            password: {
-                                name: 'Password',
-                                value: this.props.userData.password,
-                                type: 'password',
-                                icon: 'key',
-                                editable: false
-                            },
-                            zipCode: {
-                                name: 'Zip Code',
-                                value: this.props.userData.zipCode,
-                                type: 'number',
-                                icon: 'map-marker',
-                                editable: false
-                            }
-                        },
-                        petForms: this.props.userData.pets.map(mapPetsToForms),
-                        sitterForms: {
-                            availability: {
-                                name: 'Days Available',
-                                value: this.props.userData.availability,
-                                type: 'text',
-                                icon: 'calendar',
-                                editable: false
-                            }
-                        }
-                     };
+            status: 0,
+            inputForms: {
+                name: {
+                    name: 'Full Name',
+                    value: this.props.userData.name,
+                    type: 'text',
+                    icon: 'user-o',
+                    status: 2,
+                    editable: false
+                },
+                email: {
+                    name: 'Email',
+                    value: this.props.userData.email,
+                    type: 'email',
+                    icon: 'envelope',
+                    status: 2,
+                    editable: false
+                },
+                password: {
+                    name: 'Password',
+                    value: this.props.userData.password,
+                    type: 'password',
+                    icon: 'key',
+                    status: 2,
+                    editable: false
+                },
+                zipCode: {
+                    name: 'Zip Code',
+                    value: this.props.userData.zipCode,
+                    type: 'number',
+                    icon: 'map-marker',
+                    status: 2,
+                    editable: false
+                }
+            },
+            generalStatus: 0,
+            petForms: this.props.userData.pets.map(mapPetsToForms),
+            ownerStatus: 0,
+            sitterForms: {
+                availability: {
+                    name: 'Days Available',
+                    value: this.props.userData.availability,
+                    type: 'text',
+                    icon: 'calendar',
+                    editable: false
+                },
+                petPreferences: {
+                    name: 'Pet Preferences',
+                    value: this.props.userData.petPreferences,
+                    type: 'text',
+                    icon: 'calendar',
+                    editable: false
+                }
+            },
+            sitterStatus: 0
+         };
     }
 
     userUpdated(obj) {
@@ -105,8 +152,37 @@ class Profile extends React.Component {
     }
     
     handleGeneralChange(event) {
-        // have to use spread operator in order to not wipe out the rest of inputForms
-        this.setState({inputForms: {...this.state.inputForms, [event.target.name]: {...this.state.inputForms[event.target.name], value: event.target.value}}});
+        var formsClone = JSON.parse(JSON.stringify(this.state.inputForms));
+        // update statuses
+        if (event.target.name == 'password') {
+            if (event.target.value === '') {
+                formsClone.password.status = 1;
+            } else {
+                formsClone.password.status = 2;
+            }
+        } else if (event.target.name == 'name') {
+            if (event.target.value === '') {
+                formsClone.name.status = 1;
+            } else {
+                formsClone.name.status = 2;
+            }
+        } else if (event.target.name == 'email') {
+            if (event.target.value.match(String.raw`^[a-zA-Z0-9.!#$%&’*+/=?^_\`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$`)) { //`
+                formsClone.email.status = 2;
+            } else {
+                formsClone.email.status = 1;
+            }
+        } else if (event.target.name == 'zipCode') {
+            if (event.target.value.length === 5) {
+                formsClone.zipCode.status = 2;
+            } else {
+                formsClone.zipCode.status = 1;
+            }
+        }
+
+        formsClone[event.target.name].value = event.target.value;
+
+        this.setState({inputForms: formsClone});
     }
     
     cancelGeneral(event) {
@@ -115,6 +191,7 @@ class Profile extends React.Component {
         for (var attr in formsClone) {
             formsClone[attr].value = this.props.userData[attr];
             formsClone[attr].editable = false;
+            formsClone[attr].status = 2;
         }
         this.setState({inputForms: formsClone});
     }
@@ -122,33 +199,60 @@ class Profile extends React.Component {
     handleGeneralSubmit(event) {
         // update general
         
-        var updates = {
-            name: this.state.inputForms.name.value,
-            email: this.state.inputForms.email.value,
-            password: this.state.inputForms.password.value,
-            zipCode: this.state.inputForms.zipCode.value
-        };
-        
-        axios.post('/api/users/update', updates, {
-                params: {
-                    username: this.props.userData.username,
-                }
-            })
-            .then((response) => {
-                this.userUpdated(updates);
-            })
-            .catch((error) => {
-                if (typeof error.response !== 'undefined') {
-
-                    console.log(error.response);
-                }
-            });
+        if (this.state.inputForms.name.status === 2 &&
+                this.state.inputForms.email.status === 2 &&
+                this.state.inputForms.password.status === 2 &&
+                this.state.inputForms.zipCode.status === 2) {
+            var updates = {
+                name: this.state.inputForms.name.value,
+                email: this.state.inputForms.email.value,
+                password: this.state.inputForms.password.value,
+                zipCode: this.state.inputForms.zipCode.value
+            };
+            
+            axios.post('/api/users/update', updates, {
+                    params: {
+                        username: this.props.userData.username,
+                    }
+                })
+                .then((response) => {
+                    this.userUpdated(updates);
+                    
+                    var formsClone = JSON.parse(JSON.stringify(this.state.inputForms));
+                    for (var attr in formsClone) {
+                        formsClone[attr].editable = false;
+                    }
+                    this.setState({inputForms: formsClone, generalStatus: response.status});
+                })
+                .catch((error) => {
+                    if (typeof error.response !== 'undefined') {
+                        this.setState({generalStatus: error.response.status});
+                    }
+                });
+        } else {
+            this.setState({generalStatus: -1});
+        }
         event.preventDefault();
     }
 
     handleOwnerChange(event) {
         var arrayClone = JSON.parse(JSON.stringify(this.state.petForms));
-        arrayClone[event.target.id] = {...this.state.petForms[event.target.id], [event.target.name]: event.target.value};
+        
+        if (event.target.name == 'name') {
+            if (event.target.value === '') {
+                arrayClone[event.target.id].nameStatus = 1;
+            } else {
+                arrayClone[event.target.id].nameStatus = 2;
+            }
+        } else if (event.target.name == 'type') {
+            if (event.target.value === '') {
+                arrayClone[event.target.id].typeStatus = 1;
+            } else {
+                arrayClone[event.target.id].typeStatus = 2;
+            }
+        }
+        
+        arrayClone[event.target.id][event.target.name] = event.target.value;
         this.setState({petForms: arrayClone});
     }
     
@@ -159,25 +263,36 @@ class Profile extends React.Component {
     handleOwnerSubmit(event) {
         // update owner
 
-        var updates = {
-            pets: this.state.petForms.map(mapFormsToPets)
-        };
+        var shouldAllow = true;
+        for (var i = 0; i < this.state.petForms.length; i++) {
+            if (this.state.petForms[0].nameStatus !== 2 || this.state.petForms[0].typeStatus !== 2) {
+                shouldAllow = false;
+                break;
+            }
+        }
         
-        axios.post('/api/users/update', updates, {
-                params: {
-                    username: this.props.userData.username,
-                }
-            })
-            .then((response) => {
-                this.userUpdated(updates);
-            })
-            .catch((error) => {
-                if (typeof error.response !== 'undefined') {
+        if (shouldAllow) {
+            var updates = {
+                pets: this.state.petForms.map(mapFormsToPets)
+            };
+            
+            axios.post('/api/users/update', updates, {
+                    params: {
+                        username: this.props.userData.username,
+                    }
+                })
+                .then((response) => {
+                    this.userUpdated(updates);
 
-                    console.log(error.response);
-                }
-            });
-
+                    this.setState({petForms: updates.pets.map(mapPetsToForms), ownerStatus: response.status});
+                })
+                .catch((error) => {
+                    if (typeof error.response !== 'undefined') {
+                        this.setState({ownerStatus: error.response.status});
+                    }
+                });
+        }
+        
         event.preventDefault();
     }
 
@@ -195,7 +310,8 @@ class Profile extends React.Component {
         // update sitter
         
         var updates = {
-            pets: this.state.petForms.map(mapFormsToPets)
+            availability: this.state.sitterForms.availability.value,
+            petPreferences: this.state.sitterForms.petPreferences.value
         };
         
         axios.post('/api/users/update', updates, {
@@ -205,18 +321,26 @@ class Profile extends React.Component {
             })
             .then((response) => {
                 this.userUpdated(updates);
+                
+                this.setState({sitterStatus: response.status});
             })
             .catch((error) => {
                 if (typeof error.response !== 'undefined') {
-
-                    console.log(error.response);
+                    this.setState({sitterStatus: error.response.status});
                 }
             });
+        
         event.preventDefault();
     }
     
     createProfileFormLine(key, index) {
         var curVal = this.state.inputForms[key];
+        var addon;
+        if (curVal.editable) {
+            addon = (<span className="input-group-addon">{getIconFromState(curVal.status)}</span>);
+        } else {
+            addon = (<span className="input-group-btn"><Button onClick={() => this.setState({inputForms: {...this.state.inputForms, [key]: {...this.state.inputForms[key], editable:!curVal.editable}}})} bsStyle="primary"><i className="fa fa-pencil fa-fw" /></Button></span>);
+        }
         return(
             <Row className="top-buffer-sm" key={index}>
                 <Col sm={3}>
@@ -226,7 +350,7 @@ class Profile extends React.Component {
                     <div className="input-group">
                         <span className="input-group-addon"><i className={'fa fa-' + curVal.icon + ' fa-fw'} /></span>
                         <input className="form-control" name={key} type={curVal.type} placeholder={curVal.name} value={curVal.value} onChange={(event) => this.handleGeneralChange(event)} disabled={!curVal.editable} />
-                        <span className="input-group-btn"><Button onClick={() => this.setState({inputForms: {...this.state.inputForms, [key]: {...this.state.inputForms[key], editable:!curVal.editable}}})} bsStyle="primary"><i className="fa fa-pencil fa-fw" /></Button></span>
+                        {addon}
                     </div>
                 </Col>
             </Row>
@@ -235,15 +359,29 @@ class Profile extends React.Component {
     
     createPetFormLine(curVal, index) {
         var arrayClone = JSON.parse(JSON.stringify(this.state.petForms));
+        var nameAddon = null;
+        var typeAddon = null;
+        if (curVal.editable) {
+            nameAddon = (<span className="input-group-addon">{getIconFromState(curVal.nameStatus)}</span>);
+            typeAddon = (<span className="input-group-addon">{getIconFromState(curVal.typeStatus)}</span>);
+        }
+        
         return(
             <div className="bottom-buffer-sm" key={index}>
                 <div className="input-group">
                     <span className="input-group-addon"><i className="fa fa-tag fa-fw" /></span>
                     <input id={index} className="form-control" name="name" type="text" placeholder="Name" value={curVal.name} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
+                    {nameAddon}
                 </div>
-                <div className="input-group top-buffer-xs">
+                    <div className="input-group top-buffer-xs">
                     <span className="input-group-addon"><i className="fa fa-paw fa-fw" /></span>
-                    <input id={index} className="form-control" name="type" type="text" placeholder="Type" value={curVal.type} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable} />
+                    <select className="form-control" required id={index} name="type" value={curVal.type} onChange={(event) => this.handleOwnerChange(event)} disabled={!curVal.editable}>
+                        <option value="" disabled hidden>Pet Type</option>
+                        {petTypes.map((curValInner, indexInner) => {
+                            return (<option key={indexInner} value={curValInner}>{curValInner}</option>);
+                        })}
+                    </select>
+                    {typeAddon}
                 </div>
                 <div className="input-group top-buffer-xs">
                     <span className="input-group-addon"><i className="fa fa-comment fa-fw" /></span>
@@ -288,7 +426,41 @@ class Profile extends React.Component {
         );
     }
     
-    render() { 
+    createPetTypeButton(curVal, index) {
+        var sitterClone = JSON.parse(JSON.stringify(this.state.sitterForms));
+        var ind = sitterClone.petPreferences.value.indexOf(curVal);
+        var color;
+        if (ind >= 0) {
+            color = 'primary';
+        } else {
+            color = 'default';
+        }
+        return(
+                <Button onClick={() => {
+                        if (ind >= 0) {
+                            sitterClone.petPreferences.value.splice(ind, 1);
+                        } else {
+                            sitterClone.petPreferences.value.push(curVal);
+                        }
+                        this.setState({sitterForms: sitterClone});
+                    }} bsStyle={color} bsSize="lg" className="weekday-button" key={index} active={ind >= 0}>{curVal}</Button>
+        );
+    }
+    
+    render() {
+        var i;
+        
+        var generalErrorMess = null;
+        if (this.state.generalStatus == 500) {
+            generalErrorMess = (<p className='text-danger text-center'>Server error. Please try again later.</p>);
+        } else if (this.state.generalStatus == 200) {
+            generalErrorMess = (<p className='text-success text-center'>Information saved.</p>);
+        } else if (this.state.generalStatus == -1) {
+            generalErrorMess = (<p className='text-danger text-center'>You must complete all required fields.</p>);
+        } else if (this.state.generalStatus != 0) {
+            generalErrorMess = (<p className='text-danger text-center'>An unknown error occurred.</p>);
+        }
+        
         var isGeneralChanged = false;
         for (var attr in this.state.inputForms) {
             if (this.state.inputForms[attr].value != this.props.userData[attr]) {
@@ -297,11 +469,28 @@ class Profile extends React.Component {
             }
         }
         
+        var isGeneralSaveable = isGeneralChanged && (this.state.inputForms.name.status === 2 &&
+                this.state.inputForms.email.status === 2 &&
+                this.state.inputForms.password.status === 2 &&
+                this.state.inputForms.zipCode.status === 2);
+        
+
+        var ownerErrorMess = null;
+        if (this.state.ownerStatus == 500) {
+            ownerErrorMess = (<p className='text-danger text-center'>Server error. Please try again later.</p>);
+        } else if (this.state.ownerStatus == 200) {
+            ownerErrorMess = (<p className='text-success text-center'>Information saved.</p>);
+        } else if (this.state.ownerStatus == -1) {
+            ownerErrorMess = (<p className='text-danger text-center'>You must complete all required fields.</p>);
+        } else if (this.state.ownerStatus != 0) {
+            ownerErrorMess = (<p className='text-danger text-center'>An unknown error occurred.</p>);
+        }
+        
         var isOwnerChanged = false;
         if (this.state.petForms.length != this.props.userData.pets.length) {
             isOwnerChanged = true;
         } else {
-            for (var i = 0; i < this.state.petForms.length; i++) {
+            for (i = 0; i < this.state.petForms.length; i++) {
                 if (this.state.petForms[i].name != this.props.userData.pets[i].name || 
                         this.state.petForms[i].type != this.props.userData.pets[i].type || 
                         this.state.petForms[i].description != this.props.userData.pets[i].description) {
@@ -309,6 +498,27 @@ class Profile extends React.Component {
                     break;
                 }
             }
+        }
+        
+        var isOwnerSaveable = isOwnerChanged;
+        if (isOwnerSaveable) {
+            for (i = 0; i < this.state.petForms.length; i++) {
+                if (this.state.petForms[i].nameStatus !== 2 || this.state.petForms[i].typeStatus !== 2) {
+                    isOwnerSaveable = false;
+                    break;
+                }
+            }
+        }
+
+        var sitterErrorMess = null;
+        if (this.state.sitterStatus == 500) {
+            sitterErrorMess = (<p className='text-danger text-center'>Server error. Please try again later.</p>);
+        } else if (this.state.sitterStatus == 200) {
+            sitterErrorMess = (<p className='text-success text-center'>Information saved.</p>);
+        } else if (this.state.sitterStatus == -1) {
+            sitterErrorMess = (<p className='text-danger text-center'>You must complete all required fields.</p>);
+        } else if (this.state.sitterStatus != 0) {
+            sitterErrorMess = (<p className='text-danger text-center'>An unknown error occurred.</p>);
         }
         
         var isSitterChanged = false;
@@ -322,6 +532,7 @@ class Profile extends React.Component {
                 }
             }
         }
+        var isSitterSaveable = isSitterChanged;
         
         return(
             <div>
@@ -360,7 +571,12 @@ class Profile extends React.Component {
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelGeneral(event)} disabled={!isGeneralChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>
-                                                <Button block bsSize="lg" onClick={(event) => this.handleGeneralSubmit(event)} bsStyle="success" disabled={!isGeneralChanged}>Save</Button>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleGeneralSubmit(event)} bsStyle="success" disabled={!isGeneralSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={12} sm={10} lg={8}>
+                                                {generalErrorMess}
                                             </Col>
                                         </Row>
                                     </Grid>
@@ -384,7 +600,12 @@ class Profile extends React.Component {
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelOwner(event)} disabled={!isOwnerChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>
-                                                <Button block bsSize="lg" onClick={(event) => this.handleOwnerSubmit(event)} bsStyle="success" disabled={!isOwnerChanged}>Save</Button>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleOwnerSubmit(event)} bsStyle="success" disabled={!isOwnerSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={12} sm={10} lg={8}>
+                                                {ownerErrorMess}
                                             </Col>
                                         </Row>
                                     </Grid>
@@ -402,11 +623,26 @@ class Profile extends React.Component {
                                             </Col>
                                         </Row>
                                         <Row className="top-buffer-sm">
+                                            <Col sm={3}>
+                                                <legend>{this.state.sitterForms.petPreferences.name}</legend>
+                                            </Col>
+                                            <Col sm={7} lg={5}>
+                                                <div className="weekday-row">
+                                                    {petTypes.map((curVal, index) => this.createPetTypeButton(curVal, index))}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
                                             <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
                                                 <Button block bsSize="lg" onClick={(event) => this.cancelSitter(event)} disabled={!isSitterChanged}>Cancel</Button>
                                             </Col>
                                             <Col xs={6} sm={4} md={3}>
-                                                <Button block bsSize="lg" onClick={(event) => this.handleSitterSubmit(event)} bsStyle="success" disabled={!isSitterChanged}>Save</Button>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleSitterSubmit(event)} bsStyle="success" disabled={!isSitterSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={12} sm={10} lg={8}>
+                                                {sitterErrorMess}
                                             </Col>
                                         </Row>
                                     </Grid>

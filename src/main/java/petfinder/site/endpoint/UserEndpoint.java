@@ -32,9 +32,15 @@ public class UserEndpoint {
     static final ObjectMapper mapper = new ObjectMapper();
 
     // Returns user information for a given username
+    @RequestMapping(path = "/exists", method = RequestMethod.GET)
+    public static ResponseEntity<String> userExists(@RequestParam(name = "username") String username){
+        return EndpointUtil.getQuery("/users/user/" + username, false);
+    }
+    
+    // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
-        return EndpointUtil.getQuery("/users/user/" + username);
+        return EndpointUtil.getQuery("/users/user/" + username, true);
     }
 
     // Returns user information if username and password are correct

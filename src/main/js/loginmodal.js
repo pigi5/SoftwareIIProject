@@ -43,24 +43,27 @@ class LoginModal extends React.Component {
     
     handleSubmit(event) {
         // login
-        axios.get('/api/login', {
-                params: {
-                    'username': this.state.username,
-                    'password': this.state.password
-                }
-            })
-            .then((response) => {
-                console.log(JSON.stringify(response, null, 4));
-                this.setState({status: response.status});
-                this.authorizeUser(response.data);
-            })
-            .catch((error) => {
-                console.log(JSON.stringify(error, null, 4));
-                if (typeof error.response !== 'undefined') {
-                    this.setState({status: error.response.status});
-                    console.log(this.state.status);
-                }
-            });
+        if (this.state.username !== '' && this.state.password !== '') {
+            axios.get('/api/login', {
+                    params: {
+                        'username': this.state.username,
+                        'password': this.state.password
+                    }
+                })
+                .then((response) => {
+                    console.log(JSON.stringify(response, null, 4));
+                    this.setState({status: response.status});
+                    this.authorizeUser(response.data);
+                })
+                .catch((error) => {
+                    console.log(JSON.stringify(error, null, 4));
+                    if (typeof error.response !== 'undefined') {
+                        this.setState({status: error.response.status});
+                    }
+                });
+        } else {
+            this.setState({status: -1});
+        }
 
         event.preventDefault();
     }
@@ -73,6 +76,8 @@ class LoginModal extends React.Component {
             errorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
         } else if (this.state.status == 200) {
             errorMess = (<p className='text-success text-center top-buffer-sm'>Login successful.</p>);
+        } else if (this.state.status != 0) {
+            errorMess = (<p className='text-danger text-center top-buffer-sm'>An unknown error occurred.</p>);
         }
 
         return (
@@ -95,7 +100,7 @@ class LoginModal extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={this.close}>Close</Button>
-                        <Button onClick={this.handleSubmit} bsStyle="primary">Login</Button>
+                        <Button onClick={this.handleSubmit} bsStyle="primary" disabled={this.state.username === '' || this.state.password === ''}>Login</Button>
                     </Modal.Footer>
                 </Modal>
             </NavItem>
