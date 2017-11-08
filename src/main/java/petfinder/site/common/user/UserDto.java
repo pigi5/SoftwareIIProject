@@ -29,9 +29,9 @@ public class UserDto {
 	//Constructors
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
-		this.pets = Collections.emptyList();
-		this.petPreferences = Collections.emptyList();
-		this.availability = Collections.emptyList();
+		this.pets = new LinkedList<PetDto>();
+		this.petPreferences = new LinkedList<PetType>();
+		this.availability = new LinkedList<String>();
 		this.rating = 0;
 		this.numberOfRatings = 0;
 	}
@@ -43,9 +43,11 @@ public class UserDto {
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
 	public void setPetPreferences(List<String> petPreferencesString){
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			this.petPreferences = mapper.readValue(petPreferencesString.toString(), mapper.getTypeFactory().constructCollectionType(List.class, PetType.class));
+			this.petPreferences.clear();
+			for (String typeName : petPreferencesString) {
+				this.petPreferences.add(PetType.get(typeName));
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

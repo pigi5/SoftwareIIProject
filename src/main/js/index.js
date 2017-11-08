@@ -34,12 +34,12 @@ class Index extends React.Component {
                     <Route exact path="/faq" component={FAQPage} />
         
                     <Route exact path="/sitterprefs" component={SitterPreferences} />
-                    <Route exact path="/startappt" component={StartAppointment} />
                    
                     <PrivateRoute exact path="/dashboard/owner" authed={this.props.authed} component={OwnerDashboard} />
                     <PrivateRoute exact path="/dashboard/sitter" authed={this.props.authed} component={SitterDashboard} />
                     <PrivateRoute exact path="/profile" authed={this.props.authed} component={Profile} />
                     <PrivateRoute exact path="/search" authed={this.props.authed} component={SearchResults} />
+                    <PrivateRoute exact path="/startappt" authed={this.props.authed} component={StartAppointment} />
               
                     <Route component={NotFoundPage} />
                 </Switch>

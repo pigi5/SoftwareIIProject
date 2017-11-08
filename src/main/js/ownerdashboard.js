@@ -2,33 +2,74 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Grid, Row, Col, Button} from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button} from 'react-bootstrap';
 
 class OwnerDashboard extends React.Component {
-    createPetCard(curVal, index, array) {
+    createPetCard(curVal, index) {
         return (
-            <div className="card" key={index}>
-                <div className="card-block card-padded">
-                    <h4 className="card-title">{curVal['name']}</h4>
-                    <h6 className="card-subtitle mb-2 text-muted">{curVal['type']}</h6>
-                    <p className="card-text">{curVal['description']}</p>
+            <Col key={index} xs={12} sm={6} md={4}>
+                <div className="sr-card">
+                    <h3><strong>{curVal.name}</strong> <small>({curVal.type})</small></h3>
+                    <p>{curVal.description}</p>
                 </div>
-            </div>
+            </Col>
         );
     }
     
     render() { 
-        console.log(JSON.stringify(this.props.userData, null, 4));
+//        var booking = null;
+//        if (this.props.userData.appointments.length > 0) {
+//            booking = (<Badge>this.props.userData.appointments.length</Badge>);
+//        }
         return(
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
                     <PageHeader>
-                        Sitter Dashboard
+                        Owner Dashboard
                     </PageHeader>
-                    <div className="card-deck">
-                        {this.props.userData.pets.map(this.createPetCard)}
-                    </div>
+                    <Tab.Container id="profile-tabs" defaultActiveKey={1}>
+                        <Row>
+                            <Col sm={3} md={2}>
+                                <Nav bsStyle="pills" stacked>
+                                    <NavItem eventKey={1}>Bookings</NavItem>
+                                    <NavItem eventKey={2}>Pets</NavItem>
+                                </Nav>
+                            </Col>
+                            <Col sm={9} md={10}>
+                                <Tab.Content animation>
+                                    <Tab.Pane eventKey={1}>
+                                        <Grid>
+                                            <Row className="top-buffer-sm">
+                                                <Col sm={8} smOffset={1} md={6} mdOffset={2} lgOffset={1}>
+                                                    <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
+                                                        <span>Start Booking</span>
+                                                        <i className="fa fa-plus pull-left center-icon-vertical" />
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                            <Row className="top-buffer-sm">
+                                                <Col sm={10} lg={8}>
+                                                    List Bookings here
+                                                </Col>
+                                            </Row>
+                                        </Grid>
+                                    </Tab.Pane>
+                                    <Tab.Pane eventKey={2}>
+                                        <Grid>
+                                            <Row className="top-buffer-sm">
+                                                <Col sm={10} lg={8}>
+                                                    <Row className="equal-height">
+                                                        {this.props.userData.pets.map((curVal, index) => this.createPetCard(curVal, index))}
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </Grid>
+                                    </Tab.Pane>
+                                </Tab.Content>
+                            </Col>
+                        </Row>
+                    </Tab.Container>
                 </div>
             </div>
         );
