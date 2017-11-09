@@ -1,6 +1,4 @@
 package petfinder.site.common.user;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetType;
 
@@ -11,13 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * Created by jlutteringer on 8/23/17.
  */
-public class UserDto implements UserDetails{
+public class UserDto implements UserDetails {
 	private String name;
 	private String email;
 	private String username;
@@ -25,7 +20,6 @@ public class UserDto implements UserDetails{
 	private List<GrantedAuthority> authorities;
 	private int zipCode;
 	private List<PetDto> pets;
-	//Can only hold the strings "dog", "cat", "rodent", "bird"
 	private List<PetType> petPreferences;
 	private List<String> availability;
 	private double rating;
