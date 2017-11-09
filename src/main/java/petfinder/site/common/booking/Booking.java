@@ -5,18 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import petfinder.site.common.pet.PetDto;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Booking {
     private String ownerUsername;
     private String sitterUsername;
     private List<PetDto> petsSit;
-    private Boolean sitterApprove;
+    private boolean sitterApprove;
     private long startDate;
     private long endDate;
 
     public Booking(){
-        this.petsSit = Collections.emptyList();
+        this.petsSit = new LinkedList<PetDto>();
         this.sitterApprove = false;
         this.startDate = 0;
         this.endDate = 0;
@@ -48,8 +49,8 @@ public class Booking {
     public List<PetDto> getPetsSit() {return petsSit; }
     public void setPetsSit(List<PetDto> petsSit) {this.petsSit = petsSit; }
 
-    public Boolean getSitterApprove() {return sitterApprove; }
-    public void setSitterApprove(Boolean sitterApprove) {this.sitterApprove = sitterApprove; }
+    public boolean getSitterApprove() {return sitterApprove; }
+    public void setSitterApprove(boolean sitterApprove) {this.sitterApprove = sitterApprove; }
 
     @Override
     public String toString() {

@@ -9,12 +9,15 @@ public class Notification {
     private String message;
 
     public Notification(){
-        this.id = 1; //Can be a randomly generated unique number
+        this.id = -1; // Can be a randomly generated unique number
+        this.booking = null;
+        this.message = "";
     }
 
     public Notification(long id, Booking booking, String msg){
-        this.booking = booking; //booking this notification is connected to
-        this.message = msg; //The message you want to send to sitter or owner
+        this.id = id;
+        this.booking = booking; // booking this notification is connected to
+        this.message = msg; // The message you want to send to sitter or owner
     }
 
     public long getId() {return id; }
