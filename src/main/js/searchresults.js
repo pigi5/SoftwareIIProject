@@ -18,8 +18,8 @@ class SearchResults extends React.Component {
         
         this.state = {
             sitters: [],
-            showModal: false,
-            selectedUsername: ''
+            selectedUsername: '',
+            status = 0
         };
     }
     
@@ -64,32 +64,36 @@ class SearchResults extends React.Component {
     }
 
     close() {
-        this.setState({ showModal: false });
+        this.setState({ status: 0 });
     }
 
     request(username) {
-        this.setState({ showModal: true, selectedUsername: username });
         // logic to request appointment with sitter
-
-        axios.put('/api/book', {
-                params: {
-                    ownerUsername: this.props.userData.username,
-                    sitterUsername: username,
-                    date: queryParams.date,
-                    petNames: queryParams.pets
-
-                }
-            })
-            .then((response) => {
-
-            })
-            .catch((error) => {
-                if (typeof error.response !== 'undefined') {
-
-                    console.log(this.state.status);
-                }
-            });
-
+        var bookingData = {
+                ownerUsername: this.props.userData.username,
+                sitterUsername: username,
+                petsSit: this.props.booking.pets,
+                startDate: this.props.booking.startDate,
+                endDate: this.props.booking.endDate
+        };
+        
+        if (bookingData.ownerUsername != '' &&
+                bookingData.sitterUsername != '' &&
+                bookingData.petsSit.length > 0  &&
+                bookingData.startDate > 0 &&
+                bookingData.endDate > 0 &&) {
+            axios.put('/api/users/book', {bookingData})
+                .then((response) => {
+                    this.setState({status: response.status, selectedUsername: username});
+                })
+                .catch((error) => {
+                    if (typeof error.response !== 'undefined') {
+                        this.setState({status: error.response.status, selectedUsername: username});
+                    }
+                });
+        } else {
+            this.setState({status: -1, selectedUsername: username});
+        }
     }
     
     render() {
@@ -105,6 +109,29 @@ class SearchResults extends React.Component {
         } else {
             results = (<h3>Sorry, there were no search results that match that query.</h3>);
         }
+        
+        var message = null;
+        if (this.state.status === -1) {
+            message = (
+                <p>There is missing or incorrect information about the requested booking.</p>
+                <p>Please try searching for a sitter again.</p>
+            );
+        } else if (this.state.status === 200) {
+            message = (
+                <p>A request for your pet-sitting appointment has been sent to <strong>{this.state.selectedUsername}</strong>.</p>
+                <p>You will receive a notification when they accept or decline your request.</p>
+            );
+        } else if (this.state.status === 500) {
+            message = (
+                <p>A server error occurred.</p>
+                <p>Please try again later.</p>
+            );
+        } else if (this.state.status !== 0) {
+            message = (
+                <p>An unknown error occurred.</p>
+                <p>Please try again later.</p>
+            );
+        }
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
@@ -113,13 +140,12 @@ class SearchResults extends React.Component {
                         Search Results
                     </PageHeader>
                     {results}
-		        	<Modal show={this.state.showModal} onHide={this.close}>
+		        	<Modal show={this.state.status !== 0} onHide={this.close}>
     		            <Modal.Header closeButton>
     		                <Modal.Title>Request Sent!</Modal.Title>
     		            </Modal.Header>
     		            <Modal.Body>
-    		                <p>A request for your pet-sitting appointment has been sent to <strong>{this.state.selectedUsername}</strong>.</p>
-    		                <p>You will receive a notification when they accept or decline your request.</p>
+    		                {message}
     		            </Modal.Body>
     		            <Modal.Footer>
     		              <Button onClick={() => this.close()} bsStyle="primary">Okay</Button>
