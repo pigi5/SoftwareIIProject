@@ -19,7 +19,7 @@ class SearchResults extends React.Component {
         this.state = {
             sitters: [],
             selectedUsername: '',
-            status = 0
+            status: 0
         };
     }
     
