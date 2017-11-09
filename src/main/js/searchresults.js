@@ -70,13 +70,14 @@ class SearchResults extends React.Component {
     request(username) {
         this.setState({ showModal: true, selectedUsername: username });
         // logic to request appointment with sitter
-        /*
-        axios.get('/api/login', {
+
+        axios.put('/api/book', {
                 params: {
                     ownerUsername: this.props.userData.username,
                     sitterUsername: username,
                     date: queryParams.date,
                     petNames: queryParams.pets
+
                 }
             })
             .then((response) => {
@@ -88,7 +89,7 @@ class SearchResults extends React.Component {
                     console.log(this.state.status);
                 }
             });
-        */
+
     }
     
     render() {
