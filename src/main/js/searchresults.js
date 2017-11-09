@@ -113,23 +113,31 @@ class SearchResults extends React.Component {
         var message = null;
         if (this.state.status === -1) {
             message = (
-                <p>There is missing or incorrect information about the requested booking.</p>
-                <p>Please try searching for a sitter again.</p>
+                <div>
+                    <p>There is missing or incorrect information about the requested booking.</p>
+                    <p>Please try searching for a sitter again.</p>
+                </div>
             );
         } else if (this.state.status === 200) {
             message = (
-                <p>A request for your pet-sitting appointment has been sent to <strong>{this.state.selectedUsername}</strong>.</p>
-                <p>You will receive a notification when they accept or decline your request.</p>
+                <div>
+                    <p>A request for your pet-sitting appointment has been sent to <strong>{this.state.selectedUsername}</strong>.</p>
+                    <p>You will receive a notification when they accept or decline your request.</p>
+                </div>
             );
         } else if (this.state.status === 500) {
             message = (
-                <p>A server error occurred.</p>
-                <p>Please try again later.</p>
+                <div>
+                    <p>A server error occurred.</p>
+                    <p>Please try again later.</p>
+                </div>
             );
         } else if (this.state.status !== 0) {
             message = (
-                <p>An unknown error occurred.</p>
-                <p>Please try again later.</p>
+                <div>
+                    <p>An unknown error occurred.</p>
+                    <p>Please try again later.</p>
+                </div>
             );
         }
         return (
