@@ -45,9 +45,9 @@ public class UserDto implements UserDetails{
 		this.authorities = new LinkedList<GrantedAuthority>();
 		this.rating = 0;
 		this.numberOfRatings = 0;
-		this.accountNonExpired = false;
-		this.accountNonLocked = false;
-		this.credentialsNonExpired = false;
+		this.accountNonExpired = true;
+		this.accountNonLocked = true;
+		this.credentialsNonExpired = true;
 		this.enabled = true;
 	}
 	//Setters
