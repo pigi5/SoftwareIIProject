@@ -27,6 +27,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.context.annotation.Bean;
 
 import javax.xml.ws.Endpoint;
 
@@ -34,47 +37,15 @@ import javax.xml.ws.Endpoint;
  * Created by jlutteringer on 8/22/17.
  */
 
-/*
+
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-*/
-		/*
-		http
-				.authorizeRequests()
-					.antMatchers("/").permitAll()
-				.antMatchers("/statics/**").permitAll()
-			//	.anyRequest().authenticated()
-					.and()
-				.formLogin()
-					.loginPage("/login")
-					.permitAll()
-					.and()
-				.logout()
-					.permitAll();
-					*/
-/*
-		http
-				.csrf().disable();
-	}
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-				.withUser("user").password("password").roles("USER")
-				.and()
-				.withUser("admin").password("admin").roles("USER", "ADMIN");
-	}
-}
-*/
-
-
-
-@Configuration
-@EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+	@Qualifier("userDetailsService")
+	UserDetailsService userDetailsService;
 
 	//BONSAI INFORMATION DO NOT DELETE OR CHANGE:
 	//BONSAI URL: https://f1cjmlsx:tp7vjypq3wdxiowv@boxwood-8909856.us-east-1.bonsaisearch.net
@@ -84,13 +55,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	ObjectMapper mapper = new ObjectMapper();
 
+
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.csrf().disable()
 				.authorizeRequests()
 					.antMatchers("/statics/**").permitAll()
-					.antMatchers("/api/login").permitAll()
+					.antMatchers("/loginApi/**").permitAll()
 					.antMatchers("/api/users/add").permitAll()
 					.antMatchers("/api/users/exists").permitAll()
 					.antMatchers("/api/pets/types").permitAll()
@@ -104,6 +77,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.permitAll();
 	}
 
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+	}
+
+	/*
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		//Add this into a for loop after retrieving a list of user names/passwords?
@@ -121,4 +101,5 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.withUser(user.getUsername()).password(user.getPassword()).roles("USER");
 		}
 	}
+	*/
 }

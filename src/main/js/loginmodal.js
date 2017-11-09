@@ -44,7 +44,7 @@ class LoginModal extends React.Component {
     handleSubmit(event) {
         // login
         if (this.state.username !== '' && this.state.password !== '') {
-            axios.get('/api/login', {
+            axios.get('/loginApi/login', {
                     params: {
                         'username': this.state.username,
                         'password': this.state.password

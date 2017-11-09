@@ -5,17 +5,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.userdetails.*;
 
+import petfinder.site.MyUserDetailsService;
 import petfinder.site.common.user.UserDto;
+import petfinder.site.common.user.UserService;
+import petfinder.site.common.pet.PetDto;
+import petfinder.site.common.booking.Booking;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.text.DateFormat;
 
 
@@ -28,15 +33,18 @@ import java.text.DateFormat;
 @RequestMapping(value = "/api/users")
 public class UserEndpoint {
     @Autowired
-    
+
     static final ObjectMapper mapper = new ObjectMapper();
+
+    @Qualifier("userDetailsService")
+    static UserDetailsService userDetailsService;
 
     // Returns user information for a given username
     @RequestMapping(path = "/exists", method = RequestMethod.GET)
     public static ResponseEntity<String> userExists(@RequestParam(name = "username") String username){
         return EndpointUtil.getQuery("/users/user/" + username, false);
     }
-    
+
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
@@ -90,8 +98,24 @@ public class UserEndpoint {
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
     }
 
+    @RequestMapping(path = "/book", method = RequestMethod.POST)
+    public static ResponseEntity<String> createBooking(@RequestBody Booking booking){
+        try{
+            return EndpointUtil.indexQuery("/bookings/booking/" + booking.getStartDate(), mapper.writeValueAsString(booking));
+        } catch (JsonProcessingException e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
+        //List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        //authorities.add(new SimpleGrantedAuthority("USER"));
+        //UserDetails sUser = new User(user.getUsername(), user.getPassword(), authorities);
+
+        //UserDto newUser = userDetailsService.loadUserByUsername(user.getUsername());
+
     	try {
 			return EndpointUtil.indexQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
 		} catch (JsonProcessingException e) {
