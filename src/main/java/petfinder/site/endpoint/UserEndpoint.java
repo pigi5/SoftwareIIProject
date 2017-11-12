@@ -136,7 +136,7 @@ public class UserEndpoint {
         }catch(Exception ex){
             ex.printStackTrace();
         }
-        
+
         //add notification to sitter
         try{
             ResponseEntity<String> getSitterResponse = getUser(booking.getSitterUsername());

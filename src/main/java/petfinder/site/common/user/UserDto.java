@@ -1,5 +1,4 @@
 package petfinder.site.common.user;
-import com.sun.tools.corba.se.idl.constExpr.Not;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetType;
 
