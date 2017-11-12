@@ -1,4 +1,5 @@
 package petfinder.site.common.user;
+import com.sun.tools.corba.se.idl.constExpr.Not;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetType;
 
@@ -22,6 +23,7 @@ public class UserDto implements UserDetails {
 	private List<PetDto> pets;
 	private List<PetType> petPreferences;
 	private List<String> availability;
+	private List<Notification> notifications;
 	private double rating;
 	private int numberOfRatings;
 	private boolean accountNonExpired;
@@ -35,6 +37,7 @@ public class UserDto implements UserDetails {
 		this.pets = new LinkedList<PetDto>();
 		this.petPreferences = new LinkedList<PetType>();
 		this.availability = new LinkedList<String>();
+		this.notifications = new LinkedList<Notification>();
 
 		this.authorities = new LinkedList<GrantedAuthority>();
 		this.rating = 0;
@@ -72,9 +75,7 @@ public class UserDto implements UserDetails {
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
 	public void setAvailability(List<String> availability) {this.availability = availability;}
-
-	//accountNonExpired
-	//accountNonExpired
+	public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
 
 	//Getters
 	public String getName() 				{return name;}
@@ -98,6 +99,7 @@ public class UserDto implements UserDetails {
 	public double getRating() 				{return rating;}
 	public int getNumberOfRatings() 		{return numberOfRatings;}
 	public List<String> getAvailability() 	{return availability;}
+	public List<Notification> getNotifications() {return notifications;}
 
 	@Override
 	public List<GrantedAuthority> getAuthorities() {

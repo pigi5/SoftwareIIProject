@@ -18,6 +18,7 @@ import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.UserService;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.booking.Booking;
+import petfinder.site.common.user.Notification;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -86,7 +87,7 @@ public class UserEndpoint {
             }
         }
 
-        System.out.println(preferences);
+        //System.out.println(preferences);
 
         //get date in ms
         Date d = new Date(date);
@@ -100,22 +101,66 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/book", method = RequestMethod.POST)
     public static ResponseEntity<String> createBooking(@RequestBody Booking booking){
+
+        String petString = "";
+        String sitterPetString = "";
+        for(int i = 0; i < booking.getPetsSit().size(); i++){
+            petString += booking.getPetsSit().get(i).getName() + ", ";
+            sitterPetString += booking.getPetsSit().get(i).getName() + ", type: " + booking.getPetsSit().get(i).getType().toString() + ", ";
+        }
+        long startDate = booking.getStartDate();
+        Date d = new Date(startDate);
+        DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
+        String startDateString = df.format(d);
+
+        long endDate = booking.getEndDate();
+        Date e = new Date(endDate);
+        String endDateString = df.format(e);
+
+        //add notification to owner
         try{
-            return EndpointUtil.indexQuery("/bookings/booking/" + booking.getStartDate(), mapper.writeValueAsString(booking));
-        } catch (JsonProcessingException e){
-            e.printStackTrace();
+            //gets the owner object
+            ResponseEntity<String> getUserResponse = getUser(booking.getOwnerUsername());
+            UserDto owner = mapper.readValue(getUserResponse.getBody().toString(), UserDto.class);
+            //reads the notifications that he/she already has
+            List<Notification> ownerNotifications = owner.getNotifications();
+            //creates a string of pet names involved in the booking
+
+
+            //adds a new notification to be added to list
+            Notification toAdd = new Notification(booking, "You have requested " + booking.getSitterUsername() + " to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString);
+            ownerNotifications.add(toAdd);
+            owner.setNotifications(ownerNotifications);
+            //updates user
+            EndpointUtil.indexQueryPost("/users/user/" + owner.getUsername(), mapper.writeValueAsString(owner));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        
+        //add notification to sitter
+        try{
+            ResponseEntity<String> getSitterResponse = getUser(booking.getSitterUsername());
+            UserDto sitter = mapper.readValue(getSitterResponse.getBody().toString(), UserDto.class);
+            List<Notification> sitterNotifications = sitter.getNotifications();
+            Notification toAdd = new Notification(booking, booking.getOwnerUsername() + " has requested your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString);
+            sitterNotifications.add(toAdd);
+            sitter.setNotifications(sitterNotifications);
+            EndpointUtil.indexQueryPost("/users/user/" + sitter.getUsername(), mapper.writeValueAsString(sitter));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        try{
+            ResponseEntity<String> response = EndpointUtil.indexQueryPost("/bookings/booking", mapper.writeValueAsString(booking));
+            return response;
+        } catch (JsonProcessingException ex){
+            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
-        //List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        //authorities.add(new SimpleGrantedAuthority("USER"));
-        //UserDetails sUser = new User(user.getUsername(), user.getPassword(), authorities);
-
-        //UserDto newUser = userDetailsService.loadUserByUsername(user.getUsername());
-
     	try {
 			return EndpointUtil.indexQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
 		} catch (JsonProcessingException e) {

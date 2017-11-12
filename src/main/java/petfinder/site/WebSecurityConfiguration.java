@@ -83,23 +83,4 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(userDetailsService);
 	}
 
-	/*
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//Add this into a for loop after retrieving a list of user names/passwords?
-
-		ArrayList<UserDto> users = new ArrayList<>();
-
-		ResponseEntity<String> result = UserEndpoint.getAllUsers();
-		System.out.println(result.getBody());
-
-		users = mapper.readValue(result.getBody().toString(), mapper.getTypeFactory().constructCollectionType(List.class, UserDto.class));
-
-
-		for(UserDto user : users) {
-			auth.inMemoryAuthentication()
-					.withUser(user.getUsername()).password(user.getPassword()).roles("USER");
-		}
-	}
-	*/
 }

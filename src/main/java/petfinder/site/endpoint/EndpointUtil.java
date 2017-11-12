@@ -226,6 +226,34 @@ public class EndpointUtil {
         }
     }
 
+    static ResponseEntity<String> indexQueryPost(String esEndpoint, String docJS) {
+        RestClient restClient = getRestClient();
+
+        try {
+            Map<String, String> params = new HashMap<String, String>();
+            //params.put("op_type", "create");
+
+            HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
+
+            Response response = restClient.performRequest("POST", esEndpoint, params, entity);
+
+            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
+        } catch (ResponseException re) {
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } finally {
+            if (restClient != null) {
+                try {
+                    restClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     static ResponseEntity<String> indexQuery(String esEndpoint, String docJS) {
     	RestClient restClient = getRestClient();
 

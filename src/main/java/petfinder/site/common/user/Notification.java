@@ -1,27 +1,22 @@
-package petfinder.site.common.booking;
+package petfinder.site.common.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import petfinder.site.common.booking.Booking;
 
 public class Notification {
-    private long id;
     private Booking booking;
     private String message;
 
     public Notification(){
-        this.id = -1; // Can be a randomly generated unique number
         this.booking = null;
         this.message = "";
     }
 
-    public Notification(long id, Booking booking, String msg){
-        this.id = id;
+    public Notification(Booking booking, String msg){
         this.booking = booking; // booking this notification is connected to
         this.message = msg; // The message you want to send to sitter or owner
     }
-
-    public long getId() {return id; }
-    public void setId(long id) {this.id = id; }
 
     public Booking getBooking() {return booking; }
     public void setBooking(Booking book) {this.booking = book; }
