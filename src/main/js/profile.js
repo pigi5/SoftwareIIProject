@@ -313,7 +313,8 @@ class Profile extends React.Component {
             availability: this.state.sitterForms.availability.value,
             petPreferences: this.state.sitterForms.petPreferences.value
         };
-        
+
+
         axios.post('/api/users/update', updates, {
                 params: {
                     username: this.props.userData.username,
@@ -329,7 +330,7 @@ class Profile extends React.Component {
                     this.setState({sitterStatus: error.response.status});
                 }
             });
-        
+
         event.preventDefault();
     }
     

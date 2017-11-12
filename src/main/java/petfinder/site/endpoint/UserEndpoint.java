@@ -4,6 +4,7 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import petfinder.site.common.user.UserService;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification;
+import petfinder.site.common.pet.PetType;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -102,6 +104,8 @@ public class UserEndpoint {
     @RequestMapping(path = "/book", method = RequestMethod.POST)
     public static ResponseEntity<String> createBooking(@RequestBody Booking booking){
 
+        System.out.println(booking.toString());
+
         String petString = "";
         String sitterPetString = "";
         for(int i = 0; i < booking.getPetsSit().size(); i++){
@@ -168,7 +172,13 @@ public class UserEndpoint {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
-    
+
+    @RequestMapping(path = "/updatePreferences", method = RequestMethod.POST)
+    public static ResponseEntity<String> updatePreferences(@RequestParam(name = "username") String username, @RequestParam(name = "availability") List<String> availability, @RequestParam(name = "petPreferences") List<PetType> petTypes){
+        System.out.println("Username: " + username + " availability: " + availability.toString() + " petTypes: " + petTypes.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public static ResponseEntity<String> updateUser(@RequestParam(name = "username") String username, @RequestBody HashMap<String, Object> partialDoc){
     	try {
@@ -178,4 +188,5 @@ public class UserEndpoint {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
+
 }

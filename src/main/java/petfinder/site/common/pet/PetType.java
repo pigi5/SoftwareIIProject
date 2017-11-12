@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.Set;
 
 public enum PetType{
-    DOG("Dog"), CAT("Cat"), RODENT("Rodent"), BIRD("Bird");
+    //DOG("Dog"), CAT("Cat"), RODENT("Rodent"), BIRD("Bird");
+    DOG("DOG"), CAT("CAT"), RODENT("RODENT"), BIRD("BIRD");
 
     private static final Map<String, PetType> lookup = new HashMap<String, PetType>();
     static {
