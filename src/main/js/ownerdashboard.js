@@ -5,12 +5,64 @@ import { connect } from 'react-redux';
 import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button} from 'react-bootstrap';
 
 class OwnerDashboard extends React.Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            bookings: []
+        };
+        
+        this.refreshOwnerInfo();
+    }
+    
+    refreshOwnerInfo() {
+        axios.get('/api/users/ownerbookings', {
+                params: {
+                    username: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                this.setState({bookings:response.data});
+            })
+            .catch((error) => {
+                this.setState({bookings:[]});
+            });
+    }
+    
     createPetCard(curVal, index) {
         return (
             <Col key={index} xs={12} sm={6} md={4}>
                 <div className="sr-card">
                     <h3><strong>{curVal.name}</strong> <small>({curVal.type})</small></h3>
                     <p>{curVal.description}</p>
+                </div>
+            </Col>
+        );
+    }
+    
+    createBookingCard(curVal, index) {
+        var startDate = new Date(curVal.startDate);
+        var endDate = new Date(curVal.endDate);
+        var status;
+        var color;
+        if (curVal.sitterApprove) {
+            status = 'Booked';
+            color = 'text-success';
+        } else {
+            status = 'Pending';
+            color = 'text-warning';
+        }
+        return (
+            <Col key={index} xs={12} smOffset={2} sm={8}>
+                <div className="sr-card">
+                    <h3>Booking with <strong>{curVal.sitterUsername}</strong> to sit:</h3>
+                    <ul>
+                        {curVal.petsSit.map((petVal, ind) => (
+                            <li key={ind}><strong>{petVal.name}</strong> <small>({petVal.type})</small></li>
+                        ))}
+                    </ul>
+                    <p>From {startDate.toLocaleDateString('en-US')} to {endDate.toLocaleDateString('en-US')}</p>
+                    <p className={color + ' pull-right'}>{status}</p>
                 </div>
             </Col>
         );
@@ -26,7 +78,11 @@ class OwnerDashboard extends React.Component {
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
                     <PageHeader>
-                        Owner Dashboard
+                        <span>Owner Dashboard</span>
+                        <Button bsSize="lg" className="pull-right" onClick={() => this.refreshOwnerInfo()}>
+                            <span>Refresh</span>
+                            <i className="fa fa-refresh pull-left center-icon-vertical" />
+                        </Button>
                     </PageHeader>
                     <Tab.Container id="profile-tabs" defaultActiveKey={1}>
                         <Row>
@@ -50,7 +106,7 @@ class OwnerDashboard extends React.Component {
                                             </Row>
                                             <Row className="top-buffer-sm">
                                                 <Col sm={10} lg={8}>
-                                                    List Bookings here
+                                                    {this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index))}
                                                 </Col>
                                             </Row>
                                         </Grid>

@@ -49,11 +49,9 @@ class MyNavbar extends React.Component {
                         <span>Owner Dashboard</span>
                         <i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true" />
                     </NavItem>
-                    <NavDropdown title={<span>{this.props.userData.username}<i className="fa fa-user fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>} id="profile-dropdown">
-                        <MenuItem href="/#/profile">Profile</MenuItem>
-                        <MenuItem href="/#/startappt">Start Appointment</MenuItem>
-                        <MenuItem href="/#/sitterprefs">Sitter Prefs</MenuItem>
-                    </NavDropdown>
+                    <NavItem href="/#/profile">
+                        <span>{this.props.userData.username}<i className="fa fa-user fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
+                    </NavItem>
                     <NavItem href="/logout" onClick={this.logout} className="bg-primary">
                         <span className="text-white">Logout<i className="fa fa-sign-out fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
                     </NavItem>
