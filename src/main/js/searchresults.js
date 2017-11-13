@@ -68,6 +68,10 @@ class SearchResults extends React.Component {
     }
 
     request(username) {
+        //TODO- Ford, sometimes "Search for a Sitter" will disappear and reappear
+        //When you are entering start/end date. its not a huge deal but it can be annoying
+        //because when it appears your cursor appears over the reset button
+        
         // logic to request appointment with sitter
         var bookingData = {
                 ownerUsername: this.props.userData.username,
