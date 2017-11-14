@@ -7,14 +7,10 @@ import { serializeQuery } from 'js/util';
 
 const datePickerClear = (<i className="fa fa-times" aria-hidden="true"></i>);
 
-function mapPetToPetForm(curVal, index) {
+export function mapPetToPetForm(curVal, index) {
     var petCopy = JSON.parse(JSON.stringify(curVal));
     petCopy.checked = true;
     return petCopy;
-}
-
-function filterPetForms(curVal) {
-    return curVal.checked;
 }
 
 function mapPetFormToPet(curVal, index) {
@@ -23,18 +19,18 @@ function mapPetFormToPet(curVal, index) {
     return petCopy;
 }
 
-class StartAppointment extends React.Component {
+class StartAppointment extends React.Component {   
     constructor(props) {
         super(props);
         this.state = {
-            startDateString: '',
-            startDate: 0,
-            startDateStatus: 0,
-            endDateString: '',
-            endDate: 0,
-            endDateStatus: 0,
-            pets: this.props.userData.pets.map(mapPetToPetForm),
-            petsStatus: this.props.userData.pets.length > 0 ? 2 : 0,
+            startDateString: this.props.booking.hasOwnProperty('startDateString') ? this.props.booking.startDateString : '',
+            startDate: this.props.booking.hasOwnProperty('startDate') ? this.props.booking.startDate : 0,
+            startDateStatus: this.props.booking.hasOwnProperty('startDateStatus') ? this.props.booking.startDateStatus : 0,
+            endDateString: this.props.booking.hasOwnProperty('endDateString') ? this.props.booking.endDateString : '',
+            endDate: this.props.booking.hasOwnProperty('endDate') ? this.props.booking.endDate : 0,
+            endDateStatus: this.props.booking.hasOwnProperty('endDateStatus') ? this.props.booking.endDateStatus : 0,
+            petForms: this.props.booking.hasOwnProperty('petForms') ? this.props.booking.petForms : this.props.userData.pets.map(mapPetToPetForm),
+            petsStatus: this.props.booking.hasOwnProperty('petsStatus') ? this.props.booking.petsStatus : (this.props.userData.pets.length > 0 ? 2 : 0)
             //location: 'My House'
          };
     }
@@ -43,15 +39,10 @@ class StartAppointment extends React.Component {
         if (this.state.startDateStatus === 2 &&
                 this.state.endDateStatus === 2 &&
                 this.state.petsStatus === 2) {
-            var bookingData = {
-                startDate: this.state.startDate,
-                endDate: this.state.endDate,
-                pets: this.state.pets.filter(filterPetForms).map(mapPetFormToPet)
-                //location: this.state.location
-            };
+            var bookingData = Object.assign({}, this.state, {pets: this.state.petForms.filter((curVal) => curVal.checked).map(mapPetFormToPet)});
             
             this.props.dispatch({
-                type: 'START_BOOKING',
+                type: 'UPDATE_BOOKING',
                 bookingData: bookingData
             });
         }
@@ -67,7 +58,7 @@ class StartAppointment extends React.Component {
             endDateString: '',
             endDate: 0,
             endDateStatus: 0,
-            pets: this.props.userData.pets.map(mapPetToPetForm),
+            petForms: this.props.userData.pets.map(mapPetToPetForm),
             petsStatus: this.props.userData.pets.length > 0 ? 2 : 0,
             //location: 'My House'
         });
@@ -115,7 +106,7 @@ class StartAppointment extends React.Component {
     }
     
     onPetChange(pet) {
-        var petsCopy = JSON.parse(JSON.stringify(this.state.pets));
+        var petsCopy = JSON.parse(JSON.stringify(this.state.petForms));
         var i;
         for (i = 0; i < petsCopy.length; i++) {
             if (petsCopy[i].name == pet.name && petsCopy[i].type == pet.type) {
@@ -130,7 +121,7 @@ class StartAppointment extends React.Component {
                 break;
             }
         }
-        this.setState({pets: petsCopy, petsStatus: status});
+        this.setState({petForms: petsCopy, petsStatus: status});
     }
 
 //    onLocationChange(event) {
@@ -163,7 +154,7 @@ class StartAppointment extends React.Component {
     			    			<legend>Pets</legend>
                             </Col>
                             <Col sm={4} md={3}>
-                                {this.state.pets.map((curVal, index) => this.createPetCheckbox(curVal, index))}
+                                {this.state.petForms.map((curVal, index) => this.createPetCheckbox(curVal, index))}
                             </Col>
 		    			</Row>
                         <Row className="top-buffer-sm">

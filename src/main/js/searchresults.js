@@ -1,6 +1,6 @@
 import React from 'react';
 import MyNavbar from 'js/navbar';
-import { PageHeader, Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import { PageHeader, Grid, Row, Col, Button, Modal, Panel} from 'react-bootstrap';
 import { parseQuery } from 'js/util';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -49,16 +49,23 @@ class SearchResults extends React.Component {
     }
     
     createSitterCard(curVal, index) {
+        /* TODO - this logic is for whenever the matching algorithm including how much percent of a match a sitter is
+        var color;
+        if (curVal.match > 0.66) {
+            color = 'success';
+        } else if (curVal.match > 0.33) {
+            color = 'warning';
+        } else {
+            color = 'danger';
+        }
+        */
+        
         return (
             <Col key={index} xs={12} sm={6} md={4} lg={3}>
-                <div className="sr-card">
-                    <h3><strong>{curVal.name}</strong> <small>({curVal.username})</small></h3>
+                <Panel bsStyle="success" header={<span>{curVal.name} <small>({curVal.username})</small></span>} footer={<Button onClick={() => this.request(curVal.username)} bsStyle="success" block>Request</Button>}>
                     <p>Zip: {curVal.zipCode}</p>
                     <p>{curVal.rating} stars</p>
-                    <div className="push-bottom">
-                        <Button onClick={() => this.request(curVal.username)} bsStyle="success" block>Request</Button>
-                    </div>
-                </div>
+                </Panel>
             </Col>
         );
     }
@@ -104,11 +111,9 @@ class SearchResults extends React.Component {
         var results;
         if (this.state.sitters.length > 0) {
             results = (
-                    <Grid>
-                        <Row className="equal-height">
-                            {this.state.sitters.map((curVal, index) => this.createSitterCard(curVal, index))}
-                        </Row>
-                    </Grid>
+                    <Row className="equal-height">
+                        {this.state.sitters.map((curVal, index) => this.createSitterCard(curVal, index))}
+                    </Row>
                 );
         } else {
             results = (<h3>Sorry, there were no search results that match that query.</h3>);
@@ -147,7 +152,7 @@ class SearchResults extends React.Component {
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
-            	<div className="container">
+            	<Grid>
                     <PageHeader>
                         Search Results
                     </PageHeader>
@@ -163,7 +168,7 @@ class SearchResults extends React.Component {
     		              <Button onClick={() => this.close()} bsStyle="primary">Okay</Button>
     		            </Modal.Footer>
 		            </Modal>
-				</div>
+				</Grid>
 			</div>
 		);
     }

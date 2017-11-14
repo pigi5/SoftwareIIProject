@@ -16,7 +16,7 @@ function userReducer(state = {}, action) {
             return {authed: false};
         case 'UPDATE_USER':
             return Object.assign({}, state, {userData: Object.assign({}, state.userData, action.userData)});
-        case 'START_BOOKING':
+        case 'UPDATE_BOOKING':
             return Object.assign({}, state, {booking: action.bookingData});
         default:
             return state;

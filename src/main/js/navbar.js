@@ -2,13 +2,13 @@ import React from 'react';
 import RegisterModal, { RegisterButton } from 'js/registermodal';
 import LoginModal from 'js/loginmodal';
 import { connect } from 'react-redux';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Grid } from 'react-bootstrap';
 
 class MyNavbar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pages: [
+            pages: [/*
                 {
                     name: 'Home',
                     link: '/#/'
@@ -20,7 +20,7 @@ class MyNavbar extends React.Component {
                 {
                     name: 'FAQ',
                     link: '/#/faq'
-                }
+                }*/
             ]
         };
         
