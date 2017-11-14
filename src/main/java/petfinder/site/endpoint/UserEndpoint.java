@@ -105,7 +105,7 @@ public class UserEndpoint {
     		  .map(PetDto::getName)
     		  .collect(Collectors.joining(", "));
         String sitterPetString = booking.getPetsSit().stream()
-      		  .map(PetDto::getNameAndType)
+      		  .map(PetDto::printNameAndType)
       		  .collect(Collectors.joining(", "));
 
         DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
