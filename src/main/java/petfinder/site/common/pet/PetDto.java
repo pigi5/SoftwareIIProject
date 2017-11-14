@@ -46,4 +46,8 @@ public class PetDto {
 	public void setType(String name){
 		this.type = PetType.get(name);
 	}
+	
+	public String getNameAndType() {
+		return name + " (" + type.toString() + ")";
+	}
 }
