@@ -140,7 +140,7 @@ public class EndpointUtil {
         	}
         }
     }
-    
+
     /*
      * params: query - elasticsearch query string
      * return: defaults to lessResponse of 404 and moreResponse of 500
@@ -148,7 +148,7 @@ public class EndpointUtil {
     static ResponseEntity<String> searchOneQuery(String esEndpoint, String query) {
     	return searchOneQuery(esEndpoint, query, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
-    
+
     /*
      * description: performs a "search one" type query on the elastic search database and allows
      * 		 for specification of what type of responses to return if only one item is not found

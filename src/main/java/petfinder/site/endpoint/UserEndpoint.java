@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
 
@@ -22,6 +23,7 @@ import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification;
 import petfinder.site.common.pet.PetType;
 
+import javax.xml.ws.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.text.DateFormat;
@@ -187,6 +189,17 @@ public class UserEndpoint {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+    }
+
+    @RequestMapping(path = "/getLoggedIn", method = RequestMethod.GET)
+    public static boolean checkLoggedIn(){
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+        }catch(java.lang.ClassCastException e){
+            return false;
+        }
+        return true;
     }
 
 }
