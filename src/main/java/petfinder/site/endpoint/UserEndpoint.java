@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
 
@@ -17,6 +20,7 @@ import petfinder.site.common.user.Notification;
 import petfinder.site.common.pet.PetDto;
 import petfinder.site.common.pet.PetType;
 
+import javax.xml.ws.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,32 +107,32 @@ public class UserEndpoint {
         String sitterPetString = booking.getPetsSit().stream()
       		  .map(PetDto::getNameAndType)
       		  .collect(Collectors.joining(", "));
-        
+
         DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
         String startDateString = df.format(new Date(booking.getStartDate()));
         String endDateString = df.format(new Date(booking.getEndDate()));
 
         try {
 	        //add notification to owner
-	
+
 	        //gets the owner object
 	        ResponseEntity<String> getUserResponse = getUser(booking.getOwnerUsername());
 	        UserDto owner = mapper.readValue(getUserResponse.getBody().toString(), UserDto.class);
 	        //reads the notifications that he/she already has
 	        List<Notification> ownerNotifications = owner.getNotifications();
 	        //creates a string of pet names involved in the booking
-	
-	
+
+
 	        //adds a new notification to be added to list
 	        Notification ownerNotification = new Notification(booking, "You have requested " + booking.getSitterUsername() + " to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString);
 	        ownerNotifications.add(ownerNotification);
 	        owner.setNotifications(ownerNotifications);
 	        //updates user
 	        EndpointUtil.indexQueryPost("/users/user/" + owner.getUsername(), mapper.writeValueAsString(owner));
-	
-	
+
+
 	        //add notification to sitter
-	
+
 	        ResponseEntity<String> getSitterResponse = getUser(booking.getSitterUsername());
 	        UserDto sitter = mapper.readValue(getSitterResponse.getBody().toString(), UserDto.class);
 	        List<Notification> sitterNotifications = sitter.getNotifications();
@@ -136,19 +140,19 @@ public class UserEndpoint {
 	        sitterNotifications.add(sitterNotification);
 	        sitter.setNotifications(sitterNotifications);
 	        EndpointUtil.indexQueryPost("/users/user/" + sitter.getUsername(), mapper.writeValueAsString(sitter));
-	
+
             return EndpointUtil.indexQueryPost("/bookings/booking", mapper.writeValueAsString(booking));
         } catch (IOException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
     @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
 		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername: " + username, 1000);
     }
-    
+
     @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
 		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername: " + username, 1000);
@@ -172,6 +176,17 @@ public class UserEndpoint {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+    }
+
+    @RequestMapping(path = "/getLoggedIn", method = RequestMethod.GET)
+    public static boolean checkLoggedIn(){
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+        }catch(java.lang.ClassCastException e){
+            return false;
+        }
+        return true;
     }
 
 }

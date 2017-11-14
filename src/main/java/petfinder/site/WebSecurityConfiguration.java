@@ -67,6 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/api/users/add").permitAll()
 					.antMatchers("/api/users/exists").permitAll()
 					.antMatchers("/api/pets/types").permitAll()
+					.antMatchers("/api/users/getLoggedIn").permitAll()
 				.anyRequest().authenticated()
 					.and()
 				.formLogin()
