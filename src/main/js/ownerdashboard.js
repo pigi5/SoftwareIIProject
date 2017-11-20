@@ -10,13 +10,17 @@ class OwnerDashboard extends React.Component {
         super(props);
         
         this.state = {
-            bookings: []
+            bookings: [],
+            bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
+            profileState: 2 
         };
         
         this.refreshOwnerInfo();
     }
     
     refreshOwnerInfo() {
+        this.setState({bookingsState: 0, profileState: 0});
+        
         axios.get('/api/users/ownerbookings', {
                 params: {
                     username: this.props.userData.username
@@ -24,10 +28,26 @@ class OwnerDashboard extends React.Component {
             })
             .then((response) => {
                 response.data.sort((a, b) => b.endDate - a.endDate);
-                this.setState({bookings:response.data});
+                this.setState({bookings: response.data, bookingsState: 2});
             })
             .catch((error) => {
-                this.setState({bookings:[]});
+                this.setState({bookings:[], bookingsState: 1});
+            });
+        axios.get('/api/users/user', {
+                params: {
+                    username: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                response.data.sort((a, b) => b.notificationDate - a.notificationDate);
+                this.props.dispatch({
+                    type: 'UPDATE_USER',
+                    userData: response.data
+                });
+                this.setState({profileState: 2});
+            })
+            .catch((error) => {
+                this.setState({profileState: 1});
             });
     }
     
@@ -87,11 +107,62 @@ class OwnerDashboard extends React.Component {
         );
     }
     
+    markIsRead(index, isRead) {
+        var newNotifications = this.props.userData.notifications.slice();
+        newNotifications[index].isRead = isRead;
+        var updates = {notifications: newNotifications};
+
+        axios.get('/api/users/update', updates, {
+                params: {
+                    username: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                this.props.dispatch({
+                    type: 'UPDATE_USER',
+                    userData: updates
+                });
+            })
+            .catch((error) => {
+            });
+    }
+    
+    createNotificationCard(curVal, index) {
+        var notificationDate = new Date(curVal.notificationDate);
+        var color;
+        var status;
+        if (curVal.isRead) {
+            status = (<Button block onClick={() => this.markIsRead(index, false)}>
+                    <span>Mark Unread</span>
+                    <i className="fa fa-envelope pull-left center-icon-vertical" />
+                </Button>);
+            color = 'default';
+        } else {
+            status = (<Button block onClick={() => this.markIsRead(index, true)}>
+                    <span>Mark Read</span>
+                    <i className="fa fa-open-envelope pull-left center-icon-vertical" />
+                </Button>);
+            color = 'warning';
+        }
+        return (
+            <Col key={index} sm={8} md={6} mdOffset={2} lgOffset={1}>
+                <Panel header={notificationDate.toLocaleString('en-US')} footer={status} bsStyle={color}>
+                    <p>{curVal.message}</p>
+                </Panel>
+            </Col>
+        );
+    }
+    
     render() { 
-//        var booking = null;
-//        if (this.props.userData.appointments.length > 0) {
-//            booking = (<Badge>this.props.userData.appointments.length</Badge>);
-//        }
+        var refreshClass = 'fa-refresh ';
+        if (this.state.bookingState === 1 || this.state.profileState === 1) {
+            refreshClass = 'fa-refresh fa-spin ';
+        } else if (this.state.bookingState === 0 || this.state.profileState === 0) {
+            refreshClass = 'fa-exclamation-circle ';
+        }
+        
+        var numNotifications = this.state.userData.notifications.filter(notification => !notification.isRead).length;
+        
         return(
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
@@ -104,7 +175,7 @@ class OwnerDashboard extends React.Component {
                             <Col xs={5} sm={3} md={2}>
                                 <Button block onClick={() => this.refreshOwnerInfo()}>
                                     <span>Refresh</span>
-                                    <i className="fa fa-refresh pull-left center-icon-vertical" />
+                                    <i className={'fa ' + refreshClass + 'pull-left center-icon-vertical'} />
                                 </Button>
                             </Col>
                         </Row>
@@ -113,7 +184,7 @@ class OwnerDashboard extends React.Component {
                         <Row className="clearfix">
                             <Col sm={3} md={2}>
                                 <Nav bsStyle="pills" stacked>
-                                    <NavItem eventKey={1}>Notifications</NavItem>
+                                    <NavItem eventKey={1}>Notifications <Badge>numNotifications</Badge></NavItem>
                                     <NavItem eventKey={2}>Bookings</NavItem>
                                     <NavItem eventKey={3}>Pets</NavItem>
                                 </Nav>
@@ -121,7 +192,7 @@ class OwnerDashboard extends React.Component {
                             <Col sm={9} md={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                    
+                                        {this.state.userData.notifications.map((curVal, index) => this.createNotificationCard(curVal, index))}
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Grid>

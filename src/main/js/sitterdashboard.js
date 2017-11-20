@@ -30,6 +30,22 @@ class SitterDashboard extends React.Component {
             });
     }
     
+    acceptBooking(booking, index) {
+        axios.post('/api/users/updatebooking', {sitterApprove: true}, {
+                params: {
+                    bookingID: booking.id,
+                }
+            })
+            .then((response) => {
+                var bookingsClone = JSON.parse(JSON.stringify(this.state.bookings));
+                bookingsClone[index].sitterApprove = true; 
+                this.setState({bookings: bookingsClone});
+            })
+            .catch((error) => {
+                
+            });
+    }
+    
     createBookingCard(curVal, index) {
         var startDate = new Date(curVal.startDate);
         var endDate = new Date(curVal.endDate);
@@ -42,7 +58,7 @@ class SitterDashboard extends React.Component {
             status = (
                     <Row>
                         <Col xs={6}>
-                            <Button block bsStyle="success">Accept</Button>
+                            <Button block bsStyle="success" onClick={() => this.acceptBooking(curVal, index)}>Accept</Button>
                         </Col>
                         <Col xs={6}>
                             <Button block bsStyle="danger">Decline</Button>

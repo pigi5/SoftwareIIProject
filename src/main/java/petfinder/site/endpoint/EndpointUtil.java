@@ -55,7 +55,7 @@ public class EndpointUtil {
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user/bob)
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> getQuery(String esEndpoint, boolean returnSource) {
+    static ResponseEntity<String> getQuery(String esEndpoint, boolean returnSource, boolean returnID) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -69,8 +69,13 @@ public class EndpointUtil {
             if (!returnSource) {
                 return ResponseEntity.ok(null);
             }
+            
+            HashMap<String,Object> retMap = (HashMap<String, Object>) responseMap.get("_source");
+            if (returnID) {
+            	retMap.put("id", responseMap.get("_id"));
+            }
 
-        	return ResponseEntity.ok(mapper.writeValueAsString(responseMap.get("_source")));
+        	return ResponseEntity.ok(mapper.writeValueAsString(retMap));
         } catch (ResponseException re) {
         	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
         } catch (Exception e){
@@ -93,7 +98,7 @@ public class EndpointUtil {
      *         query - elasticsearch query string
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> searchMultipleQuery(String esEndpoint, String query, int amount) {
+    static ResponseEntity<String> searchMultipleQuery(String esEndpoint, String query, int amount, boolean returnID) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -122,7 +127,13 @@ public class EndpointUtil {
             // Take out _source from each hit and construct new list
             List<HashMap<String, Object>> retObjs = new LinkedList<HashMap<String, Object>>();
             for (HashMap<String,Object> obj : ((List<HashMap<String, Object>>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits"))) {
-            	retObjs.add((HashMap<String, Object>) obj.get("_source"));
+                HashMap<String,Object> retMap = (HashMap<String, Object>) obj.get("_source");
+                
+                if (returnID) {
+                	retMap.put("id", obj.get("_id"));
+                }
+                
+            	retObjs.add(retMap);
             }
             return ResponseEntity.ok(mapper.writeValueAsString(retObjs));
         } catch (ResponseException re) {
@@ -145,8 +156,8 @@ public class EndpointUtil {
      * params: query - elasticsearch query string
      * return: defaults to lessResponse of 404 and moreResponse of 500
      */
-    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query) {
-    	return searchOneQuery(esEndpoint, query, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query, boolean returnID) {
+    	return searchOneQuery(esEndpoint, query, returnID, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
 
     /*
@@ -158,7 +169,7 @@ public class EndpointUtil {
      *         moreResponse - ResponseEntity to return if >1 hits are found
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
+    static ResponseEntity<String> searchOneQuery(String esEndpoint, String query, boolean returnID, ResponseEntity<String> lessResponse, ResponseEntity<String> moreResponse) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -182,8 +193,13 @@ public class EndpointUtil {
             	return moreResponse;
             }
             //If hits is 1 then there was one hit so return response
-            HashMap<String,Object> userInfo = (HashMap<String, Object>) ((HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0)).get("_source");
-            return ResponseEntity.ok(mapper.writeValueAsString(userInfo));
+            HashMap<String,Object> obj = (HashMap<String,Object>) ((List<Object>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits")).get(0);
+            HashMap<String,Object> retMap = (HashMap<String,Object>) obj.get("_source");
+            if (returnID) {
+            	retMap.put("id", obj.get("_id"));
+            }
+            
+            return ResponseEntity.ok(mapper.writeValueAsString(retMap));
         } catch (ResponseException re) {
         	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
         } catch (IOException e) {

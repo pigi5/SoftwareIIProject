@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
@@ -17,13 +15,10 @@ import org.springframework.security.core.userdetails.*;
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification;
-import petfinder.site.common.pet.PetDto;
-import petfinder.site.common.pet.PetType;
+import petfinder.site.common.user.Notification.NotificationType;
 
-import javax.xml.ws.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.io.IOException;
 import java.text.DateFormat;
 
@@ -36,8 +31,9 @@ import java.text.DateFormat;
 @RestController
 @RequestMapping(value = "/api/users")
 public class UserEndpoint {
+    public static DateFormat availabilityFormat = new SimpleDateFormat("EEEE");
+	
     @Autowired
-
     static final ObjectMapper mapper = new ObjectMapper();
 
     @Qualifier("userDetailsService")
@@ -46,26 +42,26 @@ public class UserEndpoint {
     // Returns user information for a given username
     @RequestMapping(path = "/exists", method = RequestMethod.GET)
     public static ResponseEntity<String> userExists(@RequestParam(name = "username") String username){
-        return EndpointUtil.getQuery("/users/user/" + username, false);
+        return EndpointUtil.getQuery("/users/user/" + username, false, false);
     }
 
     // Returns user information for a given username
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
-        return EndpointUtil.getQuery("/users/user/" + username, true);
+        return EndpointUtil.getQuery("/users/user/" + username, true, false);
     }
 
     // Returns user information if username and password are correct
     @RequestMapping(path = "/authuser", method = RequestMethod.GET)
     public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-	    return EndpointUtil.searchOneQuery("/users/user", "username:" + username + " AND password:" + password, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+	    return EndpointUtil.searchOneQuery("/users/user", "username:" + username + " AND password:" + password, false, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
     
     // Returns "all" users (1000)
     // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000);
+	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000, false);
 	}
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
@@ -88,12 +84,9 @@ public class UserEndpoint {
 
         //get date in ms
         Date d = new Date(date);
-        DateFormat df = new SimpleDateFormat("EEEE");
-        String dayAvailable = df.format(d);
+        String dayAvailable = availabilityFormat.format(d);
 
-
-
-        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000);
+        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false);
     }
 
     @RequestMapping(path = "/book", method = RequestMethod.POST)
@@ -101,30 +94,19 @@ public class UserEndpoint {
 
         System.out.println(booking.toString());
 
-        String petString = booking.getPetsSit().stream()
-    		  .map(PetDto::getName)
-    		  .collect(Collectors.joining(", "));
-        String sitterPetString = booking.getPetsSit().stream()
-      		  .map(PetDto::printNameAndType)
-      		  .collect(Collectors.joining(", "));
-
-        DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
-        String startDateString = df.format(new Date(booking.getStartDate()));
-        String endDateString = df.format(new Date(booking.getEndDate()));
-
         try {
 	        //add notification to owner
 
 	        //gets the owner object
 	        ResponseEntity<String> getUserResponse = getUser(booking.getOwnerUsername());
-	        UserDto owner = mapper.readValue(getUserResponse.getBody().toString(), UserDto.class);
+	        UserDto owner = mapper.readValue(getUserResponse.getBody(), UserDto.class);
 	        //reads the notifications that he/she already has
 	        List<Notification> ownerNotifications = owner.getNotifications();
 	        //creates a string of pet names involved in the booking
 
 
 	        //adds a new notification to be added to list
-	        Notification ownerNotification = new Notification(booking, "You have requested " + booking.getSitterUsername() + " to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString);
+	        Notification ownerNotification = new Notification(NotificationType.OWNER_REQUEST, booking);
 	        ownerNotifications.add(ownerNotification);
 	        owner.setNotifications(ownerNotifications);
 	        //updates user
@@ -136,7 +118,7 @@ public class UserEndpoint {
 	        ResponseEntity<String> getSitterResponse = getUser(booking.getSitterUsername());
 	        UserDto sitter = mapper.readValue(getSitterResponse.getBody().toString(), UserDto.class);
 	        List<Notification> sitterNotifications = sitter.getNotifications();
-	        Notification sitterNotification = new Notification(booking, booking.getOwnerUsername() + " has requested your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString);
+	        Notification sitterNotification = new Notification(NotificationType.SITTER_REQUEST, booking);
 	        sitterNotifications.add(sitterNotification);
 	        sitter.setNotifications(sitterNotifications);
 	        EndpointUtil.indexQueryPost("/users/user/" + sitter.getUsername(), mapper.writeValueAsString(sitter));
@@ -150,12 +132,22 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername: " + username, 1000);
+		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername: " + username, 1000, true);
     }
 
     @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername: " + username, 1000);
+		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername: " + username, 1000, true);
+    }
+    
+    @RequestMapping(path = "/updatebooking", method = RequestMethod.POST)
+    public static ResponseEntity<String> updateBooking(@RequestParam(name = "bookingID") String bookingID, @RequestBody HashMap<String, Object> partialDoc){
+    	try {
+			return EndpointUtil.updateQuery("/bookings/booking/" + bookingID, mapper.writeValueAsString(partialDoc));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
@@ -182,7 +174,6 @@ public class UserEndpoint {
     public static boolean checkLoggedIn(){
         try {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String username = user.getUsername();
         }catch(java.lang.ClassCastException e){
             return false;
         }
