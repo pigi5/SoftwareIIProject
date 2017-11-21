@@ -16,7 +16,7 @@ class SitterDashboard extends React.Component {
     }
     
     refreshSitterInfo() {
-        axios.get('/api/users/sitterbookings', {
+        axios.get('/api/bookings/sitterbookings', {
                 params: {
                     username: this.props.userData.username
                 }
@@ -30,16 +30,26 @@ class SitterDashboard extends React.Component {
             });
     }
     
-    acceptBooking(booking, index) {
-        axios.post('/api/users/updatebooking', {sitterApprove: true}, {
+    finalizeBooking(booking, accept) {
+        axios.post('/api/bookings/finalizebooking', {
                 params: {
                     bookingID: booking.id,
+                    accept: accept
                 }
             })
             .then((response) => {
-                var bookingsClone = JSON.parse(JSON.stringify(this.state.bookings));
-                bookingsClone[index].sitterApprove = true; 
-                this.setState({bookings: bookingsClone});
+                var bookingsClone = this.state.bookings.slice();
+                var index = bookingsClone.findIndex(element => element.id === booking.id);
+                if (index >= 0) {
+                    if (accept) {
+                        bookingsClone[index].sitterApprove = true; 
+                    } else {
+                        bookingsClone[index].sitterDecline = true; 
+                    }
+                    this.setState({bookings: bookingsClone});
+                } else {
+                    console.log('Error: Booking ' + booking.id + ' was successfully finalized on the server-side, but it could not be found in local memory.');
+                }
             })
             .catch((error) => {
                 
@@ -58,10 +68,10 @@ class SitterDashboard extends React.Component {
             status = (
                     <Row>
                         <Col xs={6}>
-                            <Button block bsStyle="success" onClick={() => this.acceptBooking(curVal, index)}>Accept</Button>
+                            <Button block bsStyle="success" onClick={() => this.finalizeBooking(curVal, true)}>Accept</Button>
                         </Col>
                         <Col xs={6}>
-                            <Button block bsStyle="danger">Decline</Button>
+                            <Button block bsStyle="danger" onClick={() => this.finalizeBooking(curVal, false)}>Decline</Button>
                         </Col>
                     </Row>
             );

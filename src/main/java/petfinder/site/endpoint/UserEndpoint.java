@@ -1,7 +1,9 @@
 package petfinder.site.endpoint;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,67 +91,6 @@ public class UserEndpoint {
         return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false);
     }
 
-    @RequestMapping(path = "/book", method = RequestMethod.POST)
-    public static ResponseEntity<String> createBooking(@RequestBody Booking booking){
-
-        System.out.println(booking.toString());
-
-        try {
-	        //add notification to owner
-
-	        //gets the owner object
-	        ResponseEntity<String> getUserResponse = getUser(booking.getOwnerUsername());
-	        UserDto owner = mapper.readValue(getUserResponse.getBody(), UserDto.class);
-	        //reads the notifications that he/she already has
-	        List<Notification> ownerNotifications = owner.getNotifications();
-	        //creates a string of pet names involved in the booking
-
-
-	        //adds a new notification to be added to list
-	        Notification ownerNotification = new Notification(NotificationType.OWNER_REQUEST, booking);
-	        ownerNotifications.add(ownerNotification);
-	        owner.setNotifications(ownerNotifications);
-	        //updates user
-	        EndpointUtil.indexQueryPost("/users/user/" + owner.getUsername(), mapper.writeValueAsString(owner));
-
-
-	        //add notification to sitter
-
-	        ResponseEntity<String> getSitterResponse = getUser(booking.getSitterUsername());
-	        UserDto sitter = mapper.readValue(getSitterResponse.getBody().toString(), UserDto.class);
-	        List<Notification> sitterNotifications = sitter.getNotifications();
-	        Notification sitterNotification = new Notification(NotificationType.SITTER_REQUEST, booking);
-	        sitterNotifications.add(sitterNotification);
-	        sitter.setNotifications(sitterNotifications);
-	        EndpointUtil.indexQueryPost("/users/user/" + sitter.getUsername(), mapper.writeValueAsString(sitter));
-
-            return EndpointUtil.indexQueryPost("/bookings/booking", mapper.writeValueAsString(booking));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
-    public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername: " + username, 1000, true);
-    }
-
-    @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
-    public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername: " + username, 1000, true);
-    }
-    
-    @RequestMapping(path = "/updatebooking", method = RequestMethod.POST)
-    public static ResponseEntity<String> updateBooking(@RequestParam(name = "bookingID") String bookingID, @RequestBody HashMap<String, Object> partialDoc){
-    	try {
-			return EndpointUtil.updateQuery("/bookings/booking/" + bookingID, mapper.writeValueAsString(partialDoc));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-    }
-
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
     	try {
@@ -180,4 +121,22 @@ public class UserEndpoint {
         return true;
     }
 
+	
+	public static void addNotification(String username, NotificationType type, Booking booking) throws IOException {
+		// Get user in memory
+        ResponseEntity<String> getUserResponse = getUser(username);
+        UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
+        
+        // Get user's notifications
+        List<Notification> notifications = user.getNotifications();
+        
+        // Create a new notification and add it to the list
+        Notification notification = new Notification(type, booking);
+        notifications.add(notification);
+        
+        // Update user
+		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
+		partialDoc.put("notifications", notifications);
+        updateUser(username, partialDoc);
+	}
 }

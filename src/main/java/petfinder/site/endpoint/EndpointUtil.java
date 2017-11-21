@@ -121,7 +121,7 @@ public class EndpointUtil {
             int hits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
             
             if(hits < 1){
-            	return ResponseEntity.notFound().build();
+            	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
             // If hits is >1 then there was one hit so return response
             // Take out _source from each hit and construct new list
@@ -154,10 +154,10 @@ public class EndpointUtil {
 
     /*
      * params: query - elasticsearch query string
-     * return: defaults to lessResponse of 404 and moreResponse of 500
+     * return: defaults to lessResponse of 204 and moreResponse of 500
      */
     static ResponseEntity<String> searchOneQuery(String esEndpoint, String query, boolean returnID) {
-    	return searchOneQuery(esEndpoint, query, returnID, ResponseEntity.notFound().build(), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+    	return searchOneQuery(esEndpoint, query, returnID, ResponseEntity.status(HttpStatus.NO_CONTENT).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
 
     /*

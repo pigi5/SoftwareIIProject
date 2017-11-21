@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel} from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, Badge, Alert } from 'react-bootstrap';
 import { mapPetToPetForm } from 'js/startappointment';
 
 class OwnerDashboard extends React.Component {
@@ -14,21 +14,25 @@ class OwnerDashboard extends React.Component {
             bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
             profileState: 2 
         };
-        
+    }
+    
+    componentDidMount() {
         this.refreshOwnerInfo();
     }
     
     refreshOwnerInfo() {
         this.setState({bookingsState: 0, profileState: 0});
         
-        axios.get('/api/users/ownerbookings', {
+        axios.get('/api/bookings/ownerbookings', {
                 params: {
                     username: this.props.userData.username
                 }
             })
             .then((response) => {
-                response.data.sort((a, b) => b.endDate - a.endDate);
-                this.setState({bookings: response.data, bookingsState: 2});
+                if (Array.isArray(response.data)) {
+                    response.data.sort((a, b) => b.endDate - a.endDate);
+                    this.setState({bookings: response.data, bookingsState: 2});
+                }
             })
             .catch((error) => {
                 this.setState({bookings:[], bookingsState: 1});
@@ -39,7 +43,6 @@ class OwnerDashboard extends React.Component {
                 }
             })
             .then((response) => {
-                response.data.sort((a, b) => b.notificationDate - a.notificationDate);
                 this.props.dispatch({
                     type: 'UPDATE_USER',
                     userData: response.data
@@ -132,16 +135,20 @@ class OwnerDashboard extends React.Component {
         var color;
         var status;
         if (curVal.isRead) {
-            status = (<Button block onClick={() => this.markIsRead(index, false)}>
-                    <span>Mark Unread</span>
-                    <i className="fa fa-envelope pull-left center-icon-vertical" />
-                </Button>);
+            status = (
+                    <Button block onClick={() => this.markIsRead(index, false)}>
+                        <span>Mark Unread</span>
+                        <i className="fa fa-envelope pull-left center-icon-vertical" />
+                    </Button>
+                );
             color = 'default';
         } else {
-            status = (<Button block onClick={() => this.markIsRead(index, true)}>
-                    <span>Mark Read</span>
-                    <i className="fa fa-open-envelope pull-left center-icon-vertical" />
-                </Button>);
+            status = (
+                    <Button block onClick={() => this.markIsRead(index, true)}>
+                        <span>Mark Read</span>
+                        <i className="fa fa-open-envelope pull-left center-icon-vertical" />
+                    </Button>
+                );
             color = 'warning';
         }
         return (
@@ -155,13 +162,53 @@ class OwnerDashboard extends React.Component {
     
     render() { 
         var refreshClass = 'fa-refresh ';
-        if (this.state.bookingState === 1 || this.state.profileState === 1) {
+        if (this.state.bookingState === 0 || this.state.profileState === 0) {
             refreshClass = 'fa-refresh fa-spin ';
-        } else if (this.state.bookingState === 0 || this.state.profileState === 0) {
-            refreshClass = 'fa-exclamation-circle ';
+        } else if (this.state.bookingState === 1 || this.state.profileState === 1) {
+            refreshClass = 'fa-exclamation-circle text-danger ';
         }
         
-        var numNotifications = this.state.userData.notifications.filter(notification => !notification.isRead).length;
+        var numNewNots = this.props.userData.notifications.filter(notification => !notification.isRead).length;
+        
+        var notifications;
+        if (this.props.userData.notifications.length > 0) {
+            notifications = this.props.userData.notifications.map((curVal, index) => this.createNotificationCard(curVal, index));
+        } else {
+            notifications = (
+                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                        <Alert bsStyle="info">You have no notifications.</Alert>
+                    </Col>
+                );
+        }
+
+        var bookings;
+        if (this.state.bookings.length > 0) {
+            bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
+        } else {
+            bookings = (
+                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                        <Alert bsStyle="info">You have no bookings. Click the button above to set up an appointment.</Alert>
+                    </Col>
+                );
+        }
+
+        var pets;
+        if (this.state.bookings.length > 0) {
+            pets = (
+                    <Col sm={10} lg={8}>
+                        <Row className="equal-height">
+                            {this.props.userData.pets.map((curVal, index) => this.createPetCard(curVal, index))}
+                        </Row>
+                    </Col>
+                );
+        } else {
+            pets = (
+                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                        <Alert bsStyle="info">You have no pets. Go to your profile to add pets!</Alert>
+                    </Col>
+                );
+        }
+        
         
         return(
             <div>
@@ -184,7 +231,7 @@ class OwnerDashboard extends React.Component {
                         <Row className="clearfix">
                             <Col sm={3} md={2}>
                                 <Nav bsStyle="pills" stacked>
-                                    <NavItem eventKey={1}>Notifications <Badge>numNotifications</Badge></NavItem>
+                                    <NavItem eventKey={1}>Notifications <Badge pullRight>{numNewNots}</Badge></NavItem>
                                     <NavItem eventKey={2}>Bookings</NavItem>
                                     <NavItem eventKey={3}>Pets</NavItem>
                                 </Nav>
@@ -192,7 +239,11 @@ class OwnerDashboard extends React.Component {
                             <Col sm={9} md={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                        {this.state.userData.notifications.map((curVal, index) => this.createNotificationCard(curVal, index))}
+                                        <Grid>
+                                            <Row className="top-buffer-sm">
+                                                {notifications}
+                                            </Row>
+                                        </Grid>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Grid>
@@ -205,18 +256,14 @@ class OwnerDashboard extends React.Component {
                                                 </Col>
                                             </Row>
                                             <Row className="top-buffer-sm">
-                                                {this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index))}
+                                                {bookings}
                                             </Row>
                                         </Grid>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={3}>
                                         <Grid>
                                             <Row className="top-buffer-sm">
-                                                <Col sm={10} lg={8}>
-                                                    <Row className="equal-height">
-                                                        {this.props.userData.pets.map((curVal, index) => this.createPetCard(curVal, index))}
-                                                    </Row>
-                                                </Col>
+                                                {pets}
                                             </Row>
                                         </Grid>
                                     </Tab.Pane>

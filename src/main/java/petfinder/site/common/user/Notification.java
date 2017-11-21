@@ -11,7 +11,7 @@ import petfinder.site.common.booking.Booking;
 import petfinder.site.common.pet.PetDto;
 
 public class Notification {
-    public enum NotificationType { OWNER_REQUEST, SITTER_REQUEST, OWNER_ACCEPT, SITTER_ACCEPT }
+    public enum NotificationType { OWNER_REQUEST, SITTER_REQUEST, OWNER_ACCEPT, SITTER_ACCEPT, OWNER_DECLINE, SITTER_DECLINE }
     
     public static DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
     
@@ -65,6 +65,12 @@ public class Notification {
         	break;
         case SITTER_ACCEPT:
         	this.message = "You have accepted " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString;
+        	break;
+        case OWNER_DECLINE:
+        	this.message = sitterUsername + " has declined your request to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString;
+        	break;
+        case SITTER_DECLINE:
+        	this.message = "You have declined " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString;
         	break;
         default:
         	this.message = "";
