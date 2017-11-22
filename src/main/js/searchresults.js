@@ -93,7 +93,7 @@ class SearchResults extends React.Component {
                 bookingData.petsSit.length > 0  &&
                 bookingData.startDate > 0 &&
                 bookingData.endDate > 0) {
-            axios.post('/api/users/book', bookingData)
+            axios.post('/api/bookings/book', bookingData)
                 .then((response) => {
                     this.setState({status: response.status, selectedUsername: username});
                 })

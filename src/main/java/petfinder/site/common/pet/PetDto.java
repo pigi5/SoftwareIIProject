@@ -39,8 +39,8 @@ public class PetDto {
 		this.name = name;
 	}
 
-	public PetType getType() {
-		return type;
+	public String getType() {
+		return type.toString();
 	}
 
 	public void setType(String name){

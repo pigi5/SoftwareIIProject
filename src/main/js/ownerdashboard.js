@@ -115,7 +115,7 @@ class OwnerDashboard extends React.Component {
         newNotifications[index].isRead = isRead;
         var updates = {notifications: newNotifications};
 
-        axios.get('/api/users/update', updates, {
+        axios.post('/api/users/update', updates, {
                 params: {
                     username: this.props.userData.username
                 }
@@ -134,26 +134,28 @@ class OwnerDashboard extends React.Component {
         var notificationDate = new Date(curVal.notificationDate);
         var color;
         var status;
+        var statusButton;
         if (curVal.isRead) {
-            status = (
-                    <Button block onClick={() => this.markIsRead(index, false)}>
-                        <span>Mark Unread</span>
-                        <i className="fa fa-envelope pull-left center-icon-vertical" />
-                    </Button>
-                );
+            status = (<i className="fa fa-envelope pull-left center-icon-vertical" />);
+            statusButton = (
+                <Button onClick={() => this.markIsRead(index, false)}>
+                    <span>Mark Unread</span>
+                </Button>
+            );
             color = 'default';
         } else {
-            status = (
-                    <Button block onClick={() => this.markIsRead(index, true)}>
+            status = (<i className="fa fa-envelope-open pull-left center-icon-vertical" />);
+            statusButton = (
+                    <Button onClick={() => this.markIsRead(index, true)}>
                         <span>Mark Read</span>
-                        <i className="fa fa-open-envelope pull-left center-icon-vertical" />
+                        <i className="fa fa-envelope-open pull-left center-icon-vertical" />
                     </Button>
                 );
             color = 'warning';
         }
         return (
             <Col key={index} sm={8} md={6} mdOffset={2} lgOffset={1}>
-                <Panel header={notificationDate.toLocaleString('en-US')} footer={status} bsStyle={color}>
+                <Panel header={<div><span>{notificationDate.toLocaleString('en-US')}</span>{status}</div>} footer={statusButton} bsStyle={color}>
                     <p>{curVal.message}</p>
                 </Panel>
             </Col>

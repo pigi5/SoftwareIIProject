@@ -58,7 +58,7 @@ public class BookingEndpoint {
     @RequestMapping(path = "/finalizebooking", method = RequestMethod.POST)
     public static ResponseEntity<String> finalizeBooking(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "approve") boolean approve){
     	try {
-    		ResponseEntity<String> getBookingResponse = getBooking(bookingID);
+    		ResponseEntity<String> getBookingResponse = EndpointUtil.getQuery("/bookings/booking/" + bookingID, true, false);
             Booking booking = mapper.readValue(getBookingResponse.getBody(), Booking.class);
     		
     		HashMap<String, Object> partialDoc = new HashMap<String, Object>();

@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import RegisterModal from 'js/registermodal';
 import LoginModal from 'js/loginmodal';
-import { TestModal } from 'js/buttons';
 import MyNavbar from 'js/navbar';
 import { Carousel, PageHeader, Grid, Row, Col, Button } from 'react-bootstrap';
 

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import { Home, SittersPage, OwnersPage, AboutPage, FAQPage, NotFoundPage } from 'js/pages';
 import SearchResults from 'js/searchresults';
-import {SitterPreferences} from 'js/sitterpreferences';
 import StartAppointment from 'js/startappointment';
 import OwnerDashboard from 'js/ownerdashboard';
 import SitterDashboard from 'js/sitterdashboard';
@@ -32,8 +31,6 @@ class Index extends React.Component {
                     <Route exact path="/register" component={Home} />
                     <Route exact path="/about" component={AboutPage} />
                     <Route exact path="/faq" component={FAQPage} />
-        
-                    <Route exact path="/sitterprefs" component={SitterPreferences} />
                    
                     <PrivateRoute exact path="/dashboard/owner" authed={this.props.authed} component={OwnerDashboard} />
                     <PrivateRoute exact path="/dashboard/sitter" authed={this.props.authed} component={SitterDashboard} />

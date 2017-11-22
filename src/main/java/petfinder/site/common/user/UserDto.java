@@ -109,15 +109,6 @@ public class UserDto implements UserDetails {
 		this.authorities = authorities;
 	}
 
-	public PetType getPetType(String petName) {
-		for(int i = 0; i < this.pets.size(); i++){
-			if(this.pets.get(i).getName().equals(petName)){
-				return this.pets.get(i).getType();
-			}
-		}
-		return null;
-	}
-
 	public void addRating(int newRating) {
 		// Do a weighted average of the previous rating and the new rating
         double tempVal = (numberOfRatings * this.rating);

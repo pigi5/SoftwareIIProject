@@ -30,18 +30,18 @@ class SitterDashboard extends React.Component {
             });
     }
     
-    finalizeBooking(booking, accept) {
-        axios.post('/api/bookings/finalizebooking', {
+    finalizeBooking(booking, approve) {
+        axios.post('/api/bookings/finalizebooking', null, {
                 params: {
-                    bookingID: booking.id,
-                    accept: accept
+                    bookingID: encodeURIComponent(booking.id),
+                    approve: approve
                 }
             })
             .then((response) => {
                 var bookingsClone = this.state.bookings.slice();
                 var index = bookingsClone.findIndex(element => element.id === booking.id);
                 if (index >= 0) {
-                    if (accept) {
+                    if (approve) {
                         bookingsClone[index].sitterApprove = true; 
                     } else {
                         bookingsClone[index].sitterDecline = true; 

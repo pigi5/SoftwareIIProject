@@ -55,22 +55,22 @@ public class Notification {
         
         switch(notificationType) {
         case OWNER_REQUEST:
-        	this.message = "You have requested " + sitterUsername + " to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString;
+        	this.message = "You have requested " + sitterUsername + " to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
         	break;
         case SITTER_REQUEST:
-        	this.message = ownerUsername + " has requested your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString;
+        	this.message = ownerUsername + " has requested your sitting services for their pets: " + sitterPetString + " from " + startDateString + " to " + endDateString;
         	break;
         case OWNER_ACCEPT:
-        	this.message = sitterUsername + " has accepted your request to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString;
+        	this.message = sitterUsername + " has accepted your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
         	break;
         case SITTER_ACCEPT:
-        	this.message = "You have accepted " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString;
+        	this.message = "You have accepted " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + " from " + startDateString + " to " + endDateString;
         	break;
         case OWNER_DECLINE:
-        	this.message = sitterUsername + " has declined your request to sit your pet(s): " + petString + "from " + startDateString + " to " + endDateString;
+        	this.message = sitterUsername + " has declined your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
         	break;
         case SITTER_DECLINE:
-        	this.message = "You have declined " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + "from " + startDateString + " to " + endDateString;
+        	this.message = "You have declined " + ownerUsername + "'s request for your sitting services for their pets: " + sitterPetString + " from " + startDateString + " to " + endDateString;
         	break;
         default:
         	this.message = "";
