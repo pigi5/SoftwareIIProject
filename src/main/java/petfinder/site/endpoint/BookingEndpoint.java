@@ -33,10 +33,10 @@ public class BookingEndpoint {
 
         try {
 	        // add notification to owner
-        	UserEndpoint.addNotification(booking.getOwnerUsername(), NotificationType.OWNER_REQUEST, booking);
+        	UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.REQUEST, booking);
 
 	        // add notification to sitter
-        	UserEndpoint.addNotification(booking.getSitterUsername(), NotificationType.SITTER_REQUEST, booking);	        
+        	UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.REQUEST, booking);	        
 
             return EndpointUtil.indexQueryPost("/bookings/booking", mapper.writeValueAsString(booking));
         } catch (IOException ex) {
@@ -47,12 +47,14 @@ public class BookingEndpoint {
 
     @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername: " + username, 1000, true);
+    	String curTimeString = Long.toString(System.currentTimeMillis());
+		return EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername:" + username + " AND endDate:>" + curTimeString + " AND sitterDecline:false", 1000, true);
     }
 
     @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
-		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername: " + username, 1000, true);
+    	String curTimeString = Long.toString(System.currentTimeMillis());
+		return EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername:" + username + " AND endDate:>" + curTimeString + " AND sitterDecline:false", 1000, true);
     }
     
     @RequestMapping(path = "/finalizebooking", method = RequestMethod.POST)
@@ -60,16 +62,21 @@ public class BookingEndpoint {
     	try {
     		ResponseEntity<String> getBookingResponse = EndpointUtil.getQuery("/bookings/booking/" + bookingID, true, false);
             Booking booking = mapper.readValue(getBookingResponse.getBody(), Booking.class);
+            
+            // If one of sitterApprove or sitterDecline is set to true, the booking has already been finalized.
+            if (booking.getSitterApprove() || booking.getSitterDecline()) {
+            	return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Booking with id " + bookingID + " has already been finalized.");
+            }
     		
     		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
     		if (approve) {
     			partialDoc.put("sitterApprove", true);
-    			UserEndpoint.addNotification(booking.getOwnerUsername(), NotificationType.OWNER_ACCEPT, booking);
-    			UserEndpoint.addNotification(booking.getSitterUsername(), NotificationType.SITTER_ACCEPT, booking);
+    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.ACCEPT, booking);
+    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.ACCEPT, booking);
     		} else {
     			partialDoc.put("sitterDecline", true);
-    			UserEndpoint.addNotification(booking.getOwnerUsername(), NotificationType.OWNER_DECLINE, booking);
-    			UserEndpoint.addNotification(booking.getSitterUsername(), NotificationType.SITTER_DECLINE, booking);
+    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.DECLINE, booking);
+    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.DECLINE, booking);
     		}
 			return EndpointUtil.updateQuery("/bookings/booking/" + bookingID, mapper.writeValueAsString(partialDoc));
 		} catch (IOException e) {

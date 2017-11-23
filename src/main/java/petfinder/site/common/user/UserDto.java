@@ -22,7 +22,8 @@ public class UserDto implements UserDetails {
 	private List<PetDto> pets;
 	private List<PetType> petPreferences;
 	private List<String> availability;
-	private List<Notification> notifications;
+	private List<Notification> ownerNotifications;
+	private List<Notification> sitterNotifications;
 	private double rating;
 	private int numberOfRatings;
 	private boolean accountNonExpired;
@@ -36,7 +37,8 @@ public class UserDto implements UserDetails {
 		this.pets = new LinkedList<PetDto>();
 		this.petPreferences = new LinkedList<PetType>();
 		this.availability = new LinkedList<String>();
-		this.notifications = new LinkedList<Notification>();
+		this.ownerNotifications = new LinkedList<Notification>();
+		this.sitterNotifications = new LinkedList<Notification>();
 
 		this.authorities = new LinkedList<GrantedAuthority>();
 		this.rating = 0;
@@ -74,7 +76,8 @@ public class UserDto implements UserDetails {
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
 	public void setAvailability(List<String> availability) {this.availability = availability;}
-	public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
+	public void setOwnerNotifications(List<Notification> ownerNotifications) {this.ownerNotifications = ownerNotifications;}
+	public void setSitterNotifications(List<Notification> sitterNotifications) {this.sitterNotifications = sitterNotifications;}
 
 	//Getters
 	public String getName() 				{return name;}
@@ -98,7 +101,8 @@ public class UserDto implements UserDetails {
 	public double getRating() 				{return rating;}
 	public int getNumberOfRatings() 		{return numberOfRatings;}
 	public List<String> getAvailability() 	{return availability;}
-	public List<Notification> getNotifications() {return notifications;}
+	public List<Notification> getOwnerNotifications() {return ownerNotifications;}
+	public List<Notification> getSitterNotifications() {return sitterNotifications;}
 
 	@Override
 	public List<GrantedAuthority> getAuthorities() {

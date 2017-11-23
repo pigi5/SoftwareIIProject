@@ -1,9 +1,7 @@
 package petfinder.site.endpoint;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,8 @@ import petfinder.site.common.user.UserDto;
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification;
 import petfinder.site.common.user.Notification.NotificationType;
+import petfinder.site.common.user.OwnerNotification;
+import petfinder.site.common.user.SitterNotification;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -122,21 +122,39 @@ public class UserEndpoint {
     }
 
 	
-	public static void addNotification(String username, NotificationType type, Booking booking) throws IOException {
+	public static void addOwnerNotification(String username, NotificationType type, Booking booking) throws IOException {
 		// Get user in memory
         ResponseEntity<String> getUserResponse = getUser(username);
         UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
         
         // Get user's notifications
-        List<Notification> notifications = user.getNotifications();
+        List<Notification> notifications = user.getOwnerNotifications();
         
-        // Create a new notification and add it to the list
-        Notification notification = new Notification(type, booking);
-        notifications.add(notification);
+        // Create a new notification and add it to the front of the list
+        Notification notification = new OwnerNotification(type, booking);
+        notifications.add(0, notification);
         
         // Update user
 		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
-		partialDoc.put("notifications", notifications);
+		partialDoc.put("ownerNotifications", notifications);
+        updateUser(username, partialDoc);
+	}
+	
+	public static void addSitterNotification(String username, NotificationType type, Booking booking) throws IOException {
+		// Get user in memory
+        ResponseEntity<String> getUserResponse = getUser(username);
+        UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
+        
+        // Get user's notifications
+        List<Notification> notifications = user.getSitterNotifications();
+        
+        // Create a new notification and add it to the front of the list
+        Notification notification = new SitterNotification(type, booking);
+        notifications.add(0, notification);
+        
+        // Update user
+		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
+		partialDoc.put("sitterNotifications", notifications);
         updateUser(username, partialDoc);
 	}
 }

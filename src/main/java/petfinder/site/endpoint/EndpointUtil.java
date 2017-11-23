@@ -77,7 +77,7 @@ public class EndpointUtil {
 
         	return ResponseEntity.ok(mapper.writeValueAsString(retMap));
         } catch (ResponseException re) {
-        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (Exception e){
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -137,7 +137,7 @@ public class EndpointUtil {
             }
             return ResponseEntity.ok(mapper.writeValueAsString(retObjs));
         } catch (ResponseException re) {
-        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -201,7 +201,7 @@ public class EndpointUtil {
             
             return ResponseEntity.ok(mapper.writeValueAsString(retMap));
         } catch (ResponseException re) {
-        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {
             e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -227,7 +227,7 @@ public class EndpointUtil {
             
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
         } catch (ResponseException re) {
-        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -255,7 +255,7 @@ public class EndpointUtil {
 
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
         } catch (ResponseException re) {
-            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -283,7 +283,7 @@ public class EndpointUtil {
             
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
         } catch (ResponseException re) {
-        	return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(null);
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

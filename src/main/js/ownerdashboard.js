@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, Badge, Alert } from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, PanelGroup, Badge, Alert, Well } from 'react-bootstrap';
 import { mapPetToPetForm } from 'js/startappointment';
 
 class OwnerDashboard extends React.Component {
@@ -22,6 +22,7 @@ class OwnerDashboard extends React.Component {
     
     refreshOwnerInfo() {
         this.setState({bookingsState: 0, profileState: 0});
+        console.log('refreshing');
         
         axios.get('/api/bookings/ownerbookings', {
                 params: {
@@ -111,9 +112,9 @@ class OwnerDashboard extends React.Component {
     }
     
     markIsRead(index, isRead) {
-        var newNotifications = this.props.userData.notifications.slice();
+        var newNotifications = this.props.userData.ownerNotifications.slice();
         newNotifications[index].isRead = isRead;
-        var updates = {notifications: newNotifications};
+        var updates = {ownerNotifications: newNotifications};
 
         axios.post('/api/users/update', updates, {
                 params: {
@@ -134,31 +135,32 @@ class OwnerDashboard extends React.Component {
         var notificationDate = new Date(curVal.notificationDate);
         var color;
         var status;
-        var statusButton;
         if (curVal.isRead) {
-            status = (<i className="fa fa-envelope pull-left center-icon-vertical" />);
-            statusButton = (
-                <Button onClick={() => this.markIsRead(index, false)}>
-                    <span>Mark Unread</span>
-                </Button>
-            );
+            status = (<i className="fa fa-envelope-open fa-fw pull-left center-icon-vertical" />);
             color = 'default';
         } else {
-            status = (<i className="fa fa-envelope-open pull-left center-icon-vertical" />);
-            statusButton = (
-                    <Button onClick={() => this.markIsRead(index, true)}>
-                        <span>Mark Read</span>
-                        <i className="fa fa-envelope-open pull-left center-icon-vertical" />
-                    </Button>
-                );
+            status = (<i className="fa fa-envelope fa-fw pull-left center-icon-vertical" />);
             color = 'warning';
         }
+        var extra = null;
+        if (curVal.title.toLowerCase().includes('complete')) {
+            if (curVal.booking.ownerUpdated) {
+                extra = (<Well>Rating registered.</Well>);  
+            } else {
+                //TODO probably use an external library here for a star rating widget
+                extra = null;             
+            }
+        }
         return (
-            <Col key={index} sm={8} md={6} mdOffset={2} lgOffset={1}>
-                <Panel header={<div><span>{notificationDate.toLocaleString('en-US')}</span>{status}</div>} footer={statusButton} bsStyle={color}>
-                    <p>{curVal.message}</p>
-                </Panel>
-            </Col>
+            <Panel key={index} eventKey={index} header={
+                    <div>
+                        <span>{curVal.title}</span>
+                        <span className="pull-right">{notificationDate.toLocaleString('en-US')}</span>
+                        {status}
+                    </div>} onSelect={event => this.markIsRead(index, true)} bsStyle={color}>
+                <p>{curVal.message}</p>
+                {extra}
+            </Panel>
         );
     }
     
@@ -170,11 +172,11 @@ class OwnerDashboard extends React.Component {
             refreshClass = 'fa-exclamation-circle text-danger ';
         }
         
-        var numNewNots = this.props.userData.notifications.filter(notification => !notification.isRead).length;
+        var numNewNots = this.props.userData.ownerNotifications.filter(notification => !notification.isRead).length;
         
         var notifications;
-        if (this.props.userData.notifications.length > 0) {
-            notifications = this.props.userData.notifications.map((curVal, index) => this.createNotificationCard(curVal, index));
+        if (this.props.userData.ownerNotifications.length > 0) {
+            notifications = this.props.userData.ownerNotifications.map((curVal, index) => this.createNotificationCard(curVal, index));
         } else {
             notifications = (
                     <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
@@ -189,7 +191,7 @@ class OwnerDashboard extends React.Component {
         } else {
             bookings = (
                     <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                        <Alert bsStyle="info">You have no bookings. Click the button above to set up an appointment.</Alert>
+                        <Alert bsStyle="info">You have no upcoming bookings. Click the button above to set up an appointment.</Alert>
                     </Col>
                 );
         }
@@ -243,7 +245,11 @@ class OwnerDashboard extends React.Component {
                                     <Tab.Pane eventKey={1}>
                                         <Grid>
                                             <Row className="top-buffer-sm">
-                                                {notifications}
+                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                                                    <PanelGroup accordion>
+                                                        {notifications}
+                                                    </PanelGroup>
+                                                </Col>
                                             </Row>
                                         </Grid>
                                     </Tab.Pane>
@@ -282,8 +288,7 @@ class OwnerDashboard extends React.Component {
 const mapStateToProps = (store) => {
     return {
         authed: store.user.authed,
-        userData: store.user.userData,
-        booking: store.user.booking
+        userData: store.user.userData
     };
 };
 

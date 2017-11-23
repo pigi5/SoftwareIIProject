@@ -13,6 +13,7 @@ public class Booking {
     private List<PetDto> petsSit;
     private boolean sitterApprove;
     private boolean sitterDecline;
+    private boolean ownerRated;
     private long startDate;
     private long endDate;
 
@@ -34,9 +35,10 @@ public class Booking {
         this.petsSit = pets;
         this.sitterApprove = false;
         this.sitterDecline = false;
+        this.ownerRated = false;
     }
 
-    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline){
+    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline, boolean ownerRated){
         this.ownerUsername = ownerUsername;
         this.sitterUsername = sitterUsername;
         this.petsSit = petsSit;
@@ -44,6 +46,7 @@ public class Booking {
         this.endDate = endDate;
         this.sitterApprove = sitterApprove;
         this.sitterDecline = sitterDecline;
+        this.ownerRated = ownerRated;
     }
 
     //Setters
@@ -51,9 +54,10 @@ public class Booking {
     public void setEndDate(long endDate)				{ this.endDate = endDate; }
     public void setOwnerUsername(String ownerUsername) 	{ this.ownerUsername = ownerUsername; }
     public void setSitterUsername(String sitterUsername){ this.sitterUsername = sitterUsername; }
+    public void setPetsSit(List<PetDto> petsSit) 		{ this.petsSit = petsSit; }
     public void setSitterApprove(boolean sitterApprove) { this.sitterApprove = sitterApprove; }
     public void setSitterDecline(boolean sitterDecline) { this.sitterDecline = sitterDecline; }
-    public void setPetsSit(List<PetDto> petsSit) 		{ this.petsSit = petsSit; }
+    public void setOwnerRated(boolean ownerRated) 		{ this.ownerRated = ownerRated; }
 
     //getters
     public long getStartDate()							{ return this.startDate; }
@@ -63,6 +67,7 @@ public class Booking {
     public List<PetDto> getPetsSit() 					{ return petsSit; }
     public boolean getSitterApprove() 					{ return sitterApprove; }
     public boolean getSitterDecline() 					{ return sitterDecline; }
+    public boolean getOwnerRated() 						{ return ownerRated; }
 
     @Override
     public String toString() {

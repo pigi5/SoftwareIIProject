@@ -30,7 +30,7 @@ const reducers = {
 
 const reducer = combineReducers(reducers);
 const store = createStore(reducer, 
-        {/*
+        {
             user: {
                 authed: true,
                 userData: {
@@ -52,10 +52,58 @@ const store = createStore(reducer,
                         }
                     ],
                     availability: [],
-                    rating: null
+                    rating: null,
+                    ownerNotifications: [
+                        {
+                            title: 'Title 1',
+                            message: 'Hello',
+                            notificationDate: 1000000020000,
+                            isRead: false,
+                            booking: {}
+                        },
+                        {
+                            title: 'Title 2',
+                            message: 'Goodbye',
+                            notificationDate: 1000000010000,
+                            isRead: false,
+                            booking: {}
+                        },
+                        {
+                            title: 'Title 3',
+                            message: 'Hello again',
+                            notificationDate: 1000000000000,
+                            isRead: true,
+                            booking: {}
+                        }
+                        
+                    ],
+                    sitterNotifications: [
+                        {
+                            title: 'Title 4',
+                            message: 'Hello',
+                            notificationDate: 1000000050000,
+                            isRead: false,
+                            booking: {}
+                        },
+                        {
+                            title: 'Title 5',
+                            message: 'Goodbye',
+                            notificationDate: 1000000040000,
+                            isRead: false,
+                            booking: {}
+                        },
+                        {
+                            title: 'Title 6',
+                            message: 'Hello again',
+                            notificationDate: 1000000030000,
+                            isRead: true,
+                            booking: {}
+                        }
+                        
+                    ]
                 },
                 booking: {}
-            }*/
+            }
         }
 );
 

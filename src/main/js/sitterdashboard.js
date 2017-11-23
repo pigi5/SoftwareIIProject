@@ -93,7 +93,91 @@ class SitterDashboard extends React.Component {
         );
     }
     
+    markIsRead(index, isRead) {
+        var newNotifications = this.props.userData.sitterNotifications.slice();
+        newNotifications[index].isRead = isRead;
+        var updates = {sitterNotifications: newNotifications};
+
+        axios.post('/api/users/update', updates, {
+                params: {
+                    username: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                this.props.dispatch({
+                    type: 'UPDATE_USER',
+                    userData: updates
+                });
+            })
+            .catch((error) => {
+            });
+    }
+    
+    createNotificationCard(curVal, index) {
+        var notificationDate = new Date(curVal.notificationDate);
+        var color;
+        var status;
+        if (curVal.isRead) {
+            status = (<i className="fa fa-envelope-open fa-fw pull-left center-icon-vertical" />);
+            color = 'default';
+        } else {
+            status = (<i className="fa fa-envelope fa-fw pull-left center-icon-vertical" />);
+            color = 'warning';
+        }
+        var extra = null;
+        if (curVal.title.toLowerCase().includes('complete')) {
+            if (curVal.booking.ownerUpdated) {
+                extra = (<Well>Rating registered.</Well>);  
+            } else {
+                //TODO probably use an external library here for a star rating widget
+                extra = null;             
+            }
+        }
+        return (
+            <Panel key={index} eventKey={index} header={
+                    <div>
+                        <span>{curVal.title}</span>
+                        <span className="pull-right">{notificationDate.toLocaleString('en-US')}</span>
+                        {status}
+                    </div>} onSelect={event => this.markIsRead(index, true)} bsStyle={color}>
+                <p>{curVal.message}</p>
+                {extra}
+            </Panel>
+        );
+    }
+    
     render() {
+        var refreshClass = 'fa-refresh ';
+        if (this.state.bookingState === 0 || this.state.profileState === 0) {
+            refreshClass = 'fa-refresh fa-spin ';
+        } else if (this.state.bookingState === 1 || this.state.profileState === 1) {
+            refreshClass = 'fa-exclamation-circle text-danger ';
+        }
+        
+        var numNewNots = this.props.userData.sitterNotifications.filter(notification => !notification.isRead).length;
+        
+        var notifications;
+        if (this.props.userData.sitterNotifications.length > 0) {
+            notifications = this.props.userData.sitterNotifications.map((curVal, index) => this.createNotificationCard(curVal, index));
+        } else {
+            notifications = (
+                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                        <Alert bsStyle="info">You have no notifications.</Alert>
+                    </Col>
+                );
+        }
+
+        var bookings;
+        if (this.state.bookings.length > 0) {
+            bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
+        } else {
+            bookings = (
+                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                        <Alert bsStyle="info">You have no upcoming bookings. Click the button above to set up an appointment.</Alert>
+                    </Col>
+                );
+        }        
+        
         return(
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
@@ -106,7 +190,7 @@ class SitterDashboard extends React.Component {
                             <Col xs={5} sm={3} md={2}>
                                 <Button block onClick={() => this.refreshSitterInfo()}>
                                     <span>Refresh</span>
-                                    <i className="fa fa-refresh pull-left center-icon-vertical" />
+                                    <i className={'fa ' + refreshClass + 'pull-left center-icon-vertical'} />
                                 </Button>
                             </Col>
                         </Row>
@@ -115,19 +199,35 @@ class SitterDashboard extends React.Component {
                         <Row className="clearfix">
                             <Col sm={3} md={2}>
                                 <Nav bsStyle="pills" stacked>
-                                    <NavItem eventKey={1}>Notifications</NavItem>
+                                    <NavItem eventKey={1}>Notifications <Badge pullRight>{numNewNots}</Badge></NavItem>
                                     <NavItem eventKey={2}>Bookings</NavItem>
                                 </Nav>
                             </Col>
                             <Col sm={9} md={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                        
+                                        <Grid>
+                                            <Row className="top-buffer-sm">
+                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                                                    <PanelGroup accordion>
+                                                        {notifications}
+                                                    </PanelGroup>
+                                                </Col>
+                                            </Row>
+                                        </Grid>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Grid>
                                             <Row className="top-buffer-sm">
-                                                {this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index))}
+                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                                                    <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
+                                                        <span>Start Booking</span>
+                                                        <i className="fa fa-plus pull-left center-icon-vertical" />
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                            <Row className="top-buffer-sm">
+                                                {bookings}
                                             </Row>
                                         </Grid>
                                     </Tab.Pane>
