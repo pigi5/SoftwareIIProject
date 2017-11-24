@@ -2,38 +2,61 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel} from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, PanelGroup, Panel, Alert, Badge } from 'react-bootstrap';
 
 class SitterDashboard extends React.Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            bookings: []
+            bookings: [],
+            bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
+            profileState: 2 
         };
-        
+    }
+    
+    componentDidMount() {
         this.refreshSitterInfo();
     }
     
     refreshSitterInfo() {
+        this.setState({bookingsState: 0, profileState: 0});
+        
         axios.get('/api/bookings/sitterbookings', {
                 params: {
                     username: this.props.userData.username
                 }
             })
             .then((response) => {
-                response.data.sort((a, b) => b.endDate - a.endDate);
-                this.setState({bookings:response.data});
+                if (Array.isArray(response.data)) {
+                    response.data.sort((a, b) => b.startDate - a.startDate);
+                    this.setState({bookings: response.data, bookingsState: 2});
+                }
             })
             .catch((error) => {
-                this.setState({bookings:[]});
+                this.setState({bookings:[], bookingsState: 1});
+            });
+        axios.get('/api/users/user', {
+                params: {
+                    username: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                this.props.dispatch({
+                    type: 'UPDATE_USER',
+                    userData: response.data
+                });
+                this.setState({profileState: 2});
+            })
+            .catch((error) => {
+                this.setState({profileState: 1});
             });
     }
     
     finalizeBooking(booking, approve) {
         axios.post('/api/bookings/finalizebooking', null, {
                 params: {
-                    bookingID: encodeURIComponent(booking.id),
+                    bookingID: booking.id,
                     approve: approve
                 }
             })
@@ -44,7 +67,7 @@ class SitterDashboard extends React.Component {
                     if (approve) {
                         bookingsClone[index].sitterApprove = true; 
                     } else {
-                        bookingsClone[index].sitterDecline = true; 
+                        bookingsClone.splice(index, 1); 
                     }
                     this.setState({bookings: bookingsClone});
                 } else {
@@ -52,7 +75,7 @@ class SitterDashboard extends React.Component {
                 }
             })
             .catch((error) => {
-                
+                console.log(error.response);
             });
     }
     
@@ -124,15 +147,6 @@ class SitterDashboard extends React.Component {
             status = (<i className="fa fa-envelope fa-fw pull-left center-icon-vertical" />);
             color = 'warning';
         }
-        var extra = null;
-        if (curVal.title.toLowerCase().includes('complete')) {
-            if (curVal.booking.ownerUpdated) {
-                extra = (<Well>Rating registered.</Well>);  
-            } else {
-                //TODO probably use an external library here for a star rating widget
-                extra = null;             
-            }
-        }
         return (
             <Panel key={index} eventKey={index} header={
                     <div>
@@ -141,7 +155,6 @@ class SitterDashboard extends React.Component {
                         {status}
                     </div>} onSelect={event => this.markIsRead(index, true)} bsStyle={color}>
                 <p>{curVal.message}</p>
-                {extra}
             </Panel>
         );
     }
@@ -173,7 +186,7 @@ class SitterDashboard extends React.Component {
         } else {
             bookings = (
                     <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                        <Alert bsStyle="info">You have no upcoming bookings. Click the button above to set up an appointment.</Alert>
+                        <Alert bsStyle="info">You have no upcoming bookings.</Alert>
                     </Col>
                 );
         }        
@@ -185,7 +198,7 @@ class SitterDashboard extends React.Component {
                     <PageHeader>
                         <Row style={{display: 'flex', alignItems: 'flex-end'}}>
                             <Col xs={7} sm={9} md={10}>
-                                <span>Owner Dashboard</span>
+                                <span>Sitter Dashboard</span>
                             </Col>
                             <Col xs={5} sm={3} md={2}>
                                 <Button block onClick={() => this.refreshSitterInfo()}>
@@ -218,14 +231,6 @@ class SitterDashboard extends React.Component {
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                                                    <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
-                                                        <span>Start Booking</span>
-                                                        <i className="fa fa-plus pull-left center-icon-vertical" />
-                                                    </Button>
-                                                </Col>
-                                            </Row>
                                             <Row className="top-buffer-sm">
                                                 {bookings}
                                             </Row>

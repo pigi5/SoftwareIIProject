@@ -30,7 +30,7 @@ const reducers = {
 
 const reducer = combineReducers(reducers);
 const store = createStore(reducer, 
-        {
+        {/*
             user: {
                 authed: true,
                 userData: {
@@ -52,28 +52,32 @@ const store = createStore(reducer,
                         }
                     ],
                     availability: [],
+                    petPreferences: [],
                     rating: null,
                     ownerNotifications: [
                         {
-                            title: 'Title 1',
+                            title: 'Complete 1',
                             message: 'Hello',
                             notificationDate: 1000000020000,
                             isRead: false,
-                            booking: {}
+                            bookingID: 'erergergerggeg',
+                            ownerRated: false
                         },
                         {
                             title: 'Title 2',
                             message: 'Goodbye',
                             notificationDate: 1000000010000,
                             isRead: false,
-                            booking: {}
+                            bookingID: 'qwrgeqqeeveqrvqev',
+                            ownerRated: false
                         },
                         {
                             title: 'Title 3',
                             message: 'Hello again',
                             notificationDate: 1000000000000,
                             isRead: true,
-                            booking: {}
+                            bookingID: 'sadfjahsdkbwviubavu',
+                            ownerRated: false
                         }
                         
                     ],
@@ -83,27 +87,27 @@ const store = createStore(reducer,
                             message: 'Hello',
                             notificationDate: 1000000050000,
                             isRead: false,
-                            booking: {}
+                            bookingID: 'asdfasfsfsafasdf'
                         },
                         {
                             title: 'Title 5',
                             message: 'Goodbye',
                             notificationDate: 1000000040000,
                             isRead: false,
-                            booking: {}
+                            bookingID: 'oiuiuijoihoboib'
                         },
                         {
                             title: 'Title 6',
                             message: 'Hello again',
                             notificationDate: 1000000030000,
                             isRead: true,
-                            booking: {}
+                            bookingID: 'qwertyuiop'
                         }
                         
                     ]
                 },
                 booking: {}
-            }
+            }*/
         }
 );
 

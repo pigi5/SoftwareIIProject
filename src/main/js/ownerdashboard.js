@@ -3,6 +3,7 @@ import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
 import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, PanelGroup, Badge, Alert, Well } from 'react-bootstrap';
+import StarRatingComponent from 'react-star-rating-component';
 import { mapPetToPetForm } from 'js/startappointment';
 
 class OwnerDashboard extends React.Component {
@@ -12,7 +13,8 @@ class OwnerDashboard extends React.Component {
         this.state = {
             bookings: [],
             bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
-            profileState: 2 
+            profileState: 2,
+            ratings: new Array(this.props.userData.ownerNotifications.length).fill(0)
         };
     }
     
@@ -22,7 +24,6 @@ class OwnerDashboard extends React.Component {
     
     refreshOwnerInfo() {
         this.setState({bookingsState: 0, profileState: 0});
-        console.log('refreshing');
         
         axios.get('/api/bookings/ownerbookings', {
                 params: {
@@ -31,7 +32,7 @@ class OwnerDashboard extends React.Component {
             })
             .then((response) => {
                 if (Array.isArray(response.data)) {
-                    response.data.sort((a, b) => b.endDate - a.endDate);
+                    response.data.sort((a, b) => b.startDate - a.startDate);
                     this.setState({bookings: response.data, bookingsState: 2});
                 }
             })
@@ -48,10 +49,11 @@ class OwnerDashboard extends React.Component {
                     type: 'UPDATE_USER',
                     userData: response.data
                 });
-                this.setState({profileState: 2});
+                console.log(response.data);
+                this.setState({profileState: 2, ratings: new Array(response.data.ownerNotifications.length).fill(0)});
             })
             .catch((error) => {
-                this.setState({profileState: 1});
+                this.setState({profileState: 1, ratings: new Array(this.props.userData.ownerNotifications.length).fill(0)});
             });
     }
     
@@ -131,6 +133,26 @@ class OwnerDashboard extends React.Component {
             });
     }
     
+    changeStars(index, val) {
+        var newRatings = this.state.ratings.slice();
+        newRatings[index] = val; 
+        this.setState({ratings: newRatings});
+    }
+    
+    rateSitter(bookingID, rating) {
+        axios.post('/api/bookings/ratesitter', {
+                params: {
+                    bookingID: bookingID,
+                    rating: rating
+                }
+            })
+            .then((response) => {
+                this.refreshOwnerInfo();
+            })
+            .catch((error) => {
+            });
+    }
+    
     createNotificationCard(curVal, index) {
         var notificationDate = new Date(curVal.notificationDate);
         var color;
@@ -143,12 +165,35 @@ class OwnerDashboard extends React.Component {
             color = 'warning';
         }
         var extra = null;
-        if (curVal.title.toLowerCase().includes('complete')) {
-            if (curVal.booking.ownerUpdated) {
-                extra = (<Well>Rating registered.</Well>);  
+        if (curVal.notificationType == 'COMPLETE') {
+            if (curVal.ownerRated) {
+                extra = (<Row className="vertical-align">
+                            <div className="col">
+                                <Well>Rating registered.</Well>
+                            </div>
+                         </Row>);  
             } else {
-                //TODO probably use an external library here for a star rating widget
-                extra = null;             
+                extra = (<Row className="vertical-align">
+                            <div className="col">
+                                <Button bsStyle="danger" onClick={() => this.changeStars(index, 0)}>
+                                    <i className="fa fa-ban fa-lg" />
+                                </Button>
+                            </div>
+                            <div className="col" style={{paddingTop: 5, marginLeft: 10, marginRight: 10}}>
+                                <StarRatingComponent 
+                                    name={'rating' + index} 
+                                    value={this.state.ratings[index]}
+                                    emptyStarColor="#DDD"
+                                    onStarClick={(nextVal, prevVal, name) => this.changeStars(index, nextVal)}
+                                    renderStarIcon={() => (<i className="fa fa-paw fa-fw fa-2x center-icon-vertical" />)}
+                                />
+                            </div>
+                            <div className="col">
+                                <Button bsStyle="success" onClick={() => this.rateSitter(curVal.bookingID, this.state.ratings[index])}>
+                                    <i className="fa fa-check fa-lg" />
+                                </Button>
+                            </div>        
+                        </Row>);             
             }
         }
         return (
@@ -164,7 +209,7 @@ class OwnerDashboard extends React.Component {
         );
     }
     
-    render() { 
+    render() {
         var refreshClass = 'fa-refresh ';
         if (this.state.bookingState === 0 || this.state.profileState === 0) {
             refreshClass = 'fa-refresh fa-spin ';

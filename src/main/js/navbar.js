@@ -59,7 +59,7 @@ class MyNavbar extends React.Component {
                     </NavItem>
                     <NavItem href="/#/dashboard/owner" className="bg-info">
                         <span>Owner Dashboard</span>
-                        <i className="fa fa-paw pull-left center-icon-vertical" aria-hidden="true" />
+                        <i className="fa fa-paw fa-fw pull-left center-icon-vertical" aria-hidden="true" />
                         {ownerBadge}
                     </NavItem>
                     <NavItem href="/#/profile">

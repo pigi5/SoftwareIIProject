@@ -15,21 +15,15 @@ public abstract class Notification {
     protected NotificationType notificationType;
     protected String title;
     protected String message;
-    protected Booking booking;
+    protected String bookingID;
     protected boolean isRead;
     protected long notificationDate;
 
-    public Notification() {
-    	this.notificationType = null;
-        this.booking = null;
-        this.message = "";
-        this.isRead = false;
-        this.notificationDate = System.currentTimeMillis();
-    }
+    public Notification() {}
 
-    public Notification(NotificationType notificationType, Booking booking) {
+    public Notification(NotificationType notificationType, String bookingID) {
     	this.notificationType = notificationType;
-        this.booking = booking; // booking this notification is connected to
+        this.bookingID = bookingID; // booking this notification is connected to
 
         this.isRead = false; // if the booking should be marked as having been read before
         this.notificationDate = System.currentTimeMillis();
@@ -38,8 +32,8 @@ public abstract class Notification {
     public NotificationType getNotificationType() { return notificationType; }
     public void setNotificationType(NotificationType notificationType) { this.notificationType = notificationType; }
     
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking book) { this.booking = book; }
+    public String getBookingID() { return bookingID; }
+    public void setBookingID(String bookingID) { this.bookingID = bookingID; }
     
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -52,14 +46,4 @@ public abstract class Notification {
     
     public long getNotificationDate() { return notificationDate; }
     public void setNotificationDate(long notificationDate) { this.notificationDate = notificationDate; }
-
-    @Override
-    public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            return super.toString();
-        }
-    }
 }

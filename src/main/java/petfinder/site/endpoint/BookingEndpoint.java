@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification.NotificationType;
+import petfinder.site.common.user.UserDto;
 
 import java.util.*;
 import java.io.IOException;
@@ -32,13 +33,20 @@ public class BookingEndpoint {
         System.out.println(booking.toString());
 
         try {
+        	ResponseEntity<String> createBookingResponse = EndpointUtil.indexQuery("/bookings/booking", null, mapper.writeValueAsString(booking), false);
+        	if (!createBookingResponse.getStatusCode().is2xxSuccessful()) {
+        		return createBookingResponse;
+        	}
+
+        	String bookingID = (String)((HashMap<String, Object>)mapper.readValue(createBookingResponse.getBody(), HashMap.class)).get("_id");
+        	
 	        // add notification to owner
-        	UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.REQUEST, booking);
+        	UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.REQUEST, bookingID, booking);
 
 	        // add notification to sitter
-        	UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.REQUEST, booking);	        
+        	UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.REQUEST, bookingID, booking);	        
 
-            return EndpointUtil.indexQueryPost("/bookings/booking", mapper.writeValueAsString(booking));
+            return createBookingResponse;
         } catch (IOException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -71,14 +79,43 @@ public class BookingEndpoint {
     		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
     		if (approve) {
     			partialDoc.put("sitterApprove", true);
-    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.ACCEPT, booking);
-    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.ACCEPT, booking);
+    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.ACCEPT, bookingID, booking);
+    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.ACCEPT, bookingID, booking);
     		} else {
     			partialDoc.put("sitterDecline", true);
-    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.DECLINE, booking);
-    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.DECLINE, booking);
+    			UserEndpoint.addOwnerNotification(booking.getOwnerUsername(), NotificationType.DECLINE, bookingID, booking);
+    			UserEndpoint.addSitterNotification(booking.getSitterUsername(), NotificationType.DECLINE, bookingID, booking);
     		}
 			return EndpointUtil.updateQuery("/bookings/booking/" + bookingID, mapper.writeValueAsString(partialDoc));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+    }
+    
+    @RequestMapping(path = "/ratesitter", method = RequestMethod.POST)
+    public static ResponseEntity<String> ratesitter(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "rating") double rating){
+    	try {
+    		ResponseEntity<String> getBookingResponse = EndpointUtil.getQuery("/bookings/booking/" + bookingID, true, false);
+            Booking booking = mapper.readValue(getBookingResponse.getBody(), Booking.class);
+            
+            // If one of sitterApprove or sitterDecline is set to true, the booking has already been finalized.
+            if (booking.getOwnerRating() >= 0) {
+            	return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Booking with id " + bookingID + " has already been finalized.");
+            }
+
+            booking.setOwnerRating(rating);
+
+    		ResponseEntity<String> getSitterResponse = EndpointUtil.getQuery("/users/user/" + booking.getSitterUsername(), true, false);
+            UserDto sitter = mapper.readValue(getSitterResponse.getBody(), UserDto.class);
+			
+            sitter.addRating(rating);
+    		
+			ResponseEntity<String> updateBookingReponse = EndpointUtil.indexQuery("/bookings/booking/", bookingID, mapper.writeValueAsString(booking), false);
+			if (!updateBookingReponse.getStatusCode().is2xxSuccessful()) {
+				return updateBookingReponse;
+			}
+			return EndpointUtil.indexQuery("/users/user/", booking.getSitterUsername(), mapper.writeValueAsString(sitter), false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

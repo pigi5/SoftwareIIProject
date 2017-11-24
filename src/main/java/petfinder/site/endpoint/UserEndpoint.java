@@ -94,7 +94,7 @@ public class UserEndpoint {
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
     	try {
-			return EndpointUtil.indexQuery("/users/user/" + user.getUsername(), mapper.writeValueAsString(user));
+			return EndpointUtil.indexQuery("/users/user/", user.getUsername(), mapper.writeValueAsString(user), true);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -122,16 +122,16 @@ public class UserEndpoint {
     }
 
 	
-	public static void addOwnerNotification(String username, NotificationType type, Booking booking) throws IOException {
+	public static void addOwnerNotification(String username, NotificationType type, String bookingID, Booking booking) throws IOException {
 		// Get user in memory
         ResponseEntity<String> getUserResponse = getUser(username);
         UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
         
         // Get user's notifications
-        List<Notification> notifications = user.getOwnerNotifications();
+        List<OwnerNotification> notifications = user.getOwnerNotifications();
         
         // Create a new notification and add it to the front of the list
-        Notification notification = new OwnerNotification(type, booking);
+        OwnerNotification notification = new OwnerNotification(type, bookingID, booking);
         notifications.add(0, notification);
         
         // Update user
@@ -140,16 +140,16 @@ public class UserEndpoint {
         updateUser(username, partialDoc);
 	}
 	
-	public static void addSitterNotification(String username, NotificationType type, Booking booking) throws IOException {
+	public static void addSitterNotification(String username, NotificationType type, String bookingID, Booking booking) throws IOException {
 		// Get user in memory
         ResponseEntity<String> getUserResponse = getUser(username);
         UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
         
         // Get user's notifications
-        List<Notification> notifications = user.getSitterNotifications();
+        List<SitterNotification> notifications = user.getSitterNotifications();
         
         // Create a new notification and add it to the front of the list
-        Notification notification = new SitterNotification(type, booking);
+        SitterNotification notification = new SitterNotification(type, bookingID, booking);
         notifications.add(0, notification);
         
         // Update user

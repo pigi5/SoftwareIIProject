@@ -3,12 +3,18 @@ package petfinder.site.common.user;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.pet.PetDto;
 
 public class SitterNotification extends Notification {
-    public SitterNotification(NotificationType notificationType, Booking booking) {
-    	super(notificationType, booking);
+	
+	public SitterNotification() {}
+	
+    public SitterNotification(NotificationType notificationType, String bookingID, Booking booking) {
+    	super(notificationType, bookingID);
     	
     	String sitterPetString = "";
         String endDateString = "";
@@ -40,6 +46,17 @@ public class SitterNotification extends Notification {
         default:
         	this.title = "No Content";
         	this.message = "No Content";
+        }
+    }
+
+
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return super.toString();
         }
     }
 }

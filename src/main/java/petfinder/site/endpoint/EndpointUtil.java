@@ -242,44 +242,31 @@ public class EndpointUtil {
         }
     }
 
-    static ResponseEntity<String> indexQueryPost(String esEndpoint, String docJS) {
-        RestClient restClient = getRestClient();
-
-        try {
-            Map<String, String> params = new HashMap<String, String>();
-            //params.put("op_type", "create");
-
-            HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
-
-            Response response = restClient.performRequest("POST", esEndpoint, params, entity);
-
-            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
-        } catch (ResponseException re) {
-            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } finally {
-            if (restClient != null) {
-                try {
-                    restClient.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    static ResponseEntity<String> indexQuery(String esEndpoint, String docJS) {
+    static ResponseEntity<String> indexQuery(String esEndpoint, String index, String docJS, boolean failIfExists) {
     	RestClient restClient = getRestClient();
 
         try {
         	Map<String, String> params = new HashMap<String, String>();
-        	params.put("op_type", "create");
+        	if (failIfExists) {
+        		params.put("op_type", "create");
+        	}
         	
         	HttpEntity entity = new NStringEntity(docJS, ContentType.APPLICATION_JSON);
         	
-            Response response = restClient.performRequest("PUT", esEndpoint, params, entity);
+        	Response response;
+        	if (index == null) {
+        		// create index automatically
+        		response = restClient.performRequest("POST", esEndpoint, params, entity);
+        	} else {
+        		// use given index
+        		String fullEndpoint = esEndpoint;
+        		if (esEndpoint.endsWith("/")) {
+        			fullEndpoint += index;
+        		} else {
+        			fullEndpoint += "/" + index;
+        		}
+        		response = restClient.performRequest("PUT", fullEndpoint, params, entity);
+        	}
             
             return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
         } catch (ResponseException re) {

@@ -13,12 +13,13 @@ public class Booking {
     private List<PetDto> petsSit;
     private boolean sitterApprove;
     private boolean sitterDecline;
-    private boolean ownerRated;
+    private double ownerRating;
     private long startDate;
     private long endDate;
 
     public Booking(){
         this.petsSit = new LinkedList<PetDto>();
+        this.ownerRating = -1;
         /*
         this.sitterApprove = false;
         this.startDate = 0;
@@ -35,10 +36,10 @@ public class Booking {
         this.petsSit = pets;
         this.sitterApprove = false;
         this.sitterDecline = false;
-        this.ownerRated = false;
+        this.ownerRating = -1;
     }
 
-    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline, boolean ownerRated){
+    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline, double ownerRating){
         this.ownerUsername = ownerUsername;
         this.sitterUsername = sitterUsername;
         this.petsSit = petsSit;
@@ -46,7 +47,7 @@ public class Booking {
         this.endDate = endDate;
         this.sitterApprove = sitterApprove;
         this.sitterDecline = sitterDecline;
-        this.ownerRated = ownerRated;
+        this.ownerRating = ownerRating;
     }
 
     //Setters
@@ -57,7 +58,7 @@ public class Booking {
     public void setPetsSit(List<PetDto> petsSit) 		{ this.petsSit = petsSit; }
     public void setSitterApprove(boolean sitterApprove) { this.sitterApprove = sitterApprove; }
     public void setSitterDecline(boolean sitterDecline) { this.sitterDecline = sitterDecline; }
-    public void setOwnerRated(boolean ownerRated) 		{ this.ownerRated = ownerRated; }
+    public void setOwnerRating(double ownerRating) 		{ this.ownerRating = ownerRating; }
 
     //getters
     public long getStartDate()							{ return this.startDate; }
@@ -67,7 +68,7 @@ public class Booking {
     public List<PetDto> getPetsSit() 					{ return petsSit; }
     public boolean getSitterApprove() 					{ return sitterApprove; }
     public boolean getSitterDecline() 					{ return sitterDecline; }
-    public boolean getOwnerRated() 						{ return ownerRated; }
+    public double getOwnerRating() 						{ return ownerRating; }
 
     @Override
     public String toString() {
