@@ -3,12 +3,8 @@ package petfinder.site.common.user;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import petfinder.site.common.booking.Booking;
-
 public abstract class Notification {
-    public enum NotificationType { REQUEST, ACCEPT, DECLINE, COMPLETE }
+    public enum NotificationType { REQUEST, ACCEPT, DECLINE, COMPLETE, MESSAGE }
     
     public static DateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy");
     
