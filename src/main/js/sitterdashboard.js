@@ -140,11 +140,20 @@ class SitterDashboard extends React.Component {
         var notificationDate = new Date(curVal.notificationDate);
         var color;
         var status;
+        var notificationIcon;
         if (curVal.isRead) {
-            status = (<i className="fa fa-envelope-open fa-fw pull-left center-icon-vertical" />);
+            notificationIcon = 'fa-bell-o';
+            if (curVal.notificationType === 'MESSAGE') {
+                notificationIcon = 'fa-envelope-o';
+            }
+            status = (<i className={'fa ' + notificationIcon + ' fa-fw pull-left center-icon-vertical'} />);
             color = 'default';
         } else {
-            status = (<i className="fa fa-envelope fa-fw pull-left center-icon-vertical" />);
+            notificationIcon = 'fa-bell';
+            if (curVal.notificationType === 'MESSAGE') {
+                notificationIcon = 'fa-envelope';
+            }
+            status = (<i className={'fa ' + notificationIcon + ' fa-fw pull-left center-icon-vertical'} />);
             color = 'warning';
         }
         return (

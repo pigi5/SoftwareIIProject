@@ -67,6 +67,7 @@ public class BookingEndpoint {
     
     @RequestMapping(path = "/finalizebooking", method = RequestMethod.POST)
     public static ResponseEntity<String> finalizeBooking(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "approve") boolean approve){
+    	//TODO: find some way to allow the owner and sitter to contact each other further
     	try {
     		ResponseEntity<String> getBookingResponse = EndpointUtil.getQuery("/bookings/booking/" + bookingID, true, false);
             Booking booking = mapper.readValue(getBookingResponse.getBody(), Booking.class);

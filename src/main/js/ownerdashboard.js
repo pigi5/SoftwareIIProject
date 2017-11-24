@@ -157,15 +157,24 @@ class OwnerDashboard extends React.Component {
         var notificationDate = new Date(curVal.notificationDate);
         var color;
         var status;
+        var notificationIcon;
         if (curVal.isRead) {
-            status = (<i className="fa fa-envelope-open fa-fw pull-left center-icon-vertical" />);
+            notificationIcon = 'fa-bell-o';
+            if (curVal.notificationType === 'MESSAGE') {
+                notificationIcon = 'fa-envelope-o';
+            }
+            status = (<i className={'fa ' + notificationIcon + ' fa-fw pull-left center-icon-vertical'} />);
             color = 'default';
         } else {
-            status = (<i className="fa fa-envelope fa-fw pull-left center-icon-vertical" />);
+            notificationIcon = 'fa-bell';
+            if (curVal.notificationType === 'MESSAGE') {
+                notificationIcon = 'fa-envelope';
+            }
+            status = (<i className={'fa ' + notificationIcon + ' fa-fw pull-left center-icon-vertical'} />);
             color = 'warning';
         }
         var extra = null;
-        if (curVal.notificationType == 'COMPLETE') {
+        if (curVal.notificationType === 'COMPLETE') {
             if (curVal.ownerRated) {
                 extra = (<Row className="vertical-align">
                             <div className="col">
@@ -221,13 +230,13 @@ class OwnerDashboard extends React.Component {
         
         var notifications;
         if (this.props.userData.ownerNotifications.length > 0) {
-            notifications = this.props.userData.ownerNotifications.map((curVal, index) => this.createNotificationCard(curVal, index));
-        } else {
             notifications = (
-                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                        <Alert bsStyle="info">You have no notifications.</Alert>
-                    </Col>
+                <PanelGroup accordion>
+                    {this.props.userData.ownerNotifications.map((curVal, index) => this.createNotificationCard(curVal, index))}
+                </PanelGroup>
                 );
+        } else {
+            notifications = (<Alert bsStyle="info">You have no notifications.</Alert>);
         }
 
         var bookings;
@@ -291,9 +300,7 @@ class OwnerDashboard extends React.Component {
                                         <Grid>
                                             <Row className="top-buffer-sm">
                                                 <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                                                    <PanelGroup accordion>
-                                                        {notifications}
-                                                    </PanelGroup>
+                                                    {notifications}
                                                 </Col>
                                             </Row>
                                         </Grid>

@@ -68,8 +68,9 @@ public class UserEndpoint {
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
     public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
-
-        //Formats pet preference query string
+        //TODO: filter out self (will need to add an ownerID to the parameters)
+		
+		//Formats pet preference query string
         String preferences = "";
         List<String> petTypes = Arrays.asList(petString.split(","));
         System.out.println("petTypes: " + petTypes.toString());

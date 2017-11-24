@@ -1,6 +1,7 @@
 import React from 'react';
 import MyNavbar from 'js/navbar';
 import { PageHeader, Grid, Row, Col, Button, Modal, Panel} from 'react-bootstrap';
+import StarRatingComponent from 'react-star-rating-component';
 import { parseQuery } from 'js/util';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -19,7 +20,8 @@ class SearchResults extends React.Component {
         this.state = {
             sitters: [],
             selectedUsername: '',
-            status: 0
+            status: 0,
+            searchStatus: 0
         };
     }
     
@@ -37,11 +39,11 @@ class SearchResults extends React.Component {
                     }
                 })
                 .then((response) => {
-                    this.setState({sitters:response.data});
+                    this.setState({sitters:response.data, searchStatus:response.status});
                 })
                 .catch((error) => {
                     if (typeof error.response !== 'undefined') {
-                        this.setState({sitters:[]});
+                        this.setState({sitters:[], searchStatus:error.response.status});
                     }
                 });
 
@@ -64,7 +66,17 @@ class SearchResults extends React.Component {
             <Col key={index} xs={12} sm={6} md={4} lg={3}>
                 <Panel bsStyle="success" header={<span>{curVal.name} <small>({curVal.username})</small></span>} footer={<Button onClick={() => this.request(curVal.username)} bsStyle="success" block>Request</Button>}>
                     <p>Zip: {curVal.zipCode}</p>
-                    <p>{curVal.rating} stars</p>
+                    <Row className="vertical-align">
+                        <div className="col" style={{paddingTop: 5, marginLeft: 10, marginRight: 10}}>
+                            <StarRatingComponent 
+                                name={'rating' + index} 
+                                value={curVal.rating}
+                                emptyStarColor="#DDD"
+                                editing={false}
+                                renderStarIcon={() => (<i className="fa fa-paw fa-fw fa-2x center-icon-vertical" />)}
+                            />
+                        </div>    
+                    </Row>
                 </Panel>
             </Col>
         );
@@ -75,10 +87,6 @@ class SearchResults extends React.Component {
     }
 
     request(username) {
-        //TODO- Ford, sometimes "Search for a Sitter" will disappear and reappear
-        //When you are entering start/end date. its not a huge deal but it can be annoying
-        //because when it appears your cursor appears over the reset button
-        
         // logic to request appointment with sitter
         var bookingData = {
                 ownerUsername: this.props.userData.username,
@@ -115,8 +123,23 @@ class SearchResults extends React.Component {
                         {this.state.sitters.map((curVal, index) => this.createSitterCard(curVal, index))}
                     </Row>
                 );
-        } else {
+        } else if (this.state.searchStatus >= 200 && this.state.searchStatus < 300) {
             results = (<h3>Sorry, there were no search results that match that query.</h3>);
+        } else if (this.state.searchStatus === 0) {
+            results = (
+                    <Row className="vertical-align">
+                        <div className="col">
+                            <i className="fa fa-spinner fa-pulse fa-5x fa-fw" />
+                        </div>
+                    </Row>
+                );
+        } else {
+            results = (
+                    <div>
+                        <h3>An unknown error occurred. (Code: {this.state.searchStatus})</h3>
+                        <h3>Please try again later.</h3>
+                    </div>
+                );
         }
         
         var message = null;
@@ -144,7 +167,7 @@ class SearchResults extends React.Component {
         } else if (this.state.status !== 0) {
             message = (
                 <div>
-                    <p>An unknown error occurred.</p>
+                    <p>An unknown error occurred. (Code: {this.state.status})</p>
                     <p>Please try again later.</p>
                 </div>
             );
