@@ -92,13 +92,28 @@ public class EndpointUtil {
         }
     }
     
+    static List<HashMap<String, Object>> scrapeSource(List<HashMap<String, Object>> hits, boolean plugID) {
+    	// Take out _source from each hit and construct new list
+        List<HashMap<String, Object>> retObjs = new LinkedList<HashMap<String, Object>>();
+        for (HashMap<String,Object> obj : hits) {
+            HashMap<String,Object> retMap = (HashMap<String, Object>) obj.get("_source");
+            
+            if (plugID) {
+            	retMap.put("id", obj.get("_id"));
+            }
+            
+        	retObjs.add(retMap);
+        }
+        return retObjs;
+    }
+    
 	/*
      * description: performs a "search multiple" type query on the elastic search database
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user)
      *         query - elasticsearch query string
      * return: reponseEntity containing data for the query
      */
-    static ResponseEntity<String> searchMultipleQuery(String esEndpoint, String query, int amount, boolean returnID) {
+    static ResponseEntity<String> searchMultipleQuery(String esEndpoint, String query, int amount, boolean returnID, boolean returnHits) {
     	RestClient restClient = getRestClient();
         
         //Set up connection to database
@@ -118,24 +133,20 @@ public class EndpointUtil {
             HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
             
             // We need one hit, so determine if there are less ore more
-            int hits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
+            int numHits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
             
-            if(hits < 1){
+            if(numHits < 1){
             	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
-            // If hits is >1 then there was one hit so return response
-            // Take out _source from each hit and construct new list
-            List<HashMap<String, Object>> retObjs = new LinkedList<HashMap<String, Object>>();
-            for (HashMap<String,Object> obj : ((List<HashMap<String, Object>>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits"))) {
-                HashMap<String,Object> retMap = (HashMap<String, Object>) obj.get("_source");
-                
-                if (returnID) {
-                	retMap.put("id", obj.get("_id"));
-                }
-                
-            	retObjs.add(retMap);
+            
+            List<HashMap<String, Object>> hits = (List<HashMap<String, Object>>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits");
+            
+            // If numHits is >=1 then there was one hit so return response
+            if (returnHits) {
+	            return ResponseEntity.ok(mapper.writeValueAsString(hits));
+            } else {
+	            return ResponseEntity.ok(mapper.writeValueAsString(scrapeSource(hits, returnID)));
             }
-            return ResponseEntity.ok(mapper.writeValueAsString(retObjs));
         } catch (ResponseException re) {
             return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {

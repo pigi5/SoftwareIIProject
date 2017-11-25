@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
 
 import petfinder.site.common.user.UserDto;
-import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.Notification;
-import petfinder.site.common.user.Notification.NotificationType;
 import petfinder.site.common.user.OwnerNotification;
 import petfinder.site.common.user.SitterNotification;
 
@@ -63,7 +61,7 @@ public class UserEndpoint {
     // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
     @RequestMapping(path = "/allusers", method = RequestMethod.GET)
     public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000, false);
+	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000, false, false);
 	}
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
@@ -89,7 +87,7 @@ public class UserEndpoint {
         Date d = new Date(date);
         String dayAvailable = availabilityFormat.format(d);
 
-        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false);
+        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
@@ -123,39 +121,23 @@ public class UserEndpoint {
     }
 
 	
-	public static void addOwnerNotification(String username, NotificationType type, String bookingID, Booking booking) throws IOException {
+	public static ResponseEntity<String> addUserNotification(String username, Notification notification) throws IOException {
 		// Get user in memory
         ResponseEntity<String> getUserResponse = getUser(username);
         UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
         
-        // Get user's notifications
-        List<OwnerNotification> notifications = user.getOwnerNotifications();
+        // Add the notification
+        if (notification instanceof OwnerNotification) {
+        	user.getOwnerNotifications().add(0, (OwnerNotification) notification);
+        } else if (notification instanceof SitterNotification) {
+        	user.getSitterNotifications().add(0, (SitterNotification) notification);
+        }
         
-        // Create a new notification and add it to the front of the list
-        OwnerNotification notification = new OwnerNotification(type, bookingID, booking);
-        notifications.add(0, notification);
-        
-        // Update user
-		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
-		partialDoc.put("ownerNotifications", notifications);
-        updateUser(username, partialDoc);
+        // Reindex user
+        return reindexUser(username, user);
 	}
 	
-	public static void addSitterNotification(String username, NotificationType type, String bookingID, Booking booking) throws IOException {
-		// Get user in memory
-        ResponseEntity<String> getUserResponse = getUser(username);
-        UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
-        
-        // Get user's notifications
-        List<SitterNotification> notifications = user.getSitterNotifications();
-        
-        // Create a new notification and add it to the front of the list
-        SitterNotification notification = new SitterNotification(type, bookingID, booking);
-        notifications.add(0, notification);
-        
-        // Update user
-		HashMap<String, Object> partialDoc = new HashMap<String, Object>();
-		partialDoc.put("sitterNotifications", notifications);
-        updateUser(username, partialDoc);
+	public static ResponseEntity<String> reindexUser(String username, UserDto user) throws JsonProcessingException {
+		return EndpointUtil.indexQuery("/users/user/", username, mapper.writeValueAsString(user), false);
 	}
 }

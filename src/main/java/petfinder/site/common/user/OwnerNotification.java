@@ -14,48 +14,9 @@ public class OwnerNotification extends Notification {
     
     public OwnerNotification() {}
     
-	public OwnerNotification(NotificationType notificationType, String bookingID, Booking booking) {
-    	super(notificationType, bookingID);
-    	
+    private OwnerNotification(NotificationType notificationType, String bookingID, String title, String message) {
+    	super(notificationType, bookingID, title, message);
     	ownerRated = false;
-    	
-        String petString = "";
-        String endDateString = "";
-        String startDateString = "";
-        String sitterUsername = "";
-        if (booking != null) {
-	        petString = booking.getPetsSit().stream()
-	    		  .map(PetDto::getName)
-	    		  .collect(Collectors.joining(", "));
-	
-	        startDateString = df.format(new Date(booking.getStartDate()));
-	        endDateString = df.format(new Date(booking.getEndDate()));
-	        sitterUsername = booking.getSitterUsername();
-        }
-        
-        switch(notificationType) {
-        case REQUEST:
-        	this.title = "Appointment Requested";
-        	this.message = "You have requested " + sitterUsername + " to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
-        	break;
-        case ACCEPT:
-        	this.title = "Appointment Accepted";
-        	this.message = sitterUsername + " has accepted your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
-        	break;
-        case DECLINE:
-        	this.title = "Appointment Declined";
-        	this.message = sitterUsername + " has declined your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
-        	break;
-        case COMPLETE:
-        	this.title = "Appointment Complete";
-        	this.message = "Your appointment with " + sitterUsername + " is over. Please rate their performance.";
-        	
-        	this.ownerRated = booking.getOwnerRating() >= 0;
-        	break;
-        default:
-        	this.title = "No Content";
-        	this.message = "No Content";
-        }
     }
 	
 	public boolean isOwnerRated() {
@@ -73,5 +34,81 @@ public class OwnerNotification extends Notification {
         } catch (JsonProcessingException e) {
             return super.toString();
         }
+    }
+    
+    public static OwnerNotification createRequestNotification(String bookingID, Booking booking) {
+        String petString = "";
+        String endDateString = "";
+        String startDateString = "";
+        String sitterUsername = "";
+        if (booking != null) {
+	        petString = booking.getPetsSit().stream()
+	    		  .map(PetDto::getName)
+	    		  .collect(Collectors.joining(", "));
+	
+	        startDateString = df.format(new Date(booking.getStartDate()));
+	        endDateString = df.format(new Date(booking.getEndDate()));
+	        sitterUsername = booking.getSitterUsername();
+        }
+    	
+    	String title = "Appointment Requested";
+    	String message = "You have requested " + sitterUsername + " to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
+    	return new OwnerNotification(NotificationType.REQUEST, bookingID, title, message);
+    }
+
+    public static OwnerNotification createAcceptNotification(String bookingID, Booking booking) {
+        String petString = "";
+        String endDateString = "";
+        String startDateString = "";
+        String sitterUsername = "";
+        if (booking != null) {
+	        petString = booking.getPetsSit().stream()
+	    		  .map(PetDto::getName)
+	    		  .collect(Collectors.joining(", "));
+	
+	        startDateString = df.format(new Date(booking.getStartDate()));
+	        endDateString = df.format(new Date(booking.getEndDate()));
+	        sitterUsername = booking.getSitterUsername();
+        }
+    	
+    	String title = "Appointment Accepted";
+    	String message = sitterUsername + " has accepted your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
+    	return new OwnerNotification(NotificationType.ACCEPT, bookingID, title, message);
+    }
+    
+    public static OwnerNotification createDeclineNotification(String bookingID, Booking booking) {
+        String petString = "";
+        String endDateString = "";
+        String startDateString = "";
+        String sitterUsername = "";
+        if (booking != null) {
+	        petString = booking.getPetsSit().stream()
+	    		  .map(PetDto::getName)
+	    		  .collect(Collectors.joining(", "));
+	
+	        startDateString = df.format(new Date(booking.getStartDate()));
+	        endDateString = df.format(new Date(booking.getEndDate()));
+	        sitterUsername = booking.getSitterUsername();
+        }
+
+        String title = "Appointment Declined";
+    	String message = sitterUsername + " has declined your request to sit your pet(s): " + petString + " from " + startDateString + " to " + endDateString;
+    	return new OwnerNotification(NotificationType.DECLINE, bookingID, title, message);
+    }
+    
+    public static OwnerNotification createCompleteNotification(String bookingID, Booking booking) {
+        String sitterUsername = "";
+        if (booking != null) {
+	        sitterUsername = booking.getSitterUsername();
+        }
+        
+    	String title = "Appointment Complete";
+    	String message = "Your appointment with " + sitterUsername + " is over. Please rate their performance.";
+    	return new OwnerNotification(NotificationType.COMPLETE, bookingID, title, message);
+    }
+    
+    public static OwnerNotification createMessageNotification(String bookingID, String sitterUsername, String message) {      
+    	String title = "Message from " + sitterUsername;
+    	return new OwnerNotification(NotificationType.MESSAGE, bookingID, title, message);
     }
 }

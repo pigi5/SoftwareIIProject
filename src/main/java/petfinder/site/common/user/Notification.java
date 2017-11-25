@@ -17,10 +17,11 @@ public abstract class Notification {
 
     public Notification() {}
 
-    public Notification(NotificationType notificationType, String bookingID) {
+    public Notification(NotificationType notificationType, String bookingID, String title, String message) {
     	this.notificationType = notificationType;
         this.bookingID = bookingID; // booking this notification is connected to
-
+        this.title = title;
+        this.message = message;
         this.isRead = false; // if the booking should be marked as having been read before
         this.notificationDate = System.currentTimeMillis();
     }

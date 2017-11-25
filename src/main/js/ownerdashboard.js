@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, PanelGroup, Badge, Alert, Well } from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, Panel, PanelGroup, Badge, Alert, Well, Modal } from 'react-bootstrap';
 import StarRatingComponent from 'react-star-rating-component';
 import { mapPetToPetForm } from 'js/startappointment';
 
@@ -14,7 +14,11 @@ class OwnerDashboard extends React.Component {
             bookings: [],
             bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
             profileState: 2,
-            ratings: new Array(this.props.userData.ownerNotifications.length).fill(0)
+            ratings: new Array(this.props.userData.ownerNotifications.length).fill(0),
+            messageBooking: null,
+            messageOpen: false,
+            messageContent: '',
+            messageStatus: 0
         };
     }
     
@@ -84,6 +88,40 @@ class OwnerDashboard extends React.Component {
             bookingData: {petForms: newForms}
         });
     }
+
+    startMessage(booking) {
+        this.setState({messageBooking: booking, messageOpen: true, messageContent: ''});
+    }
+    closeMessage() {
+        this.setState({messageBooking: null, messageOpen: false, messageContent: ''});
+    }
+    changeMessage(event) {
+        this.setState({messageContent: event.target.value});
+    }
+    sendMessage() {
+        if (this.state.messageBooking !== null && 
+                this.state.messageBooking.sitterUsername !== 'undefined' &&
+                this.state.messageContent !== '') {
+            axios.get('/api/bookings/messagesitter', this.state.messageContent, {
+                params: {
+                    bookingID: this.state.messageBooking.id,
+                    sitterUsername: this.state.messageBooking.sitterUsername,
+                    ownerUsername: this.props.userData.username
+                }
+            })
+            .then((response) => {
+                this.setState({messageStatus: 0});
+                this.closeMessage();
+            })
+            .catch((error) => {
+                if (error.response !== 'undefined') {
+                    this.setState({messageStatus: error.response.status});
+                }
+            });
+        } else {
+            this.setState({messageStatus: -1});
+        }
+    }
     
     createBookingCard(curVal, index) {
         var startDate = new Date(curVal.startDate);
@@ -91,7 +129,12 @@ class OwnerDashboard extends React.Component {
         var status;
         var color;
         if (curVal.sitterApprove) {
-            status = 'Booked';
+            status = (
+                    <span>
+                        <span>'Booked'</span>
+                        <Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>Message</Button>
+                    </span>
+                );
             color = 'info';
         } else {
             status = 'Pending';
@@ -267,6 +310,16 @@ class OwnerDashboard extends React.Component {
                 );
         }
         
+        var messageError = null;
+        if (this.state.messageStatus == 500) {
+            messageError = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        } else if (this.state.messageStatus == 200) {
+            messageError = (<p className='text-success text-center top-buffer-sm'>Message sent.</p>);
+        } else if (this.state.generalStatus == -1) {
+            messageError = (<p className='text-danger text-center'>You must type a message.</p>);
+        } else if (this.state.messageStatus != 0) {
+            messageError = (<p className='text-danger text-center top-buffer-sm'>An unknown error occurred.</p>);
+        }
         
         return(
             <div>
@@ -319,6 +372,22 @@ class OwnerDashboard extends React.Component {
                                                 {bookings}
                                             </Row>
                                         </Grid>
+
+                                        <Modal show={this.state.messageOpen} onHide={this.closeMessage}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Send Message to {this.state.booking != null ? this.state.booking.sitterUsername : ''}</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <div className="input-group">
+                                                    <textarea className="form-control" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={this.messageChange} />
+                                                </div>
+                                                {messageError}
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button onClick={this.closeMessage}>Close</Button>
+                                                <Button onClick={this.sendMessage} bsStyle="primary" disabled={this.state.messageContent === ''}>Register</Button>
+                                            </Modal.Footer>
+                                        </Modal>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={3}>
                                         <Grid>

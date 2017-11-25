@@ -16,6 +16,7 @@ public class Booking {
     private double ownerRating;
     private long startDate;
     private long endDate;
+    private boolean ended;
 
     public Booking(){
         this.petsSit = new LinkedList<PetDto>();
@@ -37,9 +38,10 @@ public class Booking {
         this.sitterApprove = false;
         this.sitterDecline = false;
         this.ownerRating = -1;
+        this.ended = false;
     }
 
-    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline, double ownerRating){
+    public Booking(String ownerUsername, String sitterUsername, List<PetDto> petsSit, long startDate, long endDate, boolean sitterApprove, boolean sitterDecline, double ownerRating, boolean ended){
         this.ownerUsername = ownerUsername;
         this.sitterUsername = sitterUsername;
         this.petsSit = petsSit;
@@ -48,8 +50,13 @@ public class Booking {
         this.sitterApprove = sitterApprove;
         this.sitterDecline = sitterDecline;
         this.ownerRating = ownerRating;
+        this.ended = ended;
     }
 
+    public boolean shouldEnd() {
+    	return !ended && endDate < System.currentTimeMillis();
+    }
+    
     //Setters
     public void setStartDate(long startDate)			{ this.startDate = startDate; }
     public void setEndDate(long endDate)				{ this.endDate = endDate; }
@@ -59,6 +66,7 @@ public class Booking {
     public void setSitterApprove(boolean sitterApprove) { this.sitterApprove = sitterApprove; }
     public void setSitterDecline(boolean sitterDecline) { this.sitterDecline = sitterDecline; }
     public void setOwnerRating(double ownerRating) 		{ this.ownerRating = ownerRating; }
+    public void setEnded(boolean ended) 				{ this.ended = ended; }
 
     //getters
     public long getStartDate()							{ return this.startDate; }
@@ -69,6 +77,7 @@ public class Booking {
     public boolean getSitterApprove() 					{ return sitterApprove; }
     public boolean getSitterDecline() 					{ return sitterDecline; }
     public double getOwnerRating() 						{ return ownerRating; }
+    public boolean getEnded()		 					{ return ended; }
 
     @Override
     public String toString() {
