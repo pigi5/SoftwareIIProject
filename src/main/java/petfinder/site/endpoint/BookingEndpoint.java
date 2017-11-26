@@ -85,7 +85,7 @@ public class BookingEndpoint {
 
 	    	checkRawBookingHits(rawHits);
 	    	if (rawHits.size() == 0) {
-	    		return ResponseEntity.status(HttpStatus.NO_CONTENT);
+	    		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	    	}
 	    	
 			return ResponseEntity.ok(mapper.writeValueAsString(EndpointUtil.scrapeSource(rawHits, true)));
