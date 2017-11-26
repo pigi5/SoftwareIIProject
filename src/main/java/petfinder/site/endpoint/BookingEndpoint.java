@@ -55,7 +55,10 @@ public class BookingEndpoint {
     }
     
     private static void checkRawBookingHits(List<HashMap<String, Object>> rawHits) throws IOException {
-    	for (HashMap<String, Object> rawHit : rawHits) {
+    	// Use iterator so we can remove while iterating
+    	for (Iterator<HashMap<String, Object>> iterator = rawHits.iterator(); iterator.hasNext();) {
+    	    HashMap<String, Object> rawHit = iterator.next();
+
     		String bookingID = mapper.writeValueAsString(rawHit.get("_id"));
     		Booking booking = mapper.convertValue(rawHit.get("_source"), Booking.class);
     		if (booking.shouldEnd()) {
@@ -64,7 +67,9 @@ public class BookingEndpoint {
     			UserEndpoint.addUserNotification(booking.getOwnerUsername(), OwnerNotification.createCompleteNotification(bookingID, booking));
     			
 				reindexBooking(bookingID, booking);
-    		}
+				
+    	        iterator.remove();
+    	    }
     	}
     }
 
@@ -79,6 +84,9 @@ public class BookingEndpoint {
 	    	List<HashMap<String, Object>> rawHits = (List<HashMap<String, Object>>)mapper.readValue(bookingsResponse.getBody(), List.class);
 
 	    	checkRawBookingHits(rawHits);
+	    	if (rawHits.size() == 0) {
+	    		return ResponseEntity.status(HttpStatus.NO_CONTENT);
+	    	}
 	    	
 			return ResponseEntity.ok(mapper.writeValueAsString(EndpointUtil.scrapeSource(rawHits, true)));
 	    } catch (IOException ex) {
