@@ -167,3 +167,24 @@ option {
   justify-content: center; /* Optional, to align inner flex-items
                               horizontally within the column  */
 }
+
+@media (min-width: 768px) {
+    .padded-modal {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}
+
+.booking-name {
+	display: inline-flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.message-input-group {
+	width: 100%;
+}
+
+.message-input {
+    min-height: 80px;
+}

@@ -41,36 +41,20 @@ export class Home extends React.Component {
     }
 }
 
-export class AboutPage extends React.Component {
+export class HelpPage extends React.Component {
     render() {
         return (
             <div>
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className='container'>
                     <PageHeader>
-                        About
+                        Help
                     </PageHeader>
                 </div>
             </div>
         );
     }
 }
-
-export class FAQPage extends React.Component {
-    render() {
-        return (
-            <div>
-                <MyNavbar pageUrl={this.props.match.url} />
-                <div className='container'>
-                    <PageHeader>
-                        FAQ
-                    </PageHeader>
-                </div>
-            </div>
-        );
-    }
-}
-
 export class NotFoundPage extends React.Component {
     render() {
         return (

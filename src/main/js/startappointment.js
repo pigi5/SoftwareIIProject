@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import MyNavbar from 'js/navbar';
 import { PageHeader, Grid, Row, Col, Button } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
-import { serializeQuery } from 'js/util';
 
 const datePickerClear = (<i className="fa fa-times" aria-hidden="true"></i>);
 

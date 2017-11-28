@@ -87,7 +87,7 @@ class LoginModal extends React.Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Welcome Back!</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
+                    <Modal.Body className="padded-modal">
                         <div className="input-group">
                             <span className="input-group-addon"><i className="fa fa-user fa-fw"></i></span>
                             <input className="form-control" name="username" type="text" placeholder="Username" value={this.state.username} onChange={this.handleChange} />

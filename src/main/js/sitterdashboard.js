@@ -122,7 +122,12 @@ class SitterDashboard extends React.Component {
         var color;
         if (curVal.sitterApprove) {
             status = 'Booked';
-            extra = (<Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>Message</Button>);
+            extra = (
+                    <Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>
+                        <span>Message</span>
+                        <i className="fa fa-paper-plane fa-fw pull-left center-icon-vertical" aria-hidden="true" />
+                    </Button>
+                );
             color = 'info';
         } else {
             status = (
@@ -140,14 +145,10 @@ class SitterDashboard extends React.Component {
         return (
             <Col key={index} md={10} mdOffset={1} lg={8} lgOffset={2}>
                 <Panel header={startDate.toLocaleDateString('en-US') + ' to ' + endDate.toLocaleDateString('en-US')} footer={status} bsStyle={color}>
-                    <Row>
-                        <Col xs={10}>
-                            <h4>Booking with <strong>{curVal.ownerUsername}</strong></h4>
-                        </Col>
-                        <Col xs={2}>
-                            {extra}
-                        </Col>
-                    </Row>
+                    <div className="booking-name">
+                        <h4>Booking with <strong>{curVal.ownerUsername}</strong></h4>
+                        {extra}
+                    </div>
                     <hr style={{marginTop: 10}} />
                     <p>For:</p>
                     <ul>
@@ -296,15 +297,18 @@ class SitterDashboard extends React.Component {
                                             <Modal.Header closeButton>
                                                 <Modal.Title>Send Message to {this.state.booking != null ? this.state.booking.ownerUsername : ''}</Modal.Title>
                                             </Modal.Header>
-                                            <Modal.Body>
-                                                <div className="input-group" style={{width: '100%'}}>
-                                                    <textarea className="form-control" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={(event) => this.changeMessage(event)} />
+                                            <Modal.Body className="padded-modal">
+                                                <div className="input-group message-input-group">
+                                                    <textarea className="form-control message-input" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={(event) => this.changeMessage(event)} />
                                                 </div>
                                                 {messageError}
                                             </Modal.Body>
                                             <Modal.Footer>
-                                                <Button onClick={() => this.closeMessage()}>Close</Button>
-                                                <Button onClick={(event) => this.sendMessage(event)} bsStyle="primary" disabled={this.state.messageContent === ''}>Register</Button>
+                                                <Button onClick={() => this.closeMessage()}>Cancel</Button>
+                                                <Button onClick={(event) => this.sendMessage(event)} bsStyle="success" disabled={this.state.messageContent === ''}>
+                                                    <span>Send</span>
+                                                    <i className="fa fa-paper-plane fa-fw pull-left center-icon-vertical" aria-hidden="true" />
+                                                </Button>
                                             </Modal.Footer>
                                         </Modal>
                                     </Tab.Pane>

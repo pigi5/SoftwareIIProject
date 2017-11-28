@@ -2,7 +2,6 @@ import React from 'react';
 import MyNavbar from 'js/navbar';
 import { PageHeader, Grid, Row, Col, Button, Modal, Panel} from 'react-bootstrap';
 import StarRatingComponent from 'react-star-rating-component';
-import { parseQuery } from 'js/util';
 import { connect } from 'react-redux';
 import axios from 'axios';
 

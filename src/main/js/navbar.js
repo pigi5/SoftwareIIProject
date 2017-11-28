@@ -8,24 +8,14 @@ class MyNavbar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pages: [/*
+            pages: [
                 {
-                    name: 'Home',
-                    link: '/#/'
-                },
-                {
-                    name: 'About',
-                    link: '/#/about'
-                },
-                {
-                    name: 'FAQ',
-                    link: '/#/faq'
-                }*/
+                    icon: 'question-circle',
+                    name: 'Help',
+                    link: '/#/help'
+                }
             ]
         };
-        
-        this.createNavLink = this.createNavLink.bind(this);
-        this.logout = this.logout.bind(this);
     }
 
     logout() {
@@ -33,8 +23,17 @@ class MyNavbar extends React.Component {
         this.forceUpdate();
     }
     
-    createNavLink(curVal, index, array) {
-        return (<NavItem eventKey={index} key={index} href={curVal.link}>{curVal.name}</NavItem>);
+    createNavLink(curVal, index) {
+        var icon = null;
+        if (curVal.icon) {
+            icon = (<i className={'fa fa-' + curVal.icon + ' fa-fw pull-left center-icon-vertical'} aria-hidden="true" />);
+        }
+        return (
+                <NavItem eventKey={index} key={index} href={curVal.link}>
+                    <span>{curVal.name}</span>
+                    {icon}
+                </NavItem>
+            );
     }
     
     getNavButtons() {
@@ -65,7 +64,7 @@ class MyNavbar extends React.Component {
                     <NavItem href="/#/profile">
                         <span>{this.props.userData.username}<i className="fa fa-user fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
                     </NavItem>
-                    <NavItem href="/logout" onClick={this.logout} className="bg-primary">
+                    <NavItem href="/logout" onClick={(event) => this.logout(event)} className="bg-primary">
                         <span className="text-white">Logout<i className="fa fa-sign-out fa-fw pull-left center-icon-vertical" aria-hidden="true" /></span>
                     </NavItem>
                 </Nav>
@@ -92,7 +91,7 @@ class MyNavbar extends React.Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav activeHref={'/#' + this.props.pageUrl}>
-                            {this.state.pages.map(this.createNavLink)}
+                            {this.state.pages.map((curVal, index) => this.createNavLink(curVal, index))}
                         </Nav>
                         {this.getNavButtons()}
                     </Navbar.Collapse>
