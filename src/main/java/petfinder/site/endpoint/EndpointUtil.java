@@ -50,6 +50,16 @@ public class EndpointUtil {
                 .build();
     }
 
+    static ResponseEntity<String> remove(String esEndpoint){
+        RestClient restClient = getRestClient();
+        try {
+            Response response = restClient.performRequest("DELETE", esEndpoint);
+            return ResponseEntity.ok(null);
+        }catch(java.io.IOException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     /*
      * description: performs a "get" type query on the elastic search database
      * params: esEndpoint - elasticsearch endpoint (EX: /users/user/bob)
