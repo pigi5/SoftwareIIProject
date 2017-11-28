@@ -22,34 +22,31 @@ class SitterDashboard extends React.Component {
     refreshSitterInfo() {
         this.setState({bookingsState: 0, profileState: 0});
         
-        axios.get('/api/bookings/sitterbookings', {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
-            .then((response) => {
-                if (Array.isArray(response.data)) {
-                    response.data.sort((a, b) => b.startDate - a.startDate);
-                    this.setState({bookings: response.data, bookingsState: 2});
-                }
+        axios.get('/api/bookings/sitterbookings')
+            .then((response) => {                
+                axios.get('/api/users/refresh')
+                    .then((response2) => {
+                        if (!Array.isArray(response.data)) {
+                            response.data = [];
+                        }
+
+                        response.data.sort((a, b) => b.startDate - a.startDate);
+                        
+                        this.props.dispatch({
+                            type: 'UPDATE_USER',
+                            userData: response2.data
+                        });
+                        console.log(response.data);
+                        this.setState({bookings: response.data, bookingsState: 2, profileState: 2});
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.setState({profileState: 1});
+                    });
             })
             .catch((error) => {
+                console.log(error);
                 this.setState({bookings:[], bookingsState: 1});
-            });
-        axios.get('/api/users/user', {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
-            .then((response) => {
-                this.props.dispatch({
-                    type: 'UPDATE_USER',
-                    userData: response.data
-                });
-                this.setState({profileState: 2});
-            })
-            .catch((error) => {
-                this.setState({profileState: 1});
             });
     }
     
@@ -121,11 +118,7 @@ class SitterDashboard extends React.Component {
         newNotifications[index].isRead = isRead;
         var updates = {sitterNotifications: newNotifications};
 
-        axios.post('/api/users/update', updates, {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
+        axios.post('/api/users/update', updates)
             .then((response) => {
                 this.props.dispatch({
                     type: 'UPDATE_USER',

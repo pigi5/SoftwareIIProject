@@ -32,8 +32,6 @@ public class BookingEndpoint {
 
     @RequestMapping(path = "/book", method = RequestMethod.POST)
     public static ResponseEntity<String> createBooking(@RequestBody Booking booking){
-        System.out.println(booking.toString());
-
         try {
         	ResponseEntity<String> createBookingResponse = EndpointUtil.indexQuery("/bookings/booking", null, mapper.writeValueAsString(booking), false);
         	if (!createBookingResponse.getStatusCode().is2xxSuccessful()) {
@@ -74,9 +72,9 @@ public class BookingEndpoint {
     }
 
     @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
-    public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
+    public static ResponseEntity<String> getOwnerBookings() {
     	try {
-	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername:" + username + " AND sitterDecline:false", 1000, false, true);
+	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername:" + UserEndpoint.getCurrentUsername() + " AND sitterDecline:false", 1000, false, true);
 	    	if (bookingsResponse.getStatusCode() != HttpStatus.OK) {
 	    		return bookingsResponse;
 	    	}
@@ -89,16 +87,18 @@ public class BookingEndpoint {
 	    	}
 	    	
 			return ResponseEntity.ok(mapper.writeValueAsString(EndpointUtil.scrapeSource(rawHits, true)));
-	    } catch (IOException ex) {
+	    } catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		} catch (IOException ex) {
 	        ex.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
     }
 
     @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
-    public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
+    public static ResponseEntity<String> getSitterBookings() {
     	try {
-	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername:" + username + " AND sitterDecline:false", 1000, false, true);
+	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername:" + UserEndpoint.getCurrentUsername() + " AND sitterDecline:false", 1000, false, true);
 	    	if (bookingsResponse.getStatusCode() != HttpStatus.OK) {
 	    		return bookingsResponse;
 	    	}
@@ -108,7 +108,9 @@ public class BookingEndpoint {
 	    	checkRawBookingHits(rawHits);
 	    	
 			return ResponseEntity.ok(mapper.writeValueAsString(EndpointUtil.scrapeSource(rawHits, true)));
-	    } catch (IOException ex) {
+	    } catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		} catch (IOException ex) {
 	        ex.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
@@ -178,20 +180,24 @@ public class BookingEndpoint {
     }
 
     @RequestMapping(path = "/messagesitter", method = RequestMethod.POST)
-    public static ResponseEntity<String> messageSitter(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "sitterUsername") String sitterUsername, @RequestParam(name = "ownerUsername") String ownerUsername, @RequestBody String message) {
+    public static ResponseEntity<String> messageSitter(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "sitterUsername") String sitterUsername, @RequestBody String message) {
     	try {
-    		return UserEndpoint.addUserNotification(sitterUsername, SitterNotification.createMessageNotification(bookingID, ownerUsername, message));
-    	} catch (IOException e) {
+    		return UserEndpoint.addUserNotification(sitterUsername, SitterNotification.createMessageNotification(bookingID, UserEndpoint.getCurrentUsername(), message));
+    	} catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		} catch (IOException e) {
     		e.printStackTrace();
     		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     	}
     }
     
     @RequestMapping(path = "/messageowner", method = RequestMethod.POST)
-    public static ResponseEntity<String> messageOwner(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "sitterUsername") String sitterUsername, @RequestParam(name = "ownerUsername") String ownerUsername, @RequestBody String message) {
+    public static ResponseEntity<String> messageOwner(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "ownerUsername") String ownerUsername, @RequestBody String message) {
     	try {
-    		return UserEndpoint.addUserNotification(ownerUsername, OwnerNotification.createMessageNotification(bookingID, sitterUsername, message));
-    	} catch (IOException e) {
+    		return UserEndpoint.addUserNotification(ownerUsername, OwnerNotification.createMessageNotification(bookingID, UserEndpoint.getCurrentUsername(), message));
+    	} catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		} catch (IOException e) {
     		e.printStackTrace();
     		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     	}

@@ -54,9 +54,20 @@ public class EndpointUtil {
         RestClient restClient = getRestClient();
         try {
             Response response = restClient.performRequest("DELETE", esEndpoint);
-            return ResponseEntity.ok(null);
-        }catch(java.io.IOException e){
+            return ResponseEntity.ok(EntityUtils.toString(response.getEntity()));
+        } catch (ResponseException re) {
+            return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
+        } catch (IOException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } finally {
+        	if (restClient != null) {
+        		try {
+					restClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
         }
     }
 
@@ -142,21 +153,21 @@ public class EndpointUtil {
             
             HashMap<String,Object> responseMap = mapper.readValue(responseString, HashMap.class);
             
-            // We need one hit, so determine if there are less ore more
+            // We need at least one hit
             int numHits = (int) ((HashMap<String,Object>) responseMap.get("hits")).get("total");
             
             if(numHits < 1){
             	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
+            // If numHits is >=1 then there was one hit so return response
             
             List<HashMap<String, Object>> hits = (List<HashMap<String, Object>>) ((HashMap<String,Object>) responseMap.get("hits")).get("hits");
             
-            // If numHits is >=1 then there was one hit so return response
             if (returnHits) {
 	            return ResponseEntity.ok(mapper.writeValueAsString(hits));
-            } else {
-	            return ResponseEntity.ok(mapper.writeValueAsString(scrapeSource(hits, returnID)));
             }
+	        
+            return ResponseEntity.ok(mapper.writeValueAsString(scrapeSource(hits, returnID)));
         } catch (ResponseException re) {
             return ResponseEntity.status(HttpStatus.valueOf(re.getResponse().getStatusLine().getStatusCode())).body(re.getResponse().getStatusLine().getReasonPhrase());
         } catch (IOException e) {

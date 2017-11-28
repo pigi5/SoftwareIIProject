@@ -4,6 +4,7 @@ import { Provider, connect } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import Index from 'js/index';
+import axios from 'axios';
 
 import 'styles/main.scss';
 
@@ -29,87 +30,20 @@ const reducers = {
 };
 
 const reducer = combineReducers(reducers);
-const store = createStore(reducer, 
-        {/*
-            user: {
-                authed: true,
-                userData: {
-                    name: 'Test User',
-                    email: 'test@test.com',
-                    username: 'testuser2',
-                    password: 'password',
-                    zipCode: 11111,
-                    pets: [
-                        {
-                            name: 'Fido',
-                            type: 'Dog',
-                            description: 'Good Boy'
-                        },
-                        {
-                            name: 'Mittens',
-                            type: 'Cat',
-                            description: 'Good Girl'
-                        }
-                    ],
-                    availability: [],
-                    petPreferences: [],
-                    rating: null,
-                    ownerNotifications: [
-                        {
-                            title: 'Complete 1',
-                            message: 'Hello',
-                            notificationDate: 1000000020000,
-                            isRead: false,
-                            bookingID: 'erergergerggeg',
-                            ownerRated: false
-                        },
-                        {
-                            title: 'Title 2',
-                            message: 'Goodbye',
-                            notificationDate: 1000000010000,
-                            isRead: false,
-                            bookingID: 'qwrgeqqeeveqrvqev',
-                            ownerRated: false
-                        },
-                        {
-                            title: 'Title 3',
-                            message: 'Hello again',
-                            notificationDate: 1000000000000,
-                            isRead: true,
-                            bookingID: 'sadfjahsdkbwviubavu',
-                            ownerRated: false
-                        }
-                        
-                    ],
-                    sitterNotifications: [
-                        {
-                            title: 'Title 4',
-                            message: 'Hello',
-                            notificationDate: 1000000050000,
-                            isRead: false,
-                            bookingID: 'asdfasfsfsafasdf'
-                        },
-                        {
-                            title: 'Title 5',
-                            message: 'Goodbye',
-                            notificationDate: 1000000040000,
-                            isRead: false,
-                            bookingID: 'oiuiuijoihoboib'
-                        },
-                        {
-                            title: 'Title 6',
-                            message: 'Hello again',
-                            notificationDate: 1000000030000,
-                            isRead: true,
-                            bookingID: 'qwertyuiop'
-                        }
-                        
-                    ]
-                },
-                booking: {}
-            }*/
-        }
-);
+const store = createStore(reducer, {user: {authed: false}});
 
 const mountNode = document.querySelector('#main');
-ReactDOM.render(<Provider store={store}><Index /></Provider>, mountNode);
+
+axios.get('/api/users/refresh')
+    .then((response) => {
+        console.log('dispatched');
+        store.dispatch({
+            type: 'AUTH_USER',
+            userData: response.data
+        });
+
+        ReactDOM.render(<Provider store={store}><Index /></Provider>, mountNode);
+    })
+    .catch((response) => {
+        ReactDOM.render(<Provider store={store}><Index /></Provider>, mountNode);
+    });

@@ -210,11 +210,7 @@ class Profile extends React.Component {
                 zipCode: this.state.inputForms.zipCode.value
             };
             
-            axios.post('/api/users/update', updates, {
-                    params: {
-                        username: this.props.userData.username,
-                    }
-                })
+            axios.post('/api/users/update', updates)
                 .then((response) => {
                     this.userUpdated(updates);
                     
@@ -276,11 +272,7 @@ class Profile extends React.Component {
                 pets: this.state.petForms.map(mapFormsToPets)
             };
             
-            axios.post('/api/users/update', updates, {
-                    params: {
-                        username: this.props.userData.username,
-                    }
-                })
+            axios.post('/api/users/update', updates)
                 .then((response) => {
                     this.userUpdated(updates);
 
@@ -315,11 +307,7 @@ class Profile extends React.Component {
         };
 
 
-        axios.post('/api/users/update', updates, {
-                params: {
-                    username: this.props.userData.username,
-                }
-            })
+        axios.post('/api/users/update', updates)
             .then((response) => {
                 this.userUpdated(updates);
                 

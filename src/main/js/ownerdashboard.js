@@ -29,17 +29,9 @@ class OwnerDashboard extends React.Component {
     refreshOwnerInfo() {
         this.setState({bookingsState: 0, profileState: 0});
         
-        axios.get('/api/bookings/ownerbookings', {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
+        axios.get('/api/bookings/ownerbookings')
             .then((response) => {                
-                axios.get('/api/users/user', {
-                        params: {
-                            username: this.props.userData.username
-                        }
-                    })
+                axios.get('/api/users/refresh')
                     .then((response2) => {
                         if (!Array.isArray(response.data)) {
                             response.data = [];
@@ -116,8 +108,7 @@ class OwnerDashboard extends React.Component {
             axios.get('/api/bookings/messagesitter', this.state.messageContent, {
                 params: {
                     bookingID: this.state.messageBooking.id,
-                    sitterUsername: this.state.messageBooking.sitterUsername,
-                    ownerUsername: this.props.userData.username
+                    sitterUsername: this.state.messageBooking.sitterUsername
                 }
             })
             .then((response) => {
@@ -172,11 +163,7 @@ class OwnerDashboard extends React.Component {
         newNotifications[index].isRead = isRead;
         var updates = {ownerNotifications: newNotifications};
 
-        axios.post('/api/users/update', updates, {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
+        axios.post('/api/users/update', updates)
             .then((response) => {
                 this.props.dispatch({
                     type: 'UPDATE_USER',

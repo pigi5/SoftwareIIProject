@@ -21,7 +21,7 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
     );
 }
 
-class Index extends React.Component {    
+class Index extends React.Component {
 	render() {
 		return (
 			<Router>

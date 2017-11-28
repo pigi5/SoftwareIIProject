@@ -1,37 +1,15 @@
 package petfinder.site;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.springframework.web.client.RestTemplate;
-import petfinder.site.endpoint.EndpointUtil;
-import petfinder.site.common.user.UserDto;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import java.lang.String;
-import petfinder.site.endpoint.UserEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.context.annotation.Bean;
-
-import javax.xml.ws.Endpoint;
 
 /**
  * Created by jlutteringer on 8/22/17.
@@ -67,7 +45,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/api/users/add").permitAll()
 					.antMatchers("/api/users/exists").permitAll()
 					.antMatchers("/api/pets/types").permitAll()
-					.antMatchers("/api/users/getLoggedIn").permitAll()
+					.antMatchers("/api/users/refresh").permitAll()
 				.anyRequest().authenticated()
 					.and()
 				.formLogin()

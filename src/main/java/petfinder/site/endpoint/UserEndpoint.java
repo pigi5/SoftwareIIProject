@@ -46,34 +46,17 @@ public class UserEndpoint {
     }
 
     // Returns user information for a given username
-    @RequestMapping(path = "/user", method = RequestMethod.GET)
     public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
         return EndpointUtil.getQuery("/users/user/" + username, true, false);
     }
 
     // Returns user information if username and password are correct
-    @RequestMapping(path = "/authuser", method = RequestMethod.GET)
     public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
 	    return EndpointUtil.searchOneQuery("/users/user", "username:" + username + " AND password:" + password, false, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
 	}
-    
-    // Returns "all" users (1000)
-    // Note: to actually get all users, we would need to use pagination via https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
-    @RequestMapping(path = "/allusers", method = RequestMethod.GET)
-    public static ResponseEntity<String> getAllUsers(){
-	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000, false, false);
-	}
-
-	@RequestMapping(path = "/deleteUser", method = RequestMethod.DELETE)
-    public static ResponseEntity<String> deleteUser(@RequestParam(name = "username") String username){
-        String esEndpoint = "/users/user/" + username;
-        return EndpointUtil.remove(esEndpoint);
-    }
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
     public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
-        //TODO: filter out self (will need to add an ownerID to the parameters)
-		
 		//Formats pet preference query string
         String preferences = "";
         List<String> petTypes = Arrays.asList(petString.split(","));
@@ -93,7 +76,11 @@ public class UserEndpoint {
         Date d = new Date(date);
         String dayAvailable = availabilityFormat.format(d);
 
-        return EndpointUtil.searchMultipleQuery("/users/user", "petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
+        try {
+			return EndpointUtil.searchMultipleQuery("/users/user", "username:(NOT " + getCurrentUsername() + ") petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
+		} catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		} 
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
@@ -107,41 +94,26 @@ public class UserEndpoint {
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public static ResponseEntity<String> updateUser(@RequestParam(name = "username") String username, @RequestBody HashMap<String, Object> partialDoc){
+    public static ResponseEntity<String> updateUser(@RequestBody HashMap<String, Object> partialDoc){
     	try {
-			return EndpointUtil.updateQuery("/users/user/" + username, mapper.writeValueAsString(partialDoc));
+			return EndpointUtil.updateQuery("/users/user/" + getCurrentUsername(), mapper.writeValueAsString(partialDoc));
+		} catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
 
-    @RequestMapping(path = "/getLoggedIn", method = RequestMethod.GET)
-    public static ResponseEntity<String> getLoggedIn(){
-        try {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return getUser(user.getUsername());
-        }catch(java.lang.ClassCastException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @RequestMapping(path = "/refresh", method = RequestMethod.GET)
+    public static ResponseEntity<String> refreshUser() {
+    	try {
+			return getUser(getCurrentUsername());
+		} catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		}
     }
-
-    /*
-    @RequestMapping(path = "/addRating", method = RequestMethod.POST)
-    public static ResponseEntity<String> addRating(@RequestParam(name = "username") String username, @RequestParam(name = "rating") long rating) {
-        ResponseEntity<String> getUserResponse = getUser(username);
-        try {
-            UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
-            user.addRating(rating);
-            return reindexUser(user.getUsername(), user);
-        }catch(IOException e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-    */
-
-	
+    
 	public static ResponseEntity<String> addUserNotification(String username, Notification notification) throws IOException {
 		// Get user in memory
         ResponseEntity<String> getUserResponse = getUser(username);
@@ -160,5 +132,14 @@ public class UserEndpoint {
 	
 	public static ResponseEntity<String> reindexUser(String username, UserDto user) throws JsonProcessingException {
 		return EndpointUtil.indexQuery("/users/user/", username, mapper.writeValueAsString(user), false);
+	}
+	
+	public static String getCurrentUsername() throws NotAuthenticatedException {
+		try {
+	        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	        return user.getUsername();
+		} catch (NullPointerException | ClassCastException e) {
+			throw new NotAuthenticatedException(e);
+		}
 	}
 }
