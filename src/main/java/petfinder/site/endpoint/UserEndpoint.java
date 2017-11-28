@@ -64,6 +64,12 @@ public class UserEndpoint {
 	    return EndpointUtil.searchMultipleQuery("/users/user", null, 1000, false, false);
 	}
 
+	@RequestMapping(path = "/deleteUser", method = RequestMethod.DELETE)
+    public static ResponseEntity<String> deleteUser(@RequestParam(name = "username") String username){
+        String esEndpoint = "/users/user/" + username;
+        return EndpointUtil.remove(esEndpoint);
+    }
+
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
     public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
         //TODO: filter out self (will need to add an ownerID to the parameters)
@@ -111,14 +117,29 @@ public class UserEndpoint {
     }
 
     @RequestMapping(path = "/getLoggedIn", method = RequestMethod.GET)
-    public static boolean checkLoggedIn(){
+    public static ResponseEntity<String> getLoggedIn(){
         try {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return getUser(user.getUsername());
         }catch(java.lang.ClassCastException e){
-            return false;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        return true;
     }
+
+    /*
+    @RequestMapping(path = "/addRating", method = RequestMethod.POST)
+    public static ResponseEntity<String> addRating(@RequestParam(name = "username") String username, @RequestParam(name = "rating") long rating) {
+        ResponseEntity<String> getUserResponse = getUser(username);
+        try {
+            UserDto user = mapper.readValue(getUserResponse.getBody(), UserDto.class);
+            user.addRating(rating);
+            return reindexUser(user.getUsername(), user);
+        }catch(IOException e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    */
 
 	
 	public static ResponseEntity<String> addUserNotification(String username, Notification notification) throws IOException {

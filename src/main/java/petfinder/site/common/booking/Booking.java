@@ -1,3 +1,10 @@
+//TODO- add rating endpoint: username, rating
+//TODO- score return
+//TODO- add complete boolean to booking
+//TODO- return the token
+//TODO- validate the token
+//TODO- add sitter description to userclass
+
 package petfinder.site.common.booking;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
