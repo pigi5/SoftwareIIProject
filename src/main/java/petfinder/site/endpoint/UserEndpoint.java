@@ -69,18 +69,42 @@ public class UserEndpoint {
                 preferences += petTypes.get(i) + " AND ";
             }
         }
-
-        //System.out.println(preferences);
-
+        
         //get date in ms
         Date d = new Date(date);
         String dayAvailable = availabilityFormat.format(d);
 
+        //System.out.println(preferences);
+
+        // Uncomment code below for nearby zip codes
+        /*
+    	// TODO: replace static values with ones from API call
+    	String zipCodeList[] = {"76798", "76706", "76701", "76702", "76704"};
+        
+        try {
+        	String esQuery = "NOT username:" + getCurrentUsername() + " AND petPreferences: " + preferences + " AND (";
+	        for (int i = 0; i < zipCodeList.length; i++) {
+	        	esQuery += "zipCode: " + zipCodeList[i];
+	        	if (i < zipCodeList.length - 1) {
+	        		esQuery += " OR ";
+	        	}
+	        }
+	        esQuery += ") AND availability: " + dayAvailable;
+	        
+	        return EndpointUtil.searchMultipleQuery("/users/user", esQuery, 1000, false, false);
+        } catch (NotAuthenticatedException e) {
+			return e.getNewResponseEntity();
+		}
+        //*/
+
+        // Comment out below code for nearby zip codes
+        //*
         try {
 			return EndpointUtil.searchMultipleQuery("/users/user", "NOT username:" + getCurrentUsername() + " AND petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
 		} catch (NotAuthenticatedException e) {
 			return e.getNewResponseEntity();
-		} 
+		}
+		//*/
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
