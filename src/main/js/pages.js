@@ -13,6 +13,13 @@ export class Home extends React.Component {
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className="container">
                     <Carousel>
+	                    <Carousel.Item>
+		                    <img alt="Tempeturs logo" src="https://i.imgur.com/bOcXNei.jpg" />
+		                    <Carousel.Caption>
+		                        <h3>Tempeturs logo</h3>
+		                        <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+		                    </Carousel.Caption>
+		                </Carousel.Item>
                         <Carousel.Item>
                             <img alt="First slide" src="https://az616578.vo.msecnd.net/files/responsive/embedded/any/desktop/2016/10/10/636116545535774772-190236060_kittens.jpg" />
                             <Carousel.Caption>
