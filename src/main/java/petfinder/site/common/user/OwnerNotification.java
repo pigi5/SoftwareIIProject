@@ -10,23 +10,13 @@ import petfinder.site.common.booking.Booking;
 import petfinder.site.common.pet.PetDto;
 
 public class OwnerNotification extends Notification {
-    private boolean ownerRated;
-    
     public OwnerNotification() {}
     
     private OwnerNotification(NotificationType notificationType, String bookingID, String title, String message) {
     	super(notificationType, bookingID, title, message);
-    	ownerRated = false;
     }
-	
-	public boolean isOwnerRated() {
-		return ownerRated;
-	}
-	public void setOwnerRated(boolean ownerRated) {
-		this.ownerRated = ownerRated;
-	}
 
-    @Override
+	@Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
         try {

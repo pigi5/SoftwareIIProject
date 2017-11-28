@@ -34,30 +34,41 @@ class OwnerDashboard extends React.Component {
                     username: this.props.userData.username
                 }
             })
-            .then((response) => {
-                if (Array.isArray(response.data)) {
-                    response.data.sort((a, b) => b.startDate - a.startDate);
-                    this.setState({bookings: response.data, bookingsState: 2});
-                }
+            .then((response) => {                
+                axios.get('/api/users/user', {
+                        params: {
+                            username: this.props.userData.username
+                        }
+                    })
+                    .then((response2) => {
+                        if (!Array.isArray(response.data)) {
+                            response.data = [];
+                        }
+                        // find out if the booking has been rated for complete notifications
+                        response2.data.ownerNotifications.forEach((notification, index) => {
+                            if (notification.notificationType === 'COMPLETE') {
+                                var matchingBookingIndex = response.data.findIndex((element) => element.id == notification.bookingID);
+                                notification.ownerRated = (matchingBookingIndex >= 0 && response.data[matchingBookingIndex].ownerRating >= 0);
+                            }
+                        });
+
+                        response.data.sort((a, b) => b.startDate - a.startDate);
+                        
+                        this.props.dispatch({
+                            type: 'UPDATE_USER',
+                            userData: response2.data
+                        });
+                        console.log(response.data);
+                        this.setState({bookings: response.data, bookingsState: 2, profileState: 2, ratings: new Array(response2.data.ownerNotifications.length).fill(0)});
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.setState({profileState: 1, ratings: new Array(this.props.userData.ownerNotifications.length).fill(0)});
+                    });
             })
             .catch((error) => {
+                console.log(error);
                 this.setState({bookings:[], bookingsState: 1});
-            });
-        axios.get('/api/users/user', {
-                params: {
-                    username: this.props.userData.username
-                }
-            })
-            .then((response) => {
-                this.props.dispatch({
-                    type: 'UPDATE_USER',
-                    userData: response.data
-                });
-                console.log(response.data);
-                this.setState({profileState: 2, ratings: new Array(response.data.ownerNotifications.length).fill(0)});
-            })
-            .catch((error) => {
-                this.setState({profileState: 1, ratings: new Array(this.props.userData.ownerNotifications.length).fill(0)});
             });
     }
     
@@ -67,7 +78,7 @@ class OwnerDashboard extends React.Component {
             extra = (<span><hr /> <p>{curVal.description}</p></span>);
         }
         return (
-            <Col key={index} xs={12} sm={6} md={4}>
+            <Col key={index} xs={12} sm={6} lg={4}>
                 <Panel bsStyle="info" header={curVal.name} footer={(<Button bsStyle="success" href="/#/startappt" onClick={() => this.startBookingWithPet(curVal)}>Start Booking</Button>)}>
                     <h4>{curVal.type}</h4>
                     {extra}
@@ -141,7 +152,7 @@ class OwnerDashboard extends React.Component {
             color = 'warning';
         }
         return (
-            <Col key={index} sm={8} md={6} mdOffset={2} lgOffset={1}>
+            <Col key={index} sm={8} lg={6} lgOffset={1}>
                 <Panel header={startDate.toLocaleDateString('en-US') + ' to ' + endDate.toLocaleDateString('en-US')} footer={status} bsStyle={color}>
                     <h4>Booking with <strong>{curVal.sitterUsername}</strong></h4>
                     <hr />
@@ -183,7 +194,7 @@ class OwnerDashboard extends React.Component {
     }
     
     rateSitter(bookingID, rating) {
-        axios.post('/api/bookings/ratesitter', {
+        axios.post('/api/bookings/ratesitter', null, {
                 params: {
                     bookingID: bookingID,
                     rating: rating
@@ -221,7 +232,7 @@ class OwnerDashboard extends React.Component {
             if (curVal.ownerRated) {
                 extra = (<Row className="vertical-align">
                             <div className="col">
-                                <Well>Rating registered.</Well>
+                                <Well bsSize="sm">Rating registered.</Well>
                             </div>
                          </Row>);  
             } else {
@@ -287,7 +298,7 @@ class OwnerDashboard extends React.Component {
             bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
         } else {
             bookings = (
-                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                    <Col sm={8} lg={6} lgOffset={1}>
                         <Alert bsStyle="info">You have no upcoming bookings. Click the button above to set up an appointment.</Alert>
                     </Col>
                 );
@@ -304,7 +315,7 @@ class OwnerDashboard extends React.Component {
                 );
         } else {
             pets = (
-                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                    <Col sm={8} lg={6} lgOffset={1}>
                         <Alert bsStyle="info">You have no pets. Go to your profile to add pets!</Alert>
                     </Col>
                 );
@@ -327,10 +338,10 @@ class OwnerDashboard extends React.Component {
                 <Grid>
                     <PageHeader>
                         <Row style={{display: 'flex', alignItems: 'flex-end'}}>
-                            <Col xs={7} sm={9} md={10}>
+                            <Col xs={7} sm={9} lg={10}>
                                 <span>Owner Dashboard</span>
                             </Col>
-                            <Col xs={5} sm={3} md={2}>
+                            <Col xs={5} sm={3} lg={2}>
                                 <Button block onClick={() => this.refreshOwnerInfo()}>
                                     <span>Refresh</span>
                                     <i className={'fa ' + refreshClass + 'pull-left center-icon-vertical'} />
@@ -340,38 +351,34 @@ class OwnerDashboard extends React.Component {
                     </PageHeader>
                     <Tab.Container id="profile-tabs" defaultActiveKey={1}>
                         <Row className="clearfix">
-                            <Col sm={3} md={2}>
+                            <Col sm={3} lg={2}>
                                 <Nav bsStyle="pills" stacked>
                                     <NavItem eventKey={1}>Notifications <Badge pullRight>{numNewNots}</Badge></NavItem>
                                     <NavItem eventKey={2}>Bookings</NavItem>
                                     <NavItem eventKey={3}>Pets</NavItem>
                                 </Nav>
                             </Col>
-                            <Col sm={9} md={10}>
+                            <Col sm={9} lg={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                                                    {notifications}
-                                                </Col>
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col md={12} md={10} mdOffset={1} lg={8} lgOffset={2}>
+                                                {notifications}
+                                            </Col>
+                                        </Row>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
-                                                    <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
-                                                        <span>Start Booking</span>
-                                                        <i className="fa fa-plus pull-left center-icon-vertical" />
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                {bookings}
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={8} lg={6} lgOffset={1}>
+                                                <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
+                                                    <span>Start Booking</span>
+                                                    <i className="fa fa-plus pull-left center-icon-vertical" />
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            {bookings}
+                                        </Row>
 
                                         <Modal show={this.state.messageOpen} onHide={this.closeMessage}>
                                             <Modal.Header closeButton>
@@ -390,11 +397,9 @@ class OwnerDashboard extends React.Component {
                                         </Modal>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={3}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                {pets}
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            {pets}
+                                        </Row>
                                     </Tab.Pane>
                                 </Tab.Content>
                             </Col>

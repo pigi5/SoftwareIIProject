@@ -124,14 +124,14 @@ class Profile extends React.Component {
             ownerStatus: 0,
             sitterForms: {
                 availability: {
-                    name: 'Days Available',
+                    name: 'Availability',
                     value: this.props.userData.availability,
                     type: 'text',
                     icon: 'calendar',
                     editable: false
                 },
                 petPreferences: {
-                    name: 'Pet Preferences',
+                    name: 'Preferences',
                     value: this.props.userData.petPreferences,
                     type: 'text',
                     icon: 'calendar',
@@ -344,10 +344,10 @@ class Profile extends React.Component {
         }
         return(
             <Row className="top-buffer-sm" key={index}>
-                <Col sm={3}>
+                <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
                     <legend>{curVal.name}</legend>
                 </Col>
-                <Col sm={7} lg={5}>
+                <Col sm={8} md={7} lg={5}>
                     <div className="input-group">
                         <span className="input-group-addon"><i className={'fa fa-' + curVal.icon + ' fa-fw'} /></span>
                         <input className="form-control" name={key} type={curVal.type} placeholder={curVal.name} value={curVal.value} onChange={(event) => this.handleGeneralChange(event)} disabled={!curVal.editable} />
@@ -544,109 +544,103 @@ class Profile extends React.Component {
                     </PageHeader>
                     <Tab.Container id="profile-tabs" defaultActiveKey={1}>
                         <Row>
-                            <Col sm={3} md={2}>
+                            <Col sm={3} lg={2}>
                                 <Nav bsStyle="pills" stacked>
                                     <NavItem eventKey={1}>General</NavItem>
                                     <NavItem eventKey={2}>Owner</NavItem>
                                     <NavItem eventKey={3}>Sitter</NavItem>
                                 </Nav>
                             </Col>
-                            <Col sm={9} md={10}>
+                            <Col sm={9} lg={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={3}>
-                                                    <legend>Username</legend>
-                                                </Col>
-                                                <Col sm={7} lg={5}>
-                                                    <div className="input-group">
-                                                        <span className="input-group-addon"><i className="fa fa-user fa-fw" /></span>
-                                                        <input className="form-control" name="name" type="text" placeholder="Username" value={this.props.userData.username} disabled />
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                            {Object.keys(this.state.inputForms).map((key, index) => this.createProfileFormLine(key, index))}
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.cancelGeneral(event)} disabled={!isGeneralChanged}>Cancel</Button>
-                                                </Col>
-                                                <Col xs={6} sm={4} md={3}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.handleGeneralSubmit(event)} bsStyle="success" disabled={!isGeneralSaveable}>Save</Button>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={12} sm={10} lg={8}>
-                                                    {generalErrorMess}
-                                                </Col>
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
+                                                <legend>Username</legend>
+                                            </Col>
+                                            <Col sm={8} md={7} lg={5}>
+                                                <div className="input-group">
+                                                    <span className="input-group-addon"><i className="fa fa-user fa-fw" /></span>
+                                                    <input className="form-control" name="name" type="text" placeholder="Username" value={this.props.userData.username} disabled />
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        {Object.keys(this.state.inputForms).map((key, index) => this.createProfileFormLine(key, index))}
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} smOffset={2} lg={3} lgOffset={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelGeneral(event)} disabled={!isGeneralChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} lg={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleGeneralSubmit(event)} bsStyle="success" disabled={!isGeneralSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={10} smOffset={1} lg={8} lgOffset={2}>
+                                                {generalErrorMess}
+                                            </Col>
+                                        </Row>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={3}>
-                                                    <legend>Pets</legend>
-                                                </Col>
-                                                <Col sm={7} lg={5}>
-                                                    {this.state.petForms.map((curVal, index) => this.createPetFormLine(curVal, index))}
-                                                    <Button onClick={() => this.setState({petForms: [...this.state.petForms, {name:'', type:'', description:'', editable:true}]})} bsStyle="success" className="bottom-buffer-sm" block>
-                                                        <span>Add Pet</span>
-                                                        <i className="fa fa-plus pull-left center-icon-vertical" />
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.cancelOwner(event)} disabled={!isOwnerChanged}>Cancel</Button>
-                                                </Col>
-                                                <Col xs={6} sm={4} md={3}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.handleOwnerSubmit(event)} bsStyle="success" disabled={!isOwnerSaveable}>Save</Button>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={12} sm={10} lg={8}>
-                                                    {ownerErrorMess}
-                                                </Col>
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
+                                                <legend>Pets</legend>
+                                            </Col>
+                                            <Col sm={8} md={7} lg={5}>
+                                                {this.state.petForms.map((curVal, index) => this.createPetFormLine(curVal, index))}
+                                                <Button onClick={() => this.setState({petForms: [...this.state.petForms, {name:'', type:'', description:'', editable:true}]})} bsStyle="success" className="bottom-buffer-sm" block>
+                                                    <span>Add Pet</span>
+                                                    <i className="fa fa-plus pull-left center-icon-vertical" />
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} smOffset={2} lg={3} lgOffset={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelOwner(event)} disabled={!isOwnerChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} lg={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleOwnerSubmit(event)} bsStyle="success" disabled={!isOwnerSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={10} smOffset={1} lg={8} lgOffset={2}>
+                                                {ownerErrorMess}
+                                            </Col>
+                                        </Row>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={3}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={3}>
-                                                    <legend>{this.state.sitterForms.availability.name}</legend>
-                                                </Col>
-                                                <Col sm={7} lg={5}>
-                                                    <div className="weekday-row">
-                                                        {weekdays.map((curVal, index) => this.createWeekdayButton(curVal, index))}
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={3}>
-                                                    <legend>{this.state.sitterForms.petPreferences.name}</legend>
-                                                </Col>
-                                                <Col sm={7} lg={5}>
-                                                    <div className="weekday-row">
-                                                        {petTypes.map((curVal, index) => this.createPetTypeButton(curVal, index))}
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={6} sm={4} smOffset={1} md={3} mdOffset={2} lgOffset={1}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.cancelSitter(event)} disabled={!isSitterChanged}>Cancel</Button>
-                                                </Col>
-                                                <Col xs={6} sm={4} md={3}>
-                                                    <Button block bsSize="lg" onClick={(event) => this.handleSitterSubmit(event)} bsStyle="success" disabled={!isSitterSaveable}>Save</Button>
-                                                </Col>
-                                            </Row>
-                                            <Row className="top-buffer-sm">
-                                                <Col xs={12} sm={10} lg={8}>
-                                                    {sitterErrorMess}
-                                                </Col>
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
+                                                <legend>{this.state.sitterForms.availability.name}</legend>
+                                            </Col>
+                                            <Col sm={8} md={7} lg={5}>
+                                                <div className="weekday-row">
+                                                    {weekdays.map((curVal, index) => this.createWeekdayButton(curVal, index))}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
+                                                <legend>{this.state.sitterForms.petPreferences.name}</legend>
+                                            </Col>
+                                            <Col sm={8} md={7} lg={5}>
+                                                <div className="weekday-row">
+                                                    {petTypes.map((curVal, index) => this.createPetTypeButton(curVal, index))}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col xs={6} sm={4} smOffset={2} lg={3} lgOffset={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.cancelSitter(event)} disabled={!isSitterChanged}>Cancel</Button>
+                                            </Col>
+                                            <Col xs={6} sm={4} lg={3}>
+                                                <Button block bsSize="lg" onClick={(event) => this.handleSitterSubmit(event)} bsStyle="success" disabled={!isSitterSaveable}>Save</Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={10} smOffset={1} lg={8} lgOffset={2}>
+                                                {sitterErrorMess}
+                                            </Col>
+                                        </Row>
                                     </Tab.Pane>
                                 </Tab.Content>
                             </Col>

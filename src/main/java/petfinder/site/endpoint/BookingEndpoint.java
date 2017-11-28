@@ -59,7 +59,7 @@ public class BookingEndpoint {
     	for (Iterator<HashMap<String, Object>> iterator = rawHits.iterator(); iterator.hasNext();) {
     	    HashMap<String, Object> rawHit = iterator.next();
 
-    		String bookingID = mapper.writeValueAsString(rawHit.get("_id"));
+    		String bookingID = (String)rawHit.get("_id");
     		Booking booking = mapper.convertValue(rawHit.get("_source"), Booking.class);
     		if (booking.shouldEnd()) {
     			booking.setEnded(true);
@@ -76,7 +76,7 @@ public class BookingEndpoint {
     @RequestMapping(path = "/ownerbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getOwnerBookings(@RequestParam(name = "username") String username) {
     	try {
-	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername:" + username + " AND ended:false AND sitterDecline:false", 1000, false, true);
+	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "ownerUsername:" + username + " AND sitterDecline:false", 1000, false, true);
 	    	if (bookingsResponse.getStatusCode() != HttpStatus.OK) {
 	    		return bookingsResponse;
 	    	}
@@ -98,7 +98,7 @@ public class BookingEndpoint {
     @RequestMapping(path = "/sitterbookings", method = RequestMethod.GET)
     public static ResponseEntity<String> getSitterBookings(@RequestParam(name = "username") String username) {
     	try {
-	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername:" + username + " AND ended:false AND sitterDecline:false", 1000, false, true);
+	    	ResponseEntity<String> bookingsResponse = EndpointUtil.searchMultipleQuery("/bookings/booking", "sitterUsername:" + username + " AND sitterDecline:false", 1000, false, true);
 	    	if (bookingsResponse.getStatusCode() != HttpStatus.OK) {
 	    		return bookingsResponse;
 	    	}
@@ -154,17 +154,22 @@ public class BookingEndpoint {
             	return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Booking with id " + bookingID + " has already been finalized.");
             }
 
+            // Set the rating for the booking
             booking.setOwnerRating(rating);
-
-    		ResponseEntity<String> getSitterResponse = EndpointUtil.getQuery("/users/user/" + booking.getSitterUsername(), true, false);
-            UserDto sitter = mapper.readValue(getSitterResponse.getBody(), UserDto.class);
-			
-            sitter.addRating(rating);
     		
+            // update the booking
 			ResponseEntity<String> updateBookingReponse = EndpointUtil.indexQuery("/bookings/booking/", bookingID, mapper.writeValueAsString(booking), false);
 			if (!updateBookingReponse.getStatusCode().is2xxSuccessful()) {
 				return updateBookingReponse;
 			}
+			
+            // Get the sitter so we can modify them
+    		ResponseEntity<String> getSitterResponse = EndpointUtil.getQuery("/users/user/" + booking.getSitterUsername(), true, false);
+            UserDto sitter = mapper.readValue(getSitterResponse.getBody(), UserDto.class);
+			
+            sitter.addRating(rating);
+			
+            // update the sitter
 			return UserEndpoint.reindexUser(booking.getSitterUsername(), sitter);
 		} catch (IOException e) {
 			e.printStackTrace();

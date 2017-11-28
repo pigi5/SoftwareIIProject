@@ -183,7 +183,7 @@ class SitterDashboard extends React.Component {
             notifications = this.props.userData.sitterNotifications.map((curVal, index) => this.createNotificationCard(curVal, index));
         } else {
             notifications = (
-                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                    <Col sm={8} lg={6} lgOffset={1}>
                         <Alert bsStyle="info">You have no notifications.</Alert>
                     </Col>
                 );
@@ -194,7 +194,7 @@ class SitterDashboard extends React.Component {
             bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
         } else {
             bookings = (
-                    <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                    <Col sm={8} lg={6} lgOffset={1}>
                         <Alert bsStyle="info">You have no upcoming bookings.</Alert>
                     </Col>
                 );
@@ -230,7 +230,7 @@ class SitterDashboard extends React.Component {
                                     <Tab.Pane eventKey={1}>
                                         <Grid>
                                             <Row className="top-buffer-sm">
-                                                <Col sm={8} md={6} mdOffset={2} lgOffset={1}>
+                                                <Col sm={8} lg={6} lgOffset={1}>
                                                     <PanelGroup accordion>
                                                         {notifications}
                                                     </PanelGroup>
