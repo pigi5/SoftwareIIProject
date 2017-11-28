@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
 
 import petfinder.site.common.booking.Booking;
 import petfinder.site.common.user.OwnerNotification;
@@ -180,7 +181,7 @@ public class BookingEndpoint {
     }
 
     @RequestMapping(path = "/messagesitter", method = RequestMethod.POST)
-    public static ResponseEntity<String> messageSitter(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "sitterUsername") String sitterUsername, @RequestBody String message) {
+    public static ResponseEntity<String> messageSitter(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "sitterUsername") String sitterUsername, @RequestParam(name = "message") String message) {
     	try {
     		return UserEndpoint.addUserNotification(sitterUsername, SitterNotification.createMessageNotification(bookingID, UserEndpoint.getCurrentUsername(), message));
     	} catch (NotAuthenticatedException e) {
@@ -192,7 +193,7 @@ public class BookingEndpoint {
     }
     
     @RequestMapping(path = "/messageowner", method = RequestMethod.POST)
-    public static ResponseEntity<String> messageOwner(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "ownerUsername") String ownerUsername, @RequestBody String message) {
+    public static ResponseEntity<String> messageOwner(@RequestParam(name = "bookingID") String bookingID, @RequestParam(name = "ownerUsername") String ownerUsername, @RequestParam(name = "message") String message) {
     	try {
     		return UserEndpoint.addUserNotification(ownerUsername, OwnerNotification.createMessageNotification(bookingID, UserEndpoint.getCurrentUsername(), message));
     	} catch (NotAuthenticatedException e) {

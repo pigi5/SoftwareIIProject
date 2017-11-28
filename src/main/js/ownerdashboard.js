@@ -105,10 +105,11 @@ class OwnerDashboard extends React.Component {
         if (this.state.messageBooking !== null && 
                 this.state.messageBooking.sitterUsername !== 'undefined' &&
                 this.state.messageContent !== '') {
-            axios.get('/api/bookings/messagesitter', this.state.messageContent, {
+            axios.post('/api/bookings/messagesitter', null, {
                 params: {
                     bookingID: this.state.messageBooking.id,
-                    sitterUsername: this.state.messageBooking.sitterUsername
+                    sitterUsername: this.state.messageBooking.sitterUsername,
+                    message: this.state.messageContent
                 }
             })
             .then((response) => {
@@ -130,13 +131,10 @@ class OwnerDashboard extends React.Component {
         var endDate = new Date(curVal.endDate);
         var status;
         var color;
+        var extra = null;
         if (curVal.sitterApprove) {
-            status = (
-                    <span>
-                        <span>'Booked'</span>
-                        <Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>Message</Button>
-                    </span>
-                );
+            status = 'Booked';
+            extra = (<Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>Message</Button>);
             color = 'info';
         } else {
             status = 'Pending';
@@ -145,8 +143,15 @@ class OwnerDashboard extends React.Component {
         return (
             <Col key={index} md={10} mdOffset={1} lg={8} lgOffset={2}>
                 <Panel header={startDate.toLocaleDateString('en-US') + ' to ' + endDate.toLocaleDateString('en-US')} footer={status} bsStyle={color}>
-                    <h4>Booking with <strong>{curVal.sitterUsername}</strong></h4>
-                    <hr />
+                    <Row>
+                        <Col xs={10}>
+                            <h4>Booking with <strong>{curVal.sitterUsername}</strong></h4>
+                        </Col>
+                        <Col xs={2}>
+                            {extra}
+                        </Col>
+                    </Row>
+                    <hr style={{marginTop: 10}} />
                     <p>For:</p>
                     <ul>
                         {curVal.petsSit.map((petVal, ind) => (
@@ -159,19 +164,21 @@ class OwnerDashboard extends React.Component {
     }
     
     markIsRead(index, isRead) {
-        var newNotifications = this.props.userData.ownerNotifications.slice();
-        newNotifications[index].isRead = isRead;
-        var updates = {ownerNotifications: newNotifications};
-
-        axios.post('/api/users/update', updates)
-            .then((response) => {
-                this.props.dispatch({
-                    type: 'UPDATE_USER',
-                    userData: updates
+        if (!this.props.userData.ownerNotifications[index].isRead) {
+            var newNotifications = this.props.userData.ownerNotifications.slice();
+            newNotifications[index].isRead = isRead;
+            var updates = {ownerNotifications: newNotifications};
+    
+            axios.post('/api/users/update', updates)
+                .then((response) => {
+                    this.props.dispatch({
+                        type: 'UPDATE_USER',
+                        userData: updates
+                    });
+                })
+                .catch((error) => {
                 });
-            })
-            .catch((error) => {
-            });
+        }
     }
     
     changeStars(index, val) {
@@ -367,19 +374,19 @@ class OwnerDashboard extends React.Component {
                                             {bookings}
                                         </Row>
 
-                                        <Modal show={this.state.messageOpen} onHide={this.closeMessage}>
+                                        <Modal show={this.state.messageOpen} onHide={() => this.closeMessage()}>
                                             <Modal.Header closeButton>
-                                                <Modal.Title>Send Message to {this.state.booking != null ? this.state.booking.sitterUsername : ''}</Modal.Title>
+                                                <Modal.Title>Send Message to {this.state.messageBooking != null ? this.state.messageBooking.sitterUsername : ''}</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
-                                                <div className="input-group">
-                                                    <textarea className="form-control" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={this.messageChange} />
+                                                <div className="input-group" style={{width: '100%'}}>
+                                                    <textarea className="form-control" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={(event) => this.changeMessage(event)} />
                                                 </div>
                                                 {messageError}
                                             </Modal.Body>
                                             <Modal.Footer>
-                                                <Button onClick={this.closeMessage}>Close</Button>
-                                                <Button onClick={this.sendMessage} bsStyle="primary" disabled={this.state.messageContent === ''}>Register</Button>
+                                                <Button onClick={() => this.closeMessage()}>Close</Button>
+                                                <Button onClick={(event) => this.sendMessage(event)} bsStyle="primary" disabled={this.state.messageContent === ''}>Register</Button>
                                             </Modal.Footer>
                                         </Modal>
                                     </Tab.Pane>

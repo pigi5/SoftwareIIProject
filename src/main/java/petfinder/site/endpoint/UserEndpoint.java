@@ -77,7 +77,7 @@ public class UserEndpoint {
         String dayAvailable = availabilityFormat.format(d);
 
         try {
-			return EndpointUtil.searchMultipleQuery("/users/user", "username:(NOT " + getCurrentUsername() + ") petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
+			return EndpointUtil.searchMultipleQuery("/users/user", "NOT username:" + getCurrentUsername() + " AND petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
 		} catch (NotAuthenticatedException e) {
 			return e.getNewResponseEntity();
 		} 

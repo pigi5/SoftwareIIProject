@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, PanelGroup, Panel, Alert, Badge } from 'react-bootstrap';
+import { PageHeader, Nav, NavItem, Tab, Grid, Row, Col, Button, PanelGroup, Panel, Alert, Badge, Modal } from 'react-bootstrap';
 
 class SitterDashboard extends React.Component {
     constructor(props) {
@@ -11,7 +11,11 @@ class SitterDashboard extends React.Component {
         this.state = {
             bookings: [],
             bookingsState: 2, // 0 is refreshing, 1 is error, 2 is good
-            profileState: 2 
+            profileState: 2,
+            messageBooking: null,
+            messageOpen: false,
+            messageContent: '',
+            messageStatus: 0
         };
     }
     
@@ -76,13 +80,49 @@ class SitterDashboard extends React.Component {
             });
     }
     
+    startMessage(booking) {
+        this.setState({messageBooking: booking, messageOpen: true, messageContent: ''});
+    }
+    closeMessage() {
+        this.setState({messageBooking: null, messageOpen: false, messageContent: ''});
+    }
+    changeMessage(event) {
+        this.setState({messageContent: event.target.value});
+    }
+    sendMessage() {
+        if (this.state.messageBooking !== null && 
+                this.state.messageBooking.ownerUsername !== 'undefined' &&
+                this.state.messageContent !== '') {
+            axios.post('/api/bookings/messageowner', null, {
+                params: {
+                    bookingID: this.state.messageBooking.id,
+                    ownerUsername: this.state.messageBooking.ownerUsername,
+                    message: this.state.messageContent
+                }
+            })
+            .then((response) => {
+                this.setState({messageStatus: 0});
+                this.closeMessage();
+            })
+            .catch((error) => {
+                if (error.response !== 'undefined') {
+                    this.setState({messageStatus: error.response.status});
+                }
+            });
+        } else {
+            this.setState({messageStatus: -1});
+        }
+    }
+    
     createBookingCard(curVal, index) {
         var startDate = new Date(curVal.startDate);
         var endDate = new Date(curVal.endDate);
         var status;
+        var extra;
         var color;
         if (curVal.sitterApprove) {
             status = 'Booked';
+            extra = (<Button bsStyle="primary" className="pull-right" onClick={() => this.startMessage(curVal)}>Message</Button>);
             color = 'info';
         } else {
             status = (
@@ -98,10 +138,17 @@ class SitterDashboard extends React.Component {
             color = 'warning';
         }
         return (
-            <Col key={index} sm={8} md={6} mdOffset={2} lgOffset={1}>
+            <Col key={index} md={10} mdOffset={1} lg={8} lgOffset={2}>
                 <Panel header={startDate.toLocaleDateString('en-US') + ' to ' + endDate.toLocaleDateString('en-US')} footer={status} bsStyle={color}>
-                    <h4>Booking with <strong>{curVal.ownerUsername}</strong></h4>
-                    <hr />
+                    <Row>
+                        <Col xs={10}>
+                            <h4>Booking with <strong>{curVal.ownerUsername}</strong></h4>
+                        </Col>
+                        <Col xs={2}>
+                            {extra}
+                        </Col>
+                    </Row>
+                    <hr style={{marginTop: 10}} />
                     <p>For:</p>
                     <ul>
                         {curVal.petsSit.map((petVal, ind) => (
@@ -114,19 +161,21 @@ class SitterDashboard extends React.Component {
     }
     
     markIsRead(index, isRead) {
-        var newNotifications = this.props.userData.sitterNotifications.slice();
-        newNotifications[index].isRead = isRead;
-        var updates = {sitterNotifications: newNotifications};
-
-        axios.post('/api/users/update', updates)
-            .then((response) => {
-                this.props.dispatch({
-                    type: 'UPDATE_USER',
-                    userData: updates
+        if (!this.props.userData.sitterNotifications[index].isRead) {
+            var newNotifications = this.props.userData.sitterNotifications.slice();
+            newNotifications[index].isRead = isRead;
+            var updates = {sitterNotifications: newNotifications};
+    
+            axios.post('/api/users/update', updates)
+                .then((response) => {
+                    this.props.dispatch({
+                        type: 'UPDATE_USER',
+                        userData: updates
+                    });
+                })
+                .catch((error) => {
                 });
-            })
-            .catch((error) => {
-            });
+        }
     }
     
     createNotificationCard(curVal, index) {
@@ -173,13 +222,13 @@ class SitterDashboard extends React.Component {
         
         var notifications;
         if (this.props.userData.sitterNotifications.length > 0) {
-            notifications = this.props.userData.sitterNotifications.map((curVal, index) => this.createNotificationCard(curVal, index));
-        } else {
             notifications = (
-                    <Col sm={8} lg={6} lgOffset={1}>
-                        <Alert bsStyle="info">You have no notifications.</Alert>
-                    </Col>
+                <PanelGroup accordion>
+                    {this.props.userData.sitterNotifications.map((curVal, index) => this.createNotificationCard(curVal, index))}
+                </PanelGroup>
                 );
+        } else {
+            notifications = (<Alert bsStyle="info">You have no notifications.</Alert>);
         }
 
         var bookings;
@@ -192,6 +241,17 @@ class SitterDashboard extends React.Component {
                     </Col>
                 );
         }        
+
+        var messageError = null;
+        if (this.state.messageStatus == 500) {
+            messageError = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        } else if (this.state.messageStatus == 200) {
+            messageError = (<p className='text-success text-center top-buffer-sm'>Message sent.</p>);
+        } else if (this.state.generalStatus == -1) {
+            messageError = (<p className='text-danger text-center'>You must type a message.</p>);
+        } else if (this.state.messageStatus != 0) {
+            messageError = (<p className='text-danger text-center top-buffer-sm'>An unknown error occurred.</p>);
+        }
         
         return(
             <div>
@@ -199,11 +259,11 @@ class SitterDashboard extends React.Component {
                 <Grid>
                     <PageHeader>
                         <Row style={{display: 'flex', alignItems: 'flex-end'}}>
-                            <Col xs={7} sm={9} md={10}>
+                            <Col xs={7} sm={9} lg={10}>
                                 <span>Sitter Dashboard</span>
                             </Col>
-                            <Col xs={5} sm={3} md={2}>
-                                <Button block onClick={() => this.refreshSitterInfo()}>
+                            <Col xs={5} sm={3} lg={2}>
+                                <Button block onClick={() => this.refreshOwnerInfo()}>
                                     <span>Refresh</span>
                                     <i className={'fa ' + refreshClass + 'pull-left center-icon-vertical'} />
                                 </Button>
@@ -212,31 +272,41 @@ class SitterDashboard extends React.Component {
                     </PageHeader>
                     <Tab.Container id="profile-tabs" defaultActiveKey={1}>
                         <Row className="clearfix">
-                            <Col sm={3} md={2}>
+                            <Col sm={3} lg={2}>
                                 <Nav bsStyle="pills" stacked>
                                     <NavItem eventKey={1}>Notifications <Badge pullRight>{numNewNots}</Badge></NavItem>
                                     <NavItem eventKey={2}>Bookings</NavItem>
                                 </Nav>
                             </Col>
-                            <Col sm={9} md={10}>
+                            <Col sm={9} lg={10}>
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                <Col sm={8} lg={6} lgOffset={1}>
-                                                    <PanelGroup accordion>
-                                                        {notifications}
-                                                    </PanelGroup>
-                                                </Col>
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            <Col md={10} mdOffset={1} lg={8} lgOffset={2}>
+                                                {notifications}
+                                            </Col>
+                                        </Row>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
-                                        <Grid>
-                                            <Row className="top-buffer-sm">
-                                                {bookings}
-                                            </Row>
-                                        </Grid>
+                                        <Row className="top-buffer-sm">
+                                            {bookings}
+                                        </Row>
+
+                                        <Modal show={this.state.messageOpen} onHide={() => this.closeMessage()}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Send Message to {this.state.booking != null ? this.state.booking.ownerUsername : ''}</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <div className="input-group" style={{width: '100%'}}>
+                                                    <textarea className="form-control" name="message" type="text" placeholder="Message" value={this.state.messageContent} onChange={(event) => this.changeMessage(event)} />
+                                                </div>
+                                                {messageError}
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button onClick={() => this.closeMessage()}>Close</Button>
+                                                <Button onClick={(event) => this.sendMessage(event)} bsStyle="primary" disabled={this.state.messageContent === ''}>Register</Button>
+                                            </Modal.Footer>
+                                        </Modal>
                                     </Tab.Pane>
                                 </Tab.Content>
                             </Col>
