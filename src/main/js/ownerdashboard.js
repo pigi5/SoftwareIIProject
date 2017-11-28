@@ -78,7 +78,7 @@ class OwnerDashboard extends React.Component {
             extra = (<span><hr /> <p>{curVal.description}</p></span>);
         }
         return (
-            <Col key={index} xs={12} sm={6} lg={4}>
+            <Col key={index} sm={6} lg={4}>
                 <Panel bsStyle="info" header={curVal.name} footer={(<Button bsStyle="success" href="/#/startappt" onClick={() => this.startBookingWithPet(curVal)}>Start Booking</Button>)}>
                     <h4>{curVal.type}</h4>
                     {extra}
@@ -152,7 +152,7 @@ class OwnerDashboard extends React.Component {
             color = 'warning';
         }
         return (
-            <Col key={index} sm={8} lg={6} lgOffset={1}>
+            <Col key={index} md={10} mdOffset={1} lg={8} lgOffset={2}>
                 <Panel header={startDate.toLocaleDateString('en-US') + ' to ' + endDate.toLocaleDateString('en-US')} footer={status} bsStyle={color}>
                     <h4>Booking with <strong>{curVal.sitterUsername}</strong></h4>
                     <hr />
@@ -298,7 +298,7 @@ class OwnerDashboard extends React.Component {
             bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
         } else {
             bookings = (
-                    <Col sm={8} lg={6} lgOffset={1}>
+                    <Col md={10} mdOffset={1} lg={8} lgOffset={2}>
                         <Alert bsStyle="info">You have no upcoming bookings. Click the button above to set up an appointment.</Alert>
                     </Col>
                 );
@@ -307,7 +307,7 @@ class OwnerDashboard extends React.Component {
         var pets;
         if (this.state.bookings.length > 0) {
             pets = (
-                    <Col sm={10} lg={8}>
+                    <Col sm={10} smOffset={1} lg={8} lgOffset={2}>
                         <Row className="equal-height">
                             {this.props.userData.pets.map((curVal, index) => this.createPetCard(curVal, index))}
                         </Row>
@@ -315,7 +315,7 @@ class OwnerDashboard extends React.Component {
                 );
         } else {
             pets = (
-                    <Col sm={8} lg={6} lgOffset={1}>
+                    <Col md={10} mdOffset={1} lg={8} lgOffset={2}>
                         <Alert bsStyle="info">You have no pets. Go to your profile to add pets!</Alert>
                     </Col>
                 );
@@ -362,14 +362,14 @@ class OwnerDashboard extends React.Component {
                                 <Tab.Content animation>
                                     <Tab.Pane eventKey={1}>
                                         <Row className="top-buffer-sm">
-                                            <Col md={12} md={10} mdOffset={1} lg={8} lgOffset={2}>
+                                            <Col md={10} mdOffset={1} lg={8} lgOffset={2}>
                                                 {notifications}
                                             </Col>
                                         </Row>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Row className="top-buffer-sm">
-                                            <Col sm={8} lg={6} lgOffset={1}>
+                                            <Col md={10} mdOffset={1} lg={8} lgOffset={2}>
                                                 <Button block bsSize="lg" bsStyle="success" href="/#/startappt">
                                                     <span>Start Booking</span>
                                                     <i className="fa fa-plus pull-left center-icon-vertical" />
