@@ -4,6 +4,9 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.geonames.PostalCode;
+import org.geonames.PostalCodeSearchCriteria;
+import org.geonames.WebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -71,7 +74,28 @@ public class UserEndpoint {
                 preferences += petTypes.get(i) + " AND ";
             }
         }
-        
+
+        //postalCodeSearchCriteria needed to find near zipcodes
+        PostalCodeSearchCriteria postalCodeSearchCriteria = new PostalCodeSearchCriteria();
+        //had to make an account in order to use the geoNames api
+        WebService.setUserName("gamino");
+        //setting the users postalCode into postalCodeSearachCriteria
+        postalCodeSearchCriteria.setPostalCode(Integer.toString(zipCode));
+        //List of PostalCode objects that findNearbyPostalCodes will return
+        List<PostalCode> postalCodes = null;
+
+        try {
+            //found all near postalCodes and returned them as PostalCode objects
+            //should return 5 nearby postalCodes
+            postalCodes = WebService.findNearbyPostalCodes(postalCodeSearchCriteria);
+            /*
+            for(int i=0;i < postalCodes.size();i++){
+                System.out.println(postalCodes.get(i).getPostalCode());
+            }*/
+        }catch(Exception e){
+            throw new IllegalArgumentException();
+        }
+
         //get date in ms
         Date d = new Date(date);
         String dayAvailable = availabilityFormat.format(d);
@@ -79,10 +103,24 @@ public class UserEndpoint {
         //System.out.println(preferences);
 
         // Uncomment code below for nearby zip codes
+
+        // TODO: replace static values with ones from API call
+        //String zipCodeList[] = {"76798", "76706", "76701", "76702", "76704"};
+
+        //Only need the zipCodeList to be as big as how many PostalCodes we have
+        //should be 5 nearby postalCodes
+        String[] zipCodeList = new String[postalCodes.size()];
+
+        //Setting the zipCodeList to the nearby postalCodes
+        for(int i=0;i < postalCodes.size();i++){
+            zipCodeList[i] = postalCodes.get(i).getPostalCode();
+        }
+
         /*
-    	// TODO: replace static values with ones from API call
-    	String zipCodeList[] = {"76798", "76706", "76701", "76702", "76704"};
-        
+        for(int i=0;i < postalCodes.size();i++){
+            System.out.println(zipCodeList[i]);
+        }*/
+
         try {
         	String esQuery = "NOT username:" + getCurrentUsername() + " AND petPreferences: " + preferences + " AND (";
 	        for (int i = 0; i < zipCodeList.length; i++) {
@@ -92,21 +130,21 @@ public class UserEndpoint {
 	        	}
 	        }
 	        esQuery += ") AND availability: " + dayAvailable;
-	        
+
 	        return EndpointUtil.searchMultipleQuery("/users/user", esQuery, 1000, false, false);
         } catch (NotAuthenticatedException e) {
 			return e.getNewResponseEntity();
 		}
-        //*/
+        //
 
         // Comment out below code for nearby zip codes
-        //*
+        /*
         try {
 			return EndpointUtil.searchMultipleQuery("/users/user", "NOT username:" + getCurrentUsername() + " AND petPreferences: " + preferences + " AND zipCode: " + zipCode + " AND availability: " + dayAvailable, 1000, false, false);
 		} catch (NotAuthenticatedException e) {
 			return e.getNewResponseEntity();
 		}
-		//*/
+		*/
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)

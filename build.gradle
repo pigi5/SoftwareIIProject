@@ -60,6 +60,8 @@ dependencies {
 
 	compile group: 'com.google.guava', name: 'guava'
 
+	compile 'org.geonames:geonames-ws-client:1.1.9'
+
 	testCompile group: 'junit', name: 'junit'
 	testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
