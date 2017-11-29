@@ -14,6 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import petfinder.site.WebSecurityConfiguration;
+import sun.security.util.Password;
+
 /**
  * Created by jlutteringer on 10/10/17.
  */
@@ -26,15 +29,17 @@ public class LoginEndpoint {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder = WebSecurityConfiguration.passwordEncoder();
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         ResponseEntity<String> result = UserEndpoint.searchUserPass(username, passwordEncoder.encode(password));
         System.out.println(result);
         if(result.getStatusCode() == HttpStatus.OK) {
             //try {
             //UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, passwordEncoder.encode(password));
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
             Authentication auth = authenticationManager.authenticate(token);
 
             SecurityContextImpl securityContext = new SecurityContextImpl();

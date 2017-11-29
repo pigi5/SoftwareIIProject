@@ -18,7 +18,7 @@ import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.Notification;
 import petfinder.site.common.user.OwnerNotification;
 import petfinder.site.common.user.SitterNotification;
-import sun.security.util.Password;
+import petfinder.site.WebSecurityConfiguration;
 
 
 import java.text.SimpleDateFormat;
@@ -116,7 +116,7 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        PasswordEncoder passwordEncoder = WebSecurityConfiguration.passwordEncoder();
         System.out.println(user.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
     	try {
