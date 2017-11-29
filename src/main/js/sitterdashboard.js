@@ -270,7 +270,7 @@ class SitterDashboard extends React.Component {
                                 <span>Sitter Dashboard</span>
                             </Col>
                             <Col xs={5} sm={3} lg={2}>
-                                <Button block onClick={() => this.refreshSitterInfo()}>
+                                <Button block onClick={() => this.refreshOwnerInfo()}>
                                     <span>Refresh</span>
                                     <i className={'fa ' + refreshClass + 'pull-left center-icon-vertical'} />
                                 </Button>

@@ -14,7 +14,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/statics/**").addResourceLocations("classpath:statics/");
+		registry
+				.addResourceHandler("/statics/**")
+				.addResourceLocations("classpath:statics/");
 	}
 
 	@Override

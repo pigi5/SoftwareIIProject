@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
+	<classpathentry kind="lib" path="C:/Users/fordh/.gradle/caches/modules-2/files-2.1/org.geonames/geonames-ws-client/1.1.9/fadfcd9894d0e7a00b90ad7cbda69ced1db99611/geonames-ws-client-1.1.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

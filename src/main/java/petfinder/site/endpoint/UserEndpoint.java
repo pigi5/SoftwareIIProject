@@ -114,6 +114,7 @@ public class UserEndpoint {
         for(int i=0;i < postalCodes.size();i++){
             zipCodeList[i] = postalCodes.get(i).getPostalCode();
         }
+
         /*
         for(int i=0;i < postalCodes.size();i++){
             System.out.println(zipCodeList[i]);
