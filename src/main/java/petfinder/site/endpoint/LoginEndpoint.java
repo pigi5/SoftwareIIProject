@@ -3,6 +3,8 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +28,13 @@ public class LoginEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestParam (name = "username") String username, @RequestParam (name = "password")String password) {
-        ResponseEntity<String> result = UserEndpoint.searchUserPass(username, password);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        ResponseEntity<String> result = UserEndpoint.searchUserPass(username, passwordEncoder.encode(password));
+        System.out.println(result);
         if(result.getStatusCode() == HttpStatus.OK) {
             //try {
             //UserDto user = mapper.readValue(result.getBody().toString(), UserDto.class);
-
-
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, passwordEncoder.encode(password));
             Authentication auth = authenticationManager.authenticate(token);
 
             SecurityContextImpl securityContext = new SecurityContextImpl();

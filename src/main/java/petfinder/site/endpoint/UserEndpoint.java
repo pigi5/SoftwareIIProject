@@ -9,13 +9,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import petfinder.site.common.user.UserDto;
 import petfinder.site.common.user.Notification;
 import petfinder.site.common.user.OwnerNotification;
 import petfinder.site.common.user.SitterNotification;
+import sun.security.util.Password;
+
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,6 +39,9 @@ public class UserEndpoint {
 	
     @Autowired
     static final ObjectMapper mapper = new ObjectMapper();
+
+    //@Autowired
+    //private PasswordEncoder passwordEncoder;
 
     @Qualifier("userDetailsService")
     static UserDetailsService userDetailsService;
@@ -109,6 +116,9 @@ public class UserEndpoint {
 
     @RequestMapping(path = "/add", method = RequestMethod.PUT)
     public static ResponseEntity<String> createOwner(@RequestBody UserDto user) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        System.out.println(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
     	try {
 			return EndpointUtil.indexQuery("/users/user/", user.getUsername(), mapper.writeValueAsString(user), true);
 		} catch (JsonProcessingException e) {
