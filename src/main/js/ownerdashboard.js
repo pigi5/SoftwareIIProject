@@ -300,7 +300,7 @@ class OwnerDashboard extends React.Component {
         }
 
         var pets;
-        if (this.state.bookings.length > 0) {
+        if (this.props.userData.pets.length > 0) {
             pets = (
                     <Col sm={10} smOffset={1} lg={8} lgOffset={2}>
                         <Row className="equal-height">

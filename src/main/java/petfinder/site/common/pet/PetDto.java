@@ -1,12 +1,12 @@
 package petfinder.site.common.pet;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
  * Created by jlutteringer on 8/23/17.
  */
 public class PetDto {
+	public enum PetType{Dog, Cat, Rodent, Bird};
+	
 	private String name;
 	private PetType type;
 	private String description;
@@ -27,25 +27,13 @@ public class PetDto {
 		this.description = description;
 	}
 
-	public String getDescription() {return description;}
+	public String getDescription() 					{return description;}
+	public String getName() 						{return name;}
+	public PetType getType() 						{return type;}
 
-	public void setDescription(String Description) {this.description = Description;}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
-		return type.toString();
-	}
-
-	public void setType(String name){
-		this.type = PetType.get(name);
-	}
+	public void setType(PetType type)				{this.type = type;}
+	public void setName(String name) 				{this.name = name;}
+	public void setDescription(String Description) 	{this.description = Description;}
 	
 	public String printNameAndType() {
 		return name + " (" + type.toString() + ")";

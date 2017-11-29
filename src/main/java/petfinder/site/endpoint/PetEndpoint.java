@@ -3,7 +3,7 @@ package petfinder.site.endpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import petfinder.site.common.pet.PetType;
+import petfinder.site.common.pet.PetDto;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class PetEndpoint {
     @RequestMapping(path = "/types", method = RequestMethod.GET)
     public static ResponseEntity<String> getTypes(){
     	try {
-			return ResponseEntity.ok(mapper.writeValueAsString(PetType.getNames()));
+			return ResponseEntity.ok(mapper.writeValueAsString(PetDto.PetType.values()));
 		} catch (JsonProcessingException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}

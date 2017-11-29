@@ -30,7 +30,6 @@ class StartAppointment extends React.Component {
             endDateStatus: this.props.booking.hasOwnProperty('endDateStatus') ? this.props.booking.endDateStatus : 0,
             petForms: this.props.booking.hasOwnProperty('petForms') ? this.props.booking.petForms : this.props.userData.pets.map(mapPetToPetForm),
             petsStatus: this.props.booking.hasOwnProperty('petsStatus') ? this.props.booking.petsStatus : (this.props.userData.pets.length > 0 ? 2 : 0)
-            //location: 'My House'
          };
     }
     
@@ -58,8 +57,7 @@ class StartAppointment extends React.Component {
             endDate: 0,
             endDateStatus: 0,
             petForms: this.props.userData.pets.map(mapPetToPetForm),
-            petsStatus: this.props.userData.pets.length > 0 ? 2 : 0,
-            //location: 'My House'
+            petsStatus: this.props.userData.pets.length > 0 ? 2 : 0
         });
     }
     
@@ -123,10 +121,6 @@ class StartAppointment extends React.Component {
         this.setState({petForms: petsCopy, petsStatus: status});
     }
 
-//    onLocationChange(event) {
-//        this.setState({location: event.target.value});
-//    }
-
     createPetCheckbox(curVal, index) {
         return (
             <div className="checkbox" key={index}>
@@ -186,27 +180,6 @@ class StartAppointment extends React.Component {
         );
     }
 }
-/*
-                        <Row className="top-buffer-sm">
-                            <Col sm={4} smOffset={2} md={3} mdOffset={3}>
-                                <legend>Location</legend>
-                            </Col>
-                            <Col sm={4} md={3}>
-                                <div className="radio">
-                                    <label>
-                                        <input type="radio" name="locationRadios" value="My House" checked={this.state.location=='My House'} onChange={(event) => this.onLocationChange(event)} />
-                                        My House
-                                    </label>
-                                </div>
-                                <div className="radio">
-                                    <label>
-                                        <input type="radio" name="locationRadios" value="Sitter's House" checked={this.state.location=='Sitter\'s House'} onChange={(event) => this.onLocationChange(event)} />
-                                        Sitter's House
-                                    </label>
-                                </div>
-                            </Col>
-                        </Row>
- */
 
 
 const mapStateToProps = (store) => {

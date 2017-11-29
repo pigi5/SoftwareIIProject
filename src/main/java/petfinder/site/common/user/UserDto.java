@@ -1,6 +1,5 @@
 package petfinder.site.common.user;
 import petfinder.site.common.pet.PetDto;
-import petfinder.site.common.pet.PetType;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class UserDto implements UserDetails {
 	private List<GrantedAuthority> authorities;
 	private int zipCode;
 	private List<PetDto> pets;
-	private List<PetType> petPreferences;
+	private List<PetDto.PetType> petPreferences;
 	private List<String> availability;
 	private List<OwnerNotification> ownerNotifications;
 	private List<SitterNotification> sitterNotifications;
@@ -35,7 +34,7 @@ public class UserDto implements UserDetails {
 	//This is a dummy constructor used by elasticsearch DO NOT DELETE
 	public UserDto(){
 		this.pets = new LinkedList<PetDto>();
-		this.petPreferences = new LinkedList<PetType>();
+		this.petPreferences = new LinkedList<PetDto.PetType>();
 		this.availability = new LinkedList<String>();
 		this.ownerNotifications = new LinkedList<OwnerNotification>();
 		this.sitterNotifications = new LinkedList<SitterNotification>();
@@ -55,23 +54,8 @@ public class UserDto implements UserDetails {
 	public void setEmail(String email) 		{this.email = email;}
 	public void setZipCode(int zipCode)		{this.zipCode = zipCode;}
 	public void setPets(List<PetDto> pets) 	{this.pets = pets;}
-	public void setPetPreferences(List<String> petPreferencesString){
-		try{
-			this.petPreferences.clear();
-			for(String typeName : petPreferencesString){
-				this.petPreferences.add(PetType.get(typeName));
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		/*
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			this.petPreferences = mapper.readValue(petPreferencesString.toString(), mapper.getTypeFactory().constructCollectionType(List.class, PetType.class));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		*/
+	public void setPetPreferences(List<PetDto.PetType> petPreferences){
+		this.petPreferences = new LinkedList<PetDto.PetType>(petPreferences);
 	}
 	public void setRating(double rating) {this.rating = rating;}
 	public void setNumberOfRatings(int numberOfRatings) {this.numberOfRatings = numberOfRatings;}
@@ -80,29 +64,29 @@ public class UserDto implements UserDetails {
 	public void setSitterNotifications(List<SitterNotification> sitterNotifications) {this.sitterNotifications = sitterNotifications;}
 
 	//Getters
-	public String getName() 				{return name;}
+	public String getName() 								{return name;}
 	@Override
-	public String getUsername() 			{return username;}
+	public String getUsername() 							{return username;}
 	@Override
-	public String getPassword() 			{return password;}
+	public String getPassword() 							{return password;}
 	@Override
-	public boolean isAccountNonExpired()	{return this.accountNonExpired;}
+	public boolean isAccountNonExpired()					{return this.accountNonExpired;}
 	@Override
-	public boolean isAccountNonLocked() 	{return this.accountNonLocked;}
+	public boolean isAccountNonLocked() 					{return this.accountNonLocked;}
 	@Override
-	public boolean isCredentialsNonExpired() {return this.credentialsNonExpired;}
+	public boolean isCredentialsNonExpired() 				{return this.credentialsNonExpired;}
 	@Override
-	public boolean isEnabled() 				{return this.enabled;}
+	public boolean isEnabled() 								{return this.enabled;}
 
-	public String getEmail() 				{return email;}
-	public int getZipCode() 				{return zipCode;}
-	public List<PetDto> getPets() 			{return pets;}
-	public List<PetType> getPetPreferences() {return petPreferences;}
-	public double getRating() 				{return rating;}
-	public int getNumberOfRatings() 		{return numberOfRatings;}
-	public List<String> getAvailability() 	{return availability;}
-	public List<OwnerNotification> getOwnerNotifications() {return ownerNotifications;}
-	public List<SitterNotification> getSitterNotifications() {return sitterNotifications;}
+	public String getEmail() 								{return email;}
+	public int getZipCode() 								{return zipCode;}
+	public List<PetDto> getPets() 							{return pets;}
+	public List<PetDto.PetType> getPetPreferences() 		{return petPreferences;}
+	public double getRating() 								{return rating;}
+	public int getNumberOfRatings() 						{return numberOfRatings;}
+	public List<String> getAvailability() 					{return availability;}
+	public List<OwnerNotification> getOwnerNotifications()  {return ownerNotifications;}
+	public List<SitterNotification> getSitterNotifications(){return sitterNotifications;}
 
 	@Override
 	public List<GrantedAuthority> getAuthorities() {

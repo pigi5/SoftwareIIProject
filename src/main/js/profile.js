@@ -72,6 +72,7 @@ var petTypes = [];
 
 axios.get('/api/pets/types')
     .then((response) => {
+        console.log(response);
         petTypes = response.data;
     })
     .catch((error) => {
