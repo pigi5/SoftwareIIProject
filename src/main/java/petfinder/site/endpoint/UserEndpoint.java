@@ -48,19 +48,14 @@ public class UserEndpoint {
 
     // Returns user information for a given username
     @RequestMapping(path = "/exists", method = RequestMethod.GET)
-    public static ResponseEntity<String> userExists(@RequestParam(name = "username") String username){
+    public static ResponseEntity<String> userExists(@RequestParam(name = "username") String username) {
         return EndpointUtil.getQuery("/users/user/" + username, false, false);
     }
 
     // Returns user information for a given username
-    public static ResponseEntity<String> getUser(@RequestParam(name = "username") String username){
+    public static ResponseEntity<String> getUser(String username) {
         return EndpointUtil.getQuery("/users/user/" + username, true, false);
     }
-
-    // Returns user information if username and password are correct
-    public static ResponseEntity<String> searchUserPass(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password){
-	    return EndpointUtil.searchOneQuery("/users/user", "username:" + username + " AND password:" + password, false, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null), ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
-	}
 
 	@RequestMapping(path = "/match", method = RequestMethod.GET)
     public static ResponseEntity<String> matchOwnerSitter(@RequestParam(name = "startDate") long date, @RequestParam(name = "zipCode") int zipCode, @RequestParam(name = "petTypes[]") String petString) {
