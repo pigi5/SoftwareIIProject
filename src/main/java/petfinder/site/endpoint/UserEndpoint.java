@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -160,8 +159,18 @@ public class UserEndpoint {
 		}
     }
 
+    @RequestMapping(path = "/changepass", method = RequestMethod.POST)
+    public static ResponseEntity<String> changePass(@RequestBody HashMap<String, Object> partialDoc) {
+    	if (!partialDoc.containsKey("password")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The request did not contain a password.");
+    	}
+        PasswordEncoder passwordEncoder = WebSecurityConfiguration.passwordEncoder();
+        partialDoc.put("password", passwordEncoder.encode((String)partialDoc.get("password")));
+    	return updateUser(partialDoc);
+    }
+
     @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public static ResponseEntity<String> updateUser(@RequestBody HashMap<String, Object> partialDoc){
+    public static ResponseEntity<String> updateUser(@RequestBody HashMap<String, Object> partialDoc) {
     	try {
 			return EndpointUtil.updateQuery("/users/user/" + getCurrentUsername(), mapper.writeValueAsString(partialDoc));
 		} catch (NotAuthenticatedException e) {

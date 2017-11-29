@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MyNavbar from 'js/navbar';
 import { connect } from 'react-redux';
-import { PageHeader, Tab, Nav, NavItem, Grid, Row, Col, Button } from 'react-bootstrap';
+import { PageHeader, Tab, Nav, NavItem, Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
 function getIconFromState(state) {
     if (state === 1) {
@@ -103,14 +103,6 @@ class Profile extends React.Component {
                     status: 2,
                     editable: false
                 },
-                password: {
-                    name: 'Password',
-                    value: this.props.userData.password,
-                    type: 'password',
-                    icon: 'key',
-                    status: 2,
-                    editable: false
-                },
                 zipCode: {
                     name: 'Zip Code',
                     value: this.props.userData.zipCode,
@@ -121,6 +113,10 @@ class Profile extends React.Component {
                 }
             },
             generalStatus: 0,
+            passwordModalShow: false,
+            password: '',
+            passwordRetype: '',
+            passwordStatus: 0,
             petForms: this.props.userData.pets.map(mapPetsToForms),
             ownerStatus: 0,
             sitterForms: {
@@ -155,13 +151,7 @@ class Profile extends React.Component {
     handleGeneralChange(event) {
         var formsClone = JSON.parse(JSON.stringify(this.state.inputForms));
         // update statuses
-        if (event.target.name == 'password') {
-            if (event.target.value === '') {
-                formsClone.password.status = 1;
-            } else {
-                formsClone.password.status = 2;
-            }
-        } else if (event.target.name == 'name') {
+        if (event.target.name == 'name') {
             if (event.target.value === '') {
                 formsClone.name.status = 1;
             } else {
@@ -202,12 +192,10 @@ class Profile extends React.Component {
         
         if (this.state.inputForms.name.status === 2 &&
                 this.state.inputForms.email.status === 2 &&
-                this.state.inputForms.password.status === 2 &&
                 this.state.inputForms.zipCode.status === 2) {
             var updates = {
                 name: this.state.inputForms.name.value,
                 email: this.state.inputForms.email.value,
-                password: this.state.inputForms.password.value,
                 zipCode: this.state.inputForms.zipCode.value
             };
             
@@ -230,6 +218,30 @@ class Profile extends React.Component {
             this.setState({generalStatus: -1});
         }
         event.preventDefault();
+    }
+    
+    closePasswordModal() {
+        this.setState({passwordModalShow: false});
+    }
+    
+    passwordChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+    
+    changePassword() {
+        if (this.state.password !== '' && this.state.passwordRetype !== '' && this.state.password === this.state.passwordRetype) {
+            axios.post('/api/users/changepass', {password: this.state.password})
+                .then((response) => {
+                    this.setState({passwordStatus: response.status});
+                })
+                .catch((error) => {
+                    if (typeof error.response !== 'undefined') {
+                        this.setState({passwordStatus: error.response.status});
+                    }
+                });
+        } else {
+            this.setState({passwordStatus: -1});
+        }
     }
 
     handleOwnerChange(event) {
@@ -461,8 +473,21 @@ class Profile extends React.Component {
         
         var isGeneralSaveable = isGeneralChanged && (this.state.inputForms.name.status === 2 &&
                 this.state.inputForms.email.status === 2 &&
-                this.state.inputForms.password.status === 2 &&
                 this.state.inputForms.zipCode.status === 2);
+        
+        
+        var passwordButtonEnabled = this.state.password !== '' && this.state.passwordRetype !== '' && this.state.password === this.state.passwordRetype;
+
+        var passwordErrorMess = null;
+        if (this.state.passwordStatus == 500) {
+            passwordErrorMess = (<p className='text-danger text-center top-buffer-sm'>Server error. Please try again later.</p>);
+        } else if (this.state.passwordStatus == 200) {
+            passwordErrorMess = (<p className='text-success text-center top-buffer-sm'>Password changed.</p>);
+        } else if (this.state.passwordStatus == -1) {
+            passwordErrorMess = (<p className='text-danger text-center top-buffer-sm'>You must complete all required fields.</p>);
+        } else if (this.state.passwordStatus != 0) {
+            passwordErrorMess = (<p className='text-danger text-center top-buffer-sm'>An unknown error occurred.</p>);
+        }
         
 
         var ownerErrorMess = null;
@@ -554,6 +579,18 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                         </Row>
+                                        <Row className="top-buffer-sm">
+                                            <Col sm={4} md={3} mdOffset={1} lgOffset={2}>
+                                                <legend>Password</legend>
+                                            </Col>
+                                            <Col sm={8} md={7} lg={5}>
+                                                <div className="input-group">
+                                                    <span className="input-group-addon"><i className="fa fa-key fa-fw" /></span>
+                                                    <input className="form-control" name="password" type="text" placeholder="Password Hidden" disabled />
+                                                    <span className="input-group-btn"><Button onClick={() => this.setState({passwordModalShow: true})} bsStyle="primary"><i className="fa fa-pencil fa-fw" /></Button></span>
+                                                </div>
+                                            </Col>
+                                        </Row>
                                         {Object.keys(this.state.inputForms).map((key, index) => this.createProfileFormLine(key, index))}
                                         <Row className="top-buffer-sm">
                                             <Col xs={6} sm={4} smOffset={2} lg={3} lgOffset={3}>
@@ -568,6 +605,26 @@ class Profile extends React.Component {
                                                 {generalErrorMess}
                                             </Col>
                                         </Row>
+                                        <Modal show={this.state.passwordModalShow} onHide={() => this.closePasswordModal()}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Change Password</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className="padded-modal">
+                                                <div className="input-group">
+                                                    <span className="input-group-addon"><i className="fa fa-key fa-fw" /></span>
+                                                    <input className="form-control" name="password" type="password" placeholder="New Password" value={this.state.password} onChange={(event) => this.passwordChange(event)} />
+                                                </div>
+                                                <div className="input-group top-buffer-sm">
+                                                    <span className="input-group-addon"><i className="fa fa-repeat fa-fw" /></span>
+                                                    <input className="form-control" name="passwordRetype" type="password" placeholder="Retype Password" value={this.state.passwordRetype} onChange={(event) => this.passwordChange(event)} />
+                                                </div>
+                                                {passwordErrorMess}
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button onClick={() => this.closePasswordModal()}>Close</Button>
+                                                <Button onClick={() => this.changePassword()} bsStyle="primary" disabled={!passwordButtonEnabled}>Change Password</Button>
+                                            </Modal.Footer>
+                                        </Modal>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey={2}>
                                         <Row className="top-buffer-sm">
