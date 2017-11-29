@@ -232,6 +232,12 @@ class SitterDashboard extends React.Component {
             notifications = (<Alert bsStyle="info">You have no notifications.</Alert>);
         }
 
+        var numPendingBookings = this.state.bookings.filter(booking => !booking.sitterApprove && !booking.sitterDecline).length;
+        var bookingBadge = null;
+        if (numPendingBookings > 0) {
+            bookingBadge = (<Badge pullRight>{numPendingBookings}</Badge>);
+        }
+
         var bookings;
         if (this.state.bookings.length > 0) {
             bookings = this.state.bookings.map((curVal, index) => this.createBookingCard(curVal, index));
@@ -276,7 +282,7 @@ class SitterDashboard extends React.Component {
                             <Col sm={3} lg={2}>
                                 <Nav bsStyle="pills" stacked>
                                     <NavItem eventKey={1}>Notifications <Badge pullRight>{numNewNots}</Badge></NavItem>
-                                    <NavItem eventKey={2}>Bookings</NavItem>
+                                    <NavItem eventKey={2}>Bookings {bookingBadge}</NavItem>
                                 </Nav>
                             </Col>
                             <Col sm={9} lg={10}>
