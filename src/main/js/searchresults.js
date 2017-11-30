@@ -38,6 +38,10 @@ class SearchResults extends React.Component {
                     }
                 })
                 .then((response) => {
+                    if (!Array.isArray(response.data)) {
+                        response.data = [];
+                    }
+                    response.data.sort((a, b) => b.rating - a.rating);
                     this.setState({sitters:response.data, searchStatus:response.status});
                 })
                 .catch((error) => {
