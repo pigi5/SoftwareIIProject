@@ -445,7 +445,7 @@ class Profile extends React.Component {
                             sitterClone.petPreferences.value.push(curVal);
                         }
                         this.setState({sitterForms: sitterClone});
-                    }} bsStyle={color} bsSize="lg" className="weekday-button" key={index} active={ind >= 0}>{curVal}</Button>
+                    }} bsStyle={color} bsSize="lg" className="petpref-button" key={index} active={ind >= 0}>{curVal}</Button>
         );
     }
     

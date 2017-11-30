@@ -5,7 +5,7 @@ package petfinder.site.common.pet;
  * Created by jlutteringer on 8/23/17.
  */
 public class PetDto {
-	public enum PetType{Dog, Cat, Rodent, Bird};
+	public enum PetType{Dog, Cat, Rodent, Bird, Other};
 	
 	private String name;
 	private PetType type;

@@ -78,7 +78,20 @@ textarea {
 @media (min-width: 768px) {
     .weekday-button {
         width: 100%;
-        width: 0;
+    }
+}
+
+.petpref-button {
+    margin-top: 0;
+    margin-bottom: 2px;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+@media (min-width: 768px) {
+    .petpref-button {
+        width: 100%;
     }
 }
 
