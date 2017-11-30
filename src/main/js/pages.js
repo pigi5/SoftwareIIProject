@@ -13,32 +13,25 @@ export class Home extends React.Component {
                 <MyNavbar pageUrl={this.props.match.url} />
                 <div className="container">
                     <Carousel>
-	                    <Carousel.Item>
-		                    <img alt="Tempeturs logo" src="https://i.imgur.com/bOcXNei.jpg" />
-		                    <Carousel.Caption>
-		                        <h3>Tempeturs logo</h3>
-		                        <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-		                    </Carousel.Caption>
-		                </Carousel.Item>
                         <Carousel.Item>
-                            <img alt="First slide" src="https://az616578.vo.msecnd.net/files/responsive/embedded/any/desktop/2016/10/10/636116545535774772-190236060_kittens.jpg" />
+                            <img alt="Tempeturs" src="https://az616578.vo.msecnd.net/files/responsive/embedded/any/desktop/2016/10/10/636116545535774772-190236060_kittens.jpg" />
                             <Carousel.Caption>
-                                <h3>First slide label</h3>
-                                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                                <h1>Tempeturs</h1>
+                                <h3>- Pet-Sitting Services -</h3>
                             </Carousel.Caption>
                         </Carousel.Item>
                         <Carousel.Item>
-                            <img alt="Second slide" src="http://1.bp.blogspot.com/-btvO5UMNMS0/Vphlz_Gq9XI/AAAAAAAACu0/1w27XjMQByg/s1600/pets%2B%25286%2529.jpg" />
+                            <img alt="Need a sitter?" src="http://262f1527b4cc0b7ecec8-8c0e83a13bc8c5abf51c3c0744ac5234.r72.cf1.rackcdn.com/lps/assets/u/dog-cavalier-king-charles-spaniel-funny-pet-162167.jpeg" />
                             <Carousel.Caption>
-                                <h3>Second slide label</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                <h2>Need a sitter?</h2>
+                                <h4>Sign up to find an available pet sitter near you.</h4>
                             </Carousel.Caption>
                         </Carousel.Item>
                         <Carousel.Item>
-                            <img alt="Third slide" src="http://cdn5.hawaiilife.com/2014/05/dogkisses2.jpg" />
+                            <img alt="Want to be a sitter?" src="http://1.bp.blogspot.com/-btvO5UMNMS0/Vphlz_Gq9XI/AAAAAAAACu0/1w27XjMQByg/s1600/pets%2B%25286%2529.jpg" />
                             <Carousel.Caption>
-                                <h3>Third slide label</h3>
-                                <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                                <h2>Want to be a sitter?</h2>
+                                <h4>Sign up so that owners can request your pet-sitting services.</h4>
                             </Carousel.Caption>
                         </Carousel.Item>
                     </Carousel>

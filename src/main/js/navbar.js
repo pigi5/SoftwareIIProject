@@ -85,6 +85,7 @@ class MyNavbar extends React.Component {
                 <Navbar fluid fixedTop>
                     <Navbar.Header>
                         <Navbar.Brand>
+                            <img src="https://i.imgur.com/qRzzKot.png" className="pull-left navbar-img"/>
                             <a href="/#/" className="text-dark">Tempeturs</a>
                         </Navbar.Brand>
                         <Navbar.Toggle />
