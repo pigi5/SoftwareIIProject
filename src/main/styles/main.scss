@@ -116,6 +116,10 @@ textarea {
 	margin-top:20px;
 }
 
+.top-buffer-md {
+    margin-top:40px;
+}
+
 .top-buffer-lg {
     margin-top:80px;
 }
@@ -207,4 +211,8 @@ option {
 
 .message-input {
     min-height: 80px;
+}
+
+.indented-text{
+	text-indent: 40px;
 }
