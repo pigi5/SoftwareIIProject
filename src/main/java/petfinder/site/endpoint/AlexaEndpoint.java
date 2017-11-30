@@ -18,8 +18,10 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.boot.json.JsonParser;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +38,12 @@ public class AlexaEndpoint {
 	final String URL = "boxwood-8909856.us-east-1.bonsaisearch.net";
 	
 	ObjectMapper mapper = new ObjectMapper();
-	
+
+	@RequestMapping(path = "/sitterAvail", method = RequestMethod.GET)
+	public ResponseEntity<String> sitterAvail(@RequestParam(name = "day") String day) {
+		return EndpointUtil.searchMultipleQuery("users/user", "availability: " + day, 1000, false, false);
+	}
+
 	@RequestMapping(path = "/getSitters", method = RequestMethod.GET)
 	public String getSitters() throws IOException {
 		try {

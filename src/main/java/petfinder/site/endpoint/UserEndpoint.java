@@ -113,6 +113,7 @@ public class UserEndpoint {
         //Setting the zipCodeList to the nearby postalCodes
         for(int i=0;i < postalCodes.size();i++){
             zipCodeList[i] = postalCodes.get(i).getPostalCode();
+            System.out.println(zipCodeList[i]);
         }
 
         /*
