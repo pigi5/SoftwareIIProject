@@ -44,6 +44,7 @@ public class LoginEndpoint {
             try {
 				user = mapper.readValue(result.getBody(), UserDto.class);
 			} catch (IOException e) {
+				e.printStackTrace();
 	        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 			}
 
