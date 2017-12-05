@@ -50,7 +50,7 @@ public class EndpointUtil {
                 .build();
     }
 
-    static ResponseEntity<String> remove(String esEndpoint){
+    public static ResponseEntity<String> remove(String esEndpoint){
         RestClient restClient = getRestClient();
         try {
             Response response = restClient.performRequest("DELETE", esEndpoint);
